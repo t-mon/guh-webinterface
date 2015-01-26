@@ -1,0 +1,70 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<form ng-submit="addRule.saveRule()" ng-if="!addRule.show.addEvent && !addRule.show.addState && !addRule.show.addAction">
+  <!-- List events -->
+  <ul class="list" ng-if="addRule.eventDescriptors.length > 0">
+    <li class="list-item" ng-repeat="eventDescriptor in addRule.eventDescriptors track by $index">{{ eventDescriptor.device.name }}: {{ eventDescriptor.name }}</li>
+  </ul>
+  <p><button class="full-width button" ng-click="addRule.addEvent()" type="button">Add Event</button></p>
+
+  <!-- List states -->
+  <ul class="list" ng-if="addRule.stateDescriptors.length > 0">
+    <li class="list-item" ng-repeat="stateDescriptor in addRule.stateDescriptors track by $index">{{ stateDescriptor.device.name }}: {{ stateDescriptor.name }}</li>
+  </ul>
+  <p><button class="full-width button" ng-click="addRule.addState()" type="button">Add State</button></p>
+
+  <!-- List actions -->
+  <ul class="list" ng-if="addRule.actions.length > 0">
+    <li class="list-item" ng-repeat="action in addRule.actions track by $index">{{ action.device.name }}: {{ action.name }}</li>
+  </ul>
+  <p><button class="full-width button" ng-click="addRule.addAction()" type="button">Add Action</button></p>
+
+  <p><button class="block button" type="submit">Add Rule</button></p>
+</form>
+
+<!-- Wizard: add event -->
+<guh-wizard ng-if="addRule.show.addEvent">
+  <guh-wizard-step>
+    <!-- List devices -->
+    <ul class="list">
+      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithEventTypes track by $index">{{ device.name }}</li>
+    </ul>
+  </guh-wizard-step>
+  <guh-wizard-step>
+    <!-- List events -->
+    <guh-device-class model="addRule.currentDevice.deviceClass" save-event-descriptor="addRule.saveEventDescriptor(eventTypeData)" show="{events:true}"></guh-device-class>
+  </guh-wizard-step>
+</guh-wizard>
+
+<!-- Wizard: add state -->
+<guh-wizard ng-if="addRule.show.addState">
+  <guh-wizard-step>
+    <!-- List devices -->
+    <ul class="list">
+      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithStateTypes track by $index">{{ device.name }}</li>
+    </ul>
+  </guh-wizard-step>
+  <guh-wizard-step>
+    <!-- List events -->
+    <guh-device-class model="addRule.currentDevice.deviceClass" save-state-descriptor="addRule.saveStateDescriptor(stateTypeData)" show="{states:true}"></guh-device-class>
+  </guh-wizard-step>
+</guh-wizard>
+
+<!-- Wizard: add action -->
+<guh-wizard ng-if="addRule.show.addAction">
+  <guh-wizard-step>
+    <!-- List devices -->
+    <ul class="list">
+      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithActions track by $index">{{ device.name }}</li>
+    </ul>
+  </guh-wizard-step>
+  <guh-wizard-step>
+    <!-- List events -->
+    <guh-device-class model="addRule.currentDevice.deviceClass" save-action="addRule.saveAction(actionData)" show="{actions:true}"></guh-device-class>
+  </guh-wizard-step>
+</guh-wizard>
