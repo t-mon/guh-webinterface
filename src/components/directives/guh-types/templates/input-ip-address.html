@@ -1,0 +1,20 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<!-- TODO: Verify validation (http://stackoverflow.com/questions/17025384/ip-address-mask-for-angularjs) -->
+<!-- Currently no IPv6 -->
+<div ng-form="subForm">
+  <p>
+    <label>{{ model.name }}</label>
+    <input ng-model="model.value" ng-pattern="/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/" name="input" required type="text" />
+  </p>
+  
+  <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+    <p ng-message="required">Field is required.</p>
+    <p ng-message="pattern">Entered IP addres ist not valid.</p>
+  </div>
+</div>

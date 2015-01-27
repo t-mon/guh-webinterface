@@ -1,0 +1,15 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<ul class="list">
+  <li class="list-item" ng-repeat="rule in rules.configured">
+    <a ui-sref="guh.rules.detail({ id: rule })">
+      <h3>Personalisierter Name</h3>
+      <span>{{ rule }}</span>
+    </a>
+  </li>
+</ul>

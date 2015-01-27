@@ -1,0 +1,26 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<!-- Actions -->
+<ul ng-show="addRule.actions.length > 0">
+  <li ng-repeat="action in addRule.actions track by $index">{{ action.device.name }}: {{ action.name }}</li>
+</ul>
+
+<guh-wizard ng-if="addRule.show.addAction">
+  <guh-wizard-step>
+    <!-- List devices -->
+    <ul>
+      <li ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithActions track by $index">{{ device.name }}</li>
+    </ul>
+  </guh-wizard-step>
+  <guh-wizard-step>
+    <!-- List events -->
+    <guh-device-class model="addRule.currentDevice.deviceClass" save-action="addRule.saveAction(actionData)" show="{actions:true}"></guh-device-class>
+  </guh-wizard-step>
+</guh-wizard>
+
+<p><button ng-click="addRule.addAction()" type="button">Add Action</button></p>
