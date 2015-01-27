@@ -12,9 +12,9 @@
     .module('guh.devices')
     .controller('DevicesAddController', DevicesAddController);
 
-  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device'];
+  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device', 'errors'];
 
-  function DevicesAddController($log, $state, Vendor, Device) {
+  function DevicesAddController($log, $state, Vendor, Device, errors) {
 
     // Public Variables
     var vm = this;
@@ -59,6 +59,7 @@
         });
     }
 
+
     /*
      * Public method: discoverDevices()
      */
@@ -92,12 +93,17 @@
     function save(device) {
       if(angular.isObject(device)) {
         vm.currentDeviceClass.descriptorId = device.id;
-        Device.add(vm.currentDeviceClass);
-      } else {
-        Device.add(vm.currentDeviceClass);
       }
 
-      $state.go('guh.devices.master');
+      Device
+        .add(vm.currentDeviceClass)
+        .then(function() {
+          $state.go('guh.devices.master')
+        })
+        .catch(function(error) {
+          $log.log(error);
+          $log.log(errors.device);
+        });
     }
 
     _init();
