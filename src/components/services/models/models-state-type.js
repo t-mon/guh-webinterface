@@ -12,9 +12,9 @@
     .module('guh.components.models')
     .factory('StateType', StateTypeFactory);
 
-  StateTypeFactory.$inject = ['$http', 'ParamType'];
+  StateTypeFactory.$inject = [];
 
-  function StateTypeFactory($http, ParamType) {
+  function StateTypeFactory() {
 
     /*
      * Constructor

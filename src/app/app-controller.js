@@ -12,11 +12,9 @@
     .module('guh')
     .controller('GuhController', GuhController);
 
-  GuhController.$inject = ['$log', '$state'];
+  GuhController.$inject = [];
 
-  function GuhController($log, $state) {    
-    // $log.log('GuhController');
-    // $log.log($state);
+  function GuhController() {
   }
 
 }());

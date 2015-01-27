@@ -146,7 +146,7 @@
 
       Rule
         .add(serverData.eventDescriptors, stateEvaluator, serverData.actions)  
-        .then(function(confirmation) {
+        .then(function() {
           $state.go('guh.rules.master');
         });
     }

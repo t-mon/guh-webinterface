@@ -12,9 +12,9 @@
     .module('guh.rules')
     .controller('RulesDetailController', RulesDetailController);
 
-  RulesDetailController.$inject = ['$log', '$stateParams', '$state', 'Rule'];
+  RulesDetailController.$inject = ['$log', '$stateParams', '$state', 'appConfig', 'Rule'];
 
-  function RulesDetailController($log, $stateParams, $state, Rule) {
+  function RulesDetailController($log, $stateParams, $state, appConfig, Rule) {
     // Public Variables
     var vm = this;
 

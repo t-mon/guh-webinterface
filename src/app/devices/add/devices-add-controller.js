@@ -12,9 +12,9 @@
     .module('guh.devices')
     .controller('DevicesAddController', DevicesAddController);
 
-  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device', 'ParamDescriptor'];
+  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device'];
 
-  function DevicesAddController($log, $state, Vendor, Device, ParamDescriptor) {
+  function DevicesAddController($log, $state, Vendor, Device) {
 
     // Public Variables
     var vm = this;

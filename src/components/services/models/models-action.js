@@ -107,8 +107,8 @@
     function getInputTemplate() {
       /* jshint validthis:true */
       var basePath = 'components/directives/guh-types/templates/';
-      var name = this.name;
-      var params = this.params;
+      // var name = this.name;
+      // var params = this.params;
 
       // TODO: Return proper input template
       return basePath + 'button.html';
