@@ -22,6 +22,7 @@
       'guh.components.ui',
 
       // App
+      'guh.config',
       'guh.devices',
       'guh.rules'
     ])
