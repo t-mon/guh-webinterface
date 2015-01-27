@@ -1,0 +1,48 @@
+/* Copyright (C) 2015 guh
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ *
+ */
+
+#main-navigation {
+  background-color: #8cc1b6;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  @include rem(height, 4.8);
+  position: fixed;
+    bottom: 0;
+    left: 0;
+  width: 100%;
+
+  ul {
+    @include display(flex);
+    padding: 0;
+    width: inherit;
+  }
+
+  li {
+    border-left: 1px solid rgba(105, 147, 140, 0.5);
+    @include flex(1);
+
+    &:first-child {
+      border-left: none;
+    }
+  }
+
+  a {
+    background-color: inherit;
+    color: rgba(105, 147, 140, 0.5);
+    display: block;
+    font-weight: 300;
+    @include rem(font-size, 1.2);
+    @include rem(padding, 1.2);
+    text-align: center;
+    text-decoration: none;
+    width: inherit;
+
+    &:active,
+    &.active {
+      color: #fff;
+    }
+  }
+}

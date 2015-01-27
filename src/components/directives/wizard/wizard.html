@@ -1,0 +1,8 @@
+<h2 ng-show="title">{{title}}</h2>
+
+<div data-ng-transclude></div>
+
+<div class="tab-bar">
+  <button class="prev button" ng-click="wizardControl.external.prev()" ng-show="wizardControl.external.hasPrev()" type="button">previous</button>
+  <button class="next button" ng-click="wizardControl.external.next()" ng-show="wizardControl.external.hasNext()" type="button">next</button>
+</div>

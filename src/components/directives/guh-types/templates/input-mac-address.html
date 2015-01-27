@@ -1,0 +1,19 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<!-- TODO: Verify validation (http://stackoverflow.com/questions/12010552/jquery-javascript-mac-address-validation) -->
+<div ng-form="subForm">
+  <p>
+    <label>{{ model.name }}</label>
+    <input ng-model="data.value" ng-pattern="/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/" name="{{ name }}FormField" type="text" />
+  </p>
+  
+  <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+    <p ng-message="required">Field is required.</p>
+    <p ng-message="pattern">Entered MAC addres ist not valid.</p>
+  </div>
+</div>

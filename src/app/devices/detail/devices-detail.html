@@ -1,0 +1,46 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<!-- <div ng-if="device.params.length > 0">
+  <p>Params</p>
+  <ul>
+    <li guh-input="param" ng-repeat="param in device.params track by $index">{{ param.name }}: {{ param.value }}</li>
+  </ul>
+</div> -->
+
+<!-- <div ng-if="device.deviceClass.paramTypes.length > 0">
+  <p>Params</p>
+  <ul>
+    <li guh-input="paramType" ng-repeat="paramType in device.deviceClass.paramTypes track by $index">{{ paramType.name }}: {{ paramType.value }}</li>
+  </ul>
+</div> -->
+
+<!-- <div ng-if="device.actions.length > 0"> -->
+<div ng-if="device.deviceClass.actionTypes.length > 0">
+  <!-- <div ng-repeat="action in device.actions track by $index"> -->
+  <div class="panel" ng-repeat="action in device.deviceClass.actions track by $index">
+    <h3 class="title">{{ action.type.name }}</h3>
+    <p class="content" guh-input="paramType" ng-repeat="paramType in action.type.paramTypes track by $index" ng-if="action.type.paramTypes.length > 0"></p>
+    <button class="block button" ng-click="device.executeAction(action)" type="button">Execute Action</button>
+  </div>
+</div>
+
+<!-- <div ng-if="device.states.length > 0">
+  <p>States</p>
+  <ul>
+    <li ng-repeat="state in device.states track by $index">{{ state.name }}: {{ state.value.value }}</li>
+  </ul>
+</div> -->
+
+<!-- <div ng-if="device.deviceClass.stateTypes.length > 0">
+  <p>States</p>
+  <ul>
+    <li ng-repeat="stateType in device.deviceClass.stateTypes track by $index">{{ stateType }}</li>
+  </ul>
+</div> -->
+
+<!-- <button class="block button" ng-click="device.remove()">Remove device</button> -->

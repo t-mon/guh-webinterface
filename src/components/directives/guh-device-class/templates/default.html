@@ -1,0 +1,26 @@
+<div class="panel"
+     ng-if="show.events"
+     ng-repeat="eventType in deviceClass.eventTypes track by $index">
+
+  <h3 class="title">{{ eventType.name }}</h3>
+  <p class="content" guh-input="paramType" ng-repeat="paramType in eventType.paramTypes track by $index"></p>
+  <button class="block button" ng-click="saveEventDescriptor({eventTypeData:eventType})" type="button">Save Event</button>
+</div>
+
+<div class="panel"
+     ng-if="show.states"
+     ng-repeat="stateType in deviceClass.stateTypes track by $index">
+
+  <h3 class="title">{{ stateType.name }}</h3>
+  <p class="content" guh-input="stateType"></p>
+  <button class="block button" ng-click="saveStateDescriptor({stateTypeData:stateType})" type="button">Save State</button>
+</div>
+
+<div class="panel"
+     ng-if="show.actions"
+     ng-repeat="actionType in deviceClass.actionTypes track by $index">
+
+  <h3 class="title">{{ actionType.name }}</h3>
+  <p class="content" guh-input="paramType" ng-repeat="paramType in actionType.paramTypes track by $index"></p>
+  <button class="block button" ng-click="saveAction({actionData:actionType})" type="button">Save Action</button>
+</div>

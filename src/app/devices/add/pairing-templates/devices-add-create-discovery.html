@@ -1,0 +1,22 @@
+<!-- 
+  Copyright (C) 2015 guh
+ 
+  This software may be modified and distributed under the terms
+  of the MIT license.  See the LICENSE file for details.
+-->
+
+<ul class="list">
+  <li class="list-item" id="id-{{ device.id }}"
+      ng-class="{ active: devicesAdd.isSelected(device) }"
+      ng-repeat="device in addDevice.discoveredDevices | filter: filters.deviceName | orderBy: 'name'"
+      ng-click="addDevice.save(device)">
+    <h3>{{ device.title }}</h3>
+    <span>{{ device.description }}</span>
+  </li>
+</ul>
+
+<form name="settings" ng-if="addDevice.currentDeviceClass.discoveryParamTypes.length > 0">
+  <p guh-input="param.type" ng-repeat="param in addDevice.currentDeviceClass.discoveryParams track by $index"></p>
+</form>
+
+<button class="block button" ng-click="addDevice.discoverDevices()">Start search</button>
