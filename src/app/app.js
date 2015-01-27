@@ -36,7 +36,7 @@
       .when('/devices/detail', '/devices/all')
       .when('/rules', '/rules/all')
       .when('/rules/detail', '/rules/all')
-      .otherwise('/dashboard');
+      .otherwise('/devices');
 
     $stateProvider
       .state('guh', {
