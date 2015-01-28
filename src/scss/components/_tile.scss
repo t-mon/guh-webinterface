@@ -1,0 +1,101 @@
+/* Copyright (C) 2015 guh
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ *
+ */
+
+
+.tiles {
+  overflow: auto;
+  padding: 2% 0 0;
+  width: 100%;
+}
+
+.tile {
+  background-color: rgba(255, 255, 255, 0.05);
+  // background-color: #fff;
+  float: left;
+  margin: 0 2% 2% 0;
+  overflow: hidden;
+  position: relative;
+  width: 49%;
+
+  &::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+
+  &:nth-of-type(2n) {
+    margin-right: 0;
+  }
+}
+
+.tile-content {
+  @include align-items(center);
+  @include display(flex);
+  @include rem(font-size, 1.2);
+  height: 100%;
+  @include rem(padding, 1.2);
+  position: absolute;
+    left: 0;
+    top: 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+
+  &> h3 {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 480px) {
+
+  .tiles {
+    padding-top: 1%;
+  }
+
+  .tile {
+    margin: 0 1% 1% 0;
+    width: 32%;
+
+    &:nth-of-type(2n) {
+      margin-right: 1%;
+    }
+
+    &:nth-of-type(3n+1) {
+      margin-left: 1%;
+    }
+  }
+
+}
+
+@media screen and (min-width: 768px) {
+
+  .tiles {
+    padding: 1% 0 0;
+  }
+
+  .tile {
+    margin: 0 2% 2% 0;
+    width: 23%;
+
+    &:nth-of-type(2n) {
+      margin-right: 2%;
+    }
+
+    &:nth-of-type(3n+1) {
+      margin-left: 0;
+    }
+
+    &:nth-of-type(4n) {
+      margin-right: 1%;
+    }
+
+    &:nth-of-type(4n+1) {
+      margin-left: 1%;
+    }    
+  }
+
+}

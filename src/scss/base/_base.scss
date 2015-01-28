@@ -1,0 +1,40 @@
+/* Copyright (C) 2015 guh
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ *
+ */
+
+
+html {
+  @include background(linear-gradient($c-green-standard, $c-turquoise-standard));
+  background-repeat: no-repeat;
+  background-attachment: fixed !important;
+  box-sizing: border-box;   // http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+  font-size: 62.5%;         // 10px / 16px (= standard font-size in all modern browsers)
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Ubuntu';
+  @include rem(font-size, 1.6);
+  height: 100%;
+  letter-spacing: 0.02em;
+  @include rem(line-height, 2.4);
+}
+
+a {
+  color: #fff;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+#app-wrapper {
+  height: 100%;
+}

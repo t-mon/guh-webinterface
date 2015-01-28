@@ -25,15 +25,12 @@
      * Private methods
      */
     function _init() {
-      Device.findAll().then(success, failure);
-
-      function success(configuredDevices) {
+      Device.findAll().then(function(configuredDevices) {
+        $log.log(configuredDevices);
         vm.configured = configuredDevices;
-      }
-
-      function failure(error) {
+      }, function(error) {
         $log.error(error);
-      }
+      });
     }
 
     _init();
