@@ -7,7 +7,8 @@
 
 
 #main-navigation {
-  background-color: rgba(255, 255, 255, 0.5);
+  // background-color: rgba(255, 255, 255, 0.5);
+  background-color: #8cc1b6;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   @include rem(height, 4.8);
 
@@ -17,7 +18,8 @@
   }
 
   li {
-    border-left: 1px solid rgba(105, 147, 140, 0.5);
+    // border-left: 1px solid rgba(105, 147, 140, 0.5);
+    border-left: 1px solid #b6d2c9;
 
     &:first-child {
       border-left: none;
@@ -59,6 +61,7 @@
 @media screen and (min-width: 1024px) {
 
   #main-navigation {
+    background-color: rgba(255, 255, 255, 0.5);
     @include rem(padding, 9.6, 1.2);
     height: 100%;
 

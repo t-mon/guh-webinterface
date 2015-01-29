@@ -12,9 +12,9 @@
     .module('guh.devices')
     .controller('DevicesMasterController', DevicesMasterController);
 
-  DevicesMasterController.$inject = ['$log', 'Device'];
+  DevicesMasterController.$inject = ['$log', 'Vendor', 'Device'];
 
-  function DevicesMasterController($log, Device) {
+  function DevicesMasterController($log, Vendor, Device) {
     /*
      * Public variables
      */
@@ -25,12 +25,37 @@
      * Private methods
      */
     function _init() {
-      Device.findAll().then(function(configuredDevices) {
-        $log.log(configuredDevices);
-        vm.configured = configuredDevices;
-      }, function(error) {
-        $log.error(error);
-      });
+      // var configuredDevice = {};
+
+      Device
+        .findAll()
+        .then(function(devices) {
+          angular.forEach(devices, function(device) {
+            var configuredDevice = device;
+
+            // Get deviceClass for each device
+            Device
+              .findDeviceClass(device)
+              .then(function(deviceClass) {
+                configuredDevice.deviceClass = deviceClass;
+ 
+                // Get vendor for each deviceClass (device)
+                Vendor
+                  .find(configuredDevice.deviceClass.vendorId)
+                  .then(function(vendor) {
+                    configuredDevice.vendor = vendor;
+                    configuredDevice.svgClass = vendor
+                      .name
+                      .toLowerCase()
+                      .replace(/\s/g, '-')
+                      .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
+
+                    vm.configured.push(configuredDevice);
+                    $log.log(configuredDevice.svgClass);
+                  });
+              });
+          });
+        });
     }
 
     _init();

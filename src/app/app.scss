@@ -12,10 +12,14 @@
 @import "../scss/functions";
 @import "../scss/mixins";
 
+// SVG-Sprites for icons
+// @import "../scss/sprites/vendors/vendors.scss";
+
 // Base
 @import "../scss/base/reset";
 @import "../scss/base/base";
 @import "../scss/base/layout";
+@import "../scss/base/sprites";
 
 // Shared
 @import "layout-modules/navigation.scss";
@@ -23,6 +27,7 @@
 
 // Components
 @import "../scss/components/button";
+@import "../scss/components/form";
 @import "../scss/components/list";
 @import "../scss/components/tile";
 

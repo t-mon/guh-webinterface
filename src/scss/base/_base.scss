@@ -22,6 +22,7 @@ html {
 }
 
 body {
+  color: #fff;
   font-family: 'Ubuntu';
   @include rem(font-size, 1.6);
   height: 100%;

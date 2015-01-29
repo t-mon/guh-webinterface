@@ -6,7 +6,7 @@
 -->
 
 <ul class="tiles">
-  <li class="tile" ng-repeat="device in devices.configured track by $index">
+  <li class="vendor-{{device.svgClass}} vendor tile" ng-repeat="device in devices.configured track by $index">
     <a class="tile-content" ui-sref="guh.devices.detail({ id: device.id })">
       <h3>{{ device.name }}</h3>
       <!-- <span>{{ device.name }}</span> -->
