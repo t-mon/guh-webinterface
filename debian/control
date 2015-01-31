@@ -1,0 +1,14 @@
+Source: guh-webinterface
+Maintainer: Simon Stürz <simon.stuerz@guh.guru>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.5
+Build-Depends: debhelper (>= 9)
+Homepage: https://github.com/guh/guh-webinterface
+
+Package: guh-webinterface
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Browser based user interface for guh
+ The browser based guh-webinterface provides a verry simple 
+ interaction with guh. 
