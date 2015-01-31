@@ -9,7 +9,6 @@
 var src = './src';
 var dest =  './build';
 var config = './config';
-var rails = './../guh_rails/public';
 
 // Task: styles
 var bourbon = require('node-bourbon');
@@ -76,5 +75,11 @@ module.exports = {
       errLogToConsole: true,
       includePaths: bourbon.includePaths
     }
+  },
+  svg: {
+    srcVendors: src + '/assets/svg/vendors/*.svg',
+    // srcSprites: src + '/scss/sprites/**/*.svg',
+    dest: src
+    // dest: src + '/scss/sprites'
   }
 };

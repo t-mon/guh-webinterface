@@ -1,0 +1,81 @@
+/* Copyright (C) 2015 guh
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ *
+ */
+
+
+.row {
+  @include display(flex);
+  width: 100%;
+}
+
+.col {
+  @include flex(1);
+}
+
+// Vertical alignment of all cols inside a row
+.row-top {
+  @include align-items(flex-start);
+}
+
+.row-bottom {
+  @include align-items(flex-end);
+}
+
+.row-center {
+  @include align-items(center);
+}
+
+.row-stretch {
+  @include align-items(stretch);
+}
+
+.row-baseline {
+  @include align-items(baseline);
+}
+
+
+.row-top {
+  @include align-items(flex-start);
+}
+
+.row-bottom {
+  @include align-items(flex-end);
+}
+
+.row-center {
+  @include align-items(center);
+}
+
+.row-stretch {
+  @include align-items(stretch);
+}
+
+.row-baseline {
+  @include align-items(baseline);
+}
+
+
+// Vertical alignment of an individuell col inside a row
+.col-top {
+  @include align-self(flex-start);
+}
+
+.col-bottom {
+  @include align-self(flex-end);
+}
+
+.col-center {
+  @include align-self(center);
+}
+
+.col-stretch {
+  @include align-self(stretch);
+}
+
+.col-baseline {
+  @include align-self(baseline);
+}
+

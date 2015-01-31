@@ -5,12 +5,12 @@
  *
  */
 
+
 #main-header {
-  background-color: #bde1ce;
-  position: fixed;
-    left: 0;
-    top: 0;
-  width: 100%;
+  // background-color: rgba(255, 255, 255, 0.5);
+  background-color: #bce0cd;
+  // @include linear-gradient(to top, rgba(255, 255, 255, 0.5) 20%, rgba(188, 224, 205, 0.8) 100%);
+  @include rem(height, 4.8);
 
   h1,
   h2,
@@ -35,7 +35,8 @@
   }
 
   h2 {
-    background-color: #90ccaf;
+    // background-color: rgba(255, 255, 255, 0.2);
+    background-color: #94cdb1;
     box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.05);
     @include rem(font-size, 1.2);
     letter-spacing: 0.02em;
@@ -45,8 +46,7 @@
 
   button {
     @include rem(font-size, 1.2);
-    letter-spacing: 0.02em;
-    position: inherit;
+    position: absolute;
       top: 0;
 
     &.first-action {
@@ -57,4 +57,36 @@
       right: 0;
     }
   }
+}
+
+// Large
+@media screen and (min-width: 1024px) {
+
+  #main-header {
+    background-color: transparent;
+    @include rem(height, 9.6);
+    @include rem(padding, 2.4, 9.6);
+
+    h1,
+    button {
+      @include rem(padding, 1.2);
+    }
+
+    h2 {
+      display: none;
+    }
+
+    button {
+      @include rem(top, 2.4);
+
+      &.first-action {
+        @include rem(left, 9.6);
+      }
+
+      &.second-action {
+        @include rem(right, 9.6);
+      }
+    }
+  }
+
 }

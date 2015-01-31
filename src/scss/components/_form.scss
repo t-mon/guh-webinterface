@@ -1,0 +1,41 @@
+label {
+  display: block;
+  @include rem(font-size, 1.2);
+  letter-spacing: 0.02em;
+  @include rem(margin, 2.4, 0, 1.2);
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+input,
+select {
+  @include appearance(none);
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0px;
+  color: #fff;
+  font-family: 'Ubuntu';
+  @include rem(font-size, 1.6);
+  @include rem(line-height, 2.4);
+  outline: none;
+  @include rem(padding, 1.2);
+  width: 100%;
+}
+
+input {
+  margin: 0;
+
+  &[type="email"],
+  &[type="number"],
+  &[type="password"],
+  &[type="text"] {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}

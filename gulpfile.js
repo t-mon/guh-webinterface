@@ -22,6 +22,7 @@ var copyBuildConfig = require('./config/gulp').copyBuild;
 var markupConfig = require('./config/gulp').markup;
 var scriptsConfig = require('./config/gulp').scripts;
 var stylesConfig = require('./config/gulp').styles;
+var svgConfig = require('./config/gulp').svg;
 
 // Bower
 gulp.task('bower', function() {
@@ -40,7 +41,7 @@ gulp.task('clean', function() {
 });
 
 // copyBuild
-gulp.task('copyBuild', function() {
+gulp.task('copyBuild', ['clean', 'svgSprite'], function() {
   return gulp.src(copyBuildConfig.src)
     .pipe(gulp.dest(copyBuildConfig.dest));
 });
@@ -77,8 +78,36 @@ gulp.task('scripts', function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
+// svgSprite
+gulp.task('svgSprite', function() {
+  return gulp.src(svgConfig.srcVendors)
+    .pipe(plugins.svgSprite({
+      mode: {
+        css: {
+          common: 'vendor',
+          dest: '',
+          dimensions: false,
+          example: {
+            dest: 'assets/svg/sprites-example.html'
+          },
+          layout: 'packed',
+          prefix: 'vendor-%s',
+          render: {
+            scss: {
+              dest: 'scss/base/_sprites.scss',
+              template: 'src/assets/svg/svg-sprite-template.scss'
+            }
+          },
+          sprite: 'assets/svg/sprites.svg'
+        }
+      }
+    }))
+    .pipe(gulp.dest(svgConfig.dest));
+});
+
 // Styles
 gulp.task('styles', function() {
+  // Process, concat, minify styles and add sourcemaps
   gulp.src(stylesConfig.srcMain)
     .pipe(plugins.sourcemaps.init())
       .pipe(plugins.plumber())
@@ -97,6 +126,10 @@ gulp.task('styles', function() {
     .pipe(plugins.plumber.stop())
     .pipe(gulp.dest(stylesConfig.dest))
     .pipe(browserSync.reload({stream:true}));
+
+  // Copy SVG-Sprite files
+  // gulp.src(svgConfig.srcSprite)
+  //   .pipe(svgConfig.dest(copyBuildConfig.dest));
 });
 
 // Test
@@ -108,7 +141,8 @@ gulp.task('test-unit', function(cb) {
 });
 
 // Build
-gulp.task('build', ['clean', 'copyBuild'], function() {
+// gulp.task('build', ['clean', 'svgSprite', 'copyBuild'], function() {
+gulp.task('build', ['copyBuild'], function() {
   gulp.start('bower', 'markup', 'scripts', 'styles');
 });
 

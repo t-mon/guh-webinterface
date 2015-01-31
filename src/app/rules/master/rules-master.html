@@ -5,11 +5,20 @@
   of the MIT license.  See the LICENSE file for details.
 -->
 
-<ul class="list">
+<!-- <ul class="list">
   <li class="list-item" ng-repeat="rule in rules.configured">
     <a ui-sref="guh.rules.detail({ id: rule })">
-      <h3>Personalisierter Name</h3>
+      <h3>{{ rule }}</h3>
       <span>{{ rule }}</span>
+    </a>
+  </li>
+</ul> -->
+
+<ul class="tiles">
+  <li class="tile" ng-repeat="rule in rules.configured">
+    <a class="tile-content" ui-sref="guh.rules.detail({ id: rule })">
+      <h3>{{ rule }}</h3>
+      <!-- <span>{{ rule }}</span> -->
     </a>
   </li>
 </ul>
