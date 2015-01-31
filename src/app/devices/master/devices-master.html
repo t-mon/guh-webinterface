@@ -5,11 +5,11 @@
   of the MIT license.  See the LICENSE file for details.
 -->
 
-<ul class="list">
-  <li class="list-item" ng-repeat="device in devices.configured track by $index">
-    <a ui-sref="guh.devices.detail({ id: device.id })">
-      <h3>Personalisierter Name</h3>
-      <span>{{ device.name }}</span>
+<ul class="tiles">
+  <li class="vendor-{{device.svgClass}} vendor tile" ng-repeat="device in devices.configured track by $index">
+    <a class="tile-content" ui-sref="guh.devices.detail({ id: device.id })">
+      <h3>{{ device.name }}</h3>
+      <!-- <span>{{ device.name }}</span> -->
     </a>
   </li>
 </ul>

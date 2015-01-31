@@ -6,157 +6,188 @@
  */
 
 
-/*
- * 1. SASS (Variables, Functions, Mixins and Libraries)
- */
+// Libraries, variables, functions & mixins
+@import "bourbon";
+@import "../scss/variables";
+@import "../scss/functions";
+@import "../scss/mixins";
 
-@import "../sass/all";
+// SVG-Sprites for icons
+// @import "../scss/sprites/vendors/vendors.scss";
 
+// Base
+@import "../scss/base/reset";
+@import "../scss/base/base";
+@import "../scss/base/layout";
+@import "../scss/base/sprites";
 
-/*
- * 2. Base
- */
-
-html {
-  @include background(linear-gradient($c-green-standard, $c-turquoise-standard));
-  background-repeat: no-repeat;
-  background-attachment: fixed !important;
-  @include box-sizing(border-box);
-  font-size: 62.5%;                     // 10px / 16px (= standard font-size in all modern browsers)
-  height: 100%;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-body {
-  color: #fff;
-  font-family: 'Ubuntu';
-  @include rem(font-size, 1.6);
-  height: 100%;
-  @include rem(line-height, 2.4);
-}
-
-a {
-  color: #fff;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-label {
-  display: block;
-}
-
-#main-content {
-  @include rem(padding, 7.2, 0, 6);
-}
-
-
-/*
- * 3. Components
- */
-
-.button {
-  @include appearance(none);
-  border: none;
-  color: #fff;
-  @include rem(font-size, 1.6);
-  letter-spacing: 0.02em;
-  @include rem(line-height, 2.4);
-  outline: none;
-  text-align: center;
-  text-transform: uppercase;
-
-  &.block,
-  &.full-width {
-    background-color: rgba(255, 255, 255, 0.1);
-    display: block;
-    @include rem(margin-top, 1.2);
-    @include rem(padding, 1.2);
-  }
-
-  &.block {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  &.full-width {
-    width: 100%;
-  }
-
-  &:active {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-
-}
-
-.list {
-  @include rem(padding-top, 1.2);
-}
-
-.list-item {
-  background-color: rgba(255, 255, 255, 0.05);
-  // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  display: block;
-  @include rem(margin-bottom, 1.2);
-  @include rem(padding, 1.2);
-  width: 100%;
-
-  &:active {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-
-  a {
-    text-decoration: none;
-
-    span {
-      display: block;
-      @include rem(font-size, 1);
-    }
-  }
-}
-
-.panel {
-  background-color: rgba(255, 255, 255, 0.1);
-  // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  @include rem(margin-top, 1.2);
-  @include rem(padding-bottom, 1.2);
-  width: 100%;
-
-  &:first-child {
-    @include rem(margin-top, 1.2);
-  }
-
-  .title {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.02em;
-    @include rem(padding, 1.2);
-    text-transform: uppercase;
-  }
-
-  .content {
-    @include rem(font-size, 1.2);
-    @include rem(line-height, 2.4);
-    @include rem(padding, 1.2);
-  }
-}
-
-@import "../components/directives/wizard/wizard.scss";
-
-
-/*
- * 4. Modules
- */
-
+// Shared
 @import "layout-modules/navigation.scss";
 @import "layout-modules/header.scss";
 
+// Components
+@import "../scss/components/button";
+@import "../scss/components/form";
+@import "../scss/components/list";
+@import "../scss/components/tile";
 
-/*
- * 5. Page Specific
- */
+// Grid, utility and platform
+@import "../scss/grid";
+
+
+
+
+// /*
+//  * 1. SASS (Variables, Functions, Mixins and Libraries)
+//  */
+
+// @import "../sass/all";
+
+
+// /*
+//  * 2. Base
+//  */
+
+// html {
+//   @include background(linear-gradient($c-green-standard, $c-turquoise-standard));
+//   background-repeat: no-repeat;
+//   background-attachment: fixed !important;
+//   @include box-sizing(border-box);
+//   font-size: 62.5%;                     // 10px / 16px (= standard font-size in all modern browsers)
+//   height: 100%;
+// }
+
+// *,
+// *:before,
+// *:after {
+//   box-sizing: inherit;
+// }
+
+// body {
+//   color: #fff;
+//   font-family: 'Ubuntu';
+//   @include rem(font-size, 1.6);
+//   height: 100%;
+//   @include rem(line-height, 2.4);
+// }
+
+// a {
+//   color: #fff;
+//   letter-spacing: 0.02em;
+//   text-decoration: none;
+//   text-transform: uppercase;
+// }
+
+// label {
+//   display: block;
+// }
+
+// #main-content {
+//   @include rem(padding, 7.2, 0, 6);
+// }
+
+
+// /*
+//  * 3. Components
+//  */
+
+// .button {
+//   @include appearance(none);
+//   border: none;
+//   color: #fff;
+//   @include rem(font-size, 1.6);
+//   letter-spacing: 0.02em;
+//   @include rem(line-height, 2.4);
+//   outline: none;
+//   text-align: center;
+//   text-transform: uppercase;
+
+//   &.block,
+//   &.full-width {
+//     background-color: rgba(255, 255, 255, 0.1);
+//     display: block;
+//     @include rem(margin-top, 1.2);
+//     @include rem(padding, 1.2);
+//   }
+
+//   &.block {
+//     margin-left: auto;
+//     margin-right: auto;
+//   }
+
+//   &.full-width {
+//     width: 100%;
+//   }
+
+//   &:active {
+//     background-color: rgba(255, 255, 255, 0.2);
+//   }
+
+// }
+
+// .list {
+//   @include rem(padding-top, 1.2);
+// }
+
+// .list-item {
+//   background-color: rgba(255, 255, 255, 0.05);
+//   // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+//   display: block;
+//   @include rem(margin-bottom, 1.2);
+//   @include rem(padding, 1.2);
+//   width: 100%;
+
+//   &:active {
+//     background-color: rgba(255, 255, 255, 0.2);
+//   }
+
+//   a {
+//     text-decoration: none;
+
+//     span {
+//       display: block;
+//       @include rem(font-size, 1);
+//     }
+//   }
+// }
+
+// .panel {
+//   background-color: rgba(255, 255, 255, 0.1);
+//   // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+//   @include rem(margin-top, 1.2);
+//   @include rem(padding-bottom, 1.2);
+//   width: 100%;
+
+//   &:first-child {
+//     @include rem(margin-top, 1.2);
+//   }
+
+//   .title {
+//     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+//     letter-spacing: 0.02em;
+//     @include rem(padding, 1.2);
+//     text-transform: uppercase;
+//   }
+
+//   .content {
+//     @include rem(font-size, 1.2);
+//     @include rem(line-height, 2.4);
+//     @include rem(padding, 1.2);
+//   }
+// }
+
+// @import "../components/directives/wizard/wizard.scss";
+
+
+// /*
+//  * 4. Modules
+//  */
+
+// @import "layout-modules/navigation.scss";
+// @import "layout-modules/header.scss";
+
+
+// /*
+//  * 5. Page Specific
+//  */
 
