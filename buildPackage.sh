@@ -4,4 +4,4 @@ npm install
 bower install
 gulp
 
-debuild -us -uc
+#debuild -us -uc
