@@ -6,9 +6,9 @@ export DH_VERBOSE=1
 	dh $@ 
 
 override_dh_auto_build:
-	sudo npm install
+	npm install
 	$(CURDIR)/node_modules/.bin/bower install
-	$(CURDIR)/node_modules/.bin/gulp
+	$(CURDIR)/node_modules/gulp/bin/gulp.js
 
-override_dh_install:
-	dh_install build/ /usr/share/guh-webinterface/public
+#override_dh_install:
+	#dh_install build/ /usr/share/guh-webinterface/public
