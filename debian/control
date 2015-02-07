@@ -8,7 +8,9 @@ Homepage: https://github.com/guh/guh-webinterface
 
 Package: guh-webinterface
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, 
+  ${misc:Depends}, 
+  guh-webserver (>= 0.0.1)
 Description: Browser based user interface for guh
  The browser based guh-webinterface provides a verry simple 
  interaction with guh. 
