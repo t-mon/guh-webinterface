@@ -1,9 +1,26 @@
-/* Copyright (C) 2015 guh
- *
- * This software may be modified and distributed under the terms
- * of the MIT license.  See the LICENSE file for details.
- *
- */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                                     *
+ * Copyright (c) 2015 guh                                                              *
+ *                                                                                     *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy        *
+ * of this software and associated documentation files (the "Software"), to deal       *
+ * in the Software without restriction, including without limitation the rights        *
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           *
+ * copies of the Software, and to permit persons to whom the Software is               *
+ * furnished to do so, subject to the following conditions:                            *
+ *                                                                                     *
+ * The above copyright notice and this permission notice shall be included in all      *
+ * copies or substantial portions of the Software.                                     *
+ *                                                                                     *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,            *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE         *
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER              *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,       *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
+ * SOFTWARE.                                                                           *
+ *                                                                                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Node
 var del = require('del');
@@ -22,6 +39,7 @@ var copyBuildConfig = require('./config/gulp').copyBuild;
 var markupConfig = require('./config/gulp').markup;
 var scriptsConfig = require('./config/gulp').scripts;
 var stylesConfig = require('./config/gulp').styles;
+var svgConfig = require('./config/gulp').svg;
 
 // Bower
 gulp.task('bower', function() {
@@ -40,7 +58,7 @@ gulp.task('clean', function() {
 });
 
 // copyBuild
-gulp.task('copyBuild', function() {
+gulp.task('copyBuild', ['clean', 'svgSprite'], function() {
   return gulp.src(copyBuildConfig.src)
     .pipe(gulp.dest(copyBuildConfig.dest));
 });
@@ -77,8 +95,36 @@ gulp.task('scripts', function() {
     .pipe(browserSync.reload({stream:true}));
 });
 
+// svgSprite
+gulp.task('svgSprite', function() {
+  return gulp.src(svgConfig.srcVendors)
+    .pipe(plugins.svgSprite({
+      mode: {
+        css: {
+          common: 'vendor',
+          dest: '',
+          dimensions: false,
+          example: {
+            dest: 'assets/svg/sprites-example.html'
+          },
+          layout: 'packed',
+          prefix: 'vendor-%s',
+          render: {
+            scss: {
+              dest: 'scss/base/_sprites.scss',
+              template: 'src/assets/svg/svg-sprite-template.scss'
+            }
+          },
+          sprite: 'assets/svg/sprites.svg'
+        }
+      }
+    }))
+    .pipe(gulp.dest(svgConfig.dest));
+});
+
 // Styles
 gulp.task('styles', function() {
+  // Process, concat, minify styles and add sourcemaps
   gulp.src(stylesConfig.srcMain)
     .pipe(plugins.sourcemaps.init())
       .pipe(plugins.plumber())
@@ -97,6 +143,10 @@ gulp.task('styles', function() {
     .pipe(plugins.plumber.stop())
     .pipe(gulp.dest(stylesConfig.dest))
     .pipe(browserSync.reload({stream:true}));
+
+  // Copy SVG-Sprite files
+  // gulp.src(svgConfig.srcSprite)
+  //   .pipe(svgConfig.dest(copyBuildConfig.dest));
 });
 
 // Test
@@ -108,7 +158,8 @@ gulp.task('test-unit', function(cb) {
 });
 
 // Build
-gulp.task('build', ['clean', 'copyBuild'], function() {
+// gulp.task('build', ['clean', 'svgSprite', 'copyBuild'], function() {
+gulp.task('build', ['copyBuild'], function() {
   gulp.start('bower', 'markup', 'scripts', 'styles');
 });
 
