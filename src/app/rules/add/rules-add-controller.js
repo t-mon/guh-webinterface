@@ -54,7 +54,8 @@
       devicesWithStateTypes: [],
       devicesWithActions: [],
       currentDevice: {},
-      currentDeviceClass: {}
+      currentDeviceClass: {},
+      wizard: {}
     });
 
     // Public methods
@@ -170,6 +171,9 @@
 
     function selectDevice(device) {
       vm.currentDevice = device;
+
+      // Go to next wizard step
+      vm.wizard.next();
     }
 
     function saveAction(actionData) {

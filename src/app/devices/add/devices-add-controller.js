@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
  * SOFTWARE.                                                                           *
  *                                                                                     *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 (function(){
 "use strict";
@@ -39,6 +39,7 @@
     vm.supportedDeviceClasses = [];
     vm.currentDeviceClass = {};
     vm.discoveredDevices = [];
+    vm.wizard = {};
 
     // Public Methods
     vm.selectVendor = selectVendor;
@@ -93,6 +94,9 @@
      */
     function selectVendor(vendor) {
       _loadVendorDeviceClasses(vendor);
+
+      // Go to next wizard step
+      vm.wizard.next();
     }
 
     /*
@@ -102,6 +106,9 @@
       vm.currentDeviceClass = deviceClass;
       vm.createMethod = deviceClass.getCreateMethod();
       vm.setupMethod = deviceClass.getSetupMethod();
+
+      // Go to next wizard step
+      vm.wizard.next();      
     }
 
     /*
@@ -115,7 +122,7 @@
       Device
         .add(vm.currentDeviceClass)
         .then(function() {
-          $state.go('guh.devices.master')
+          $state.go('guh.devices.master');
         })
         .catch(function(error) {
           $log.log(error);

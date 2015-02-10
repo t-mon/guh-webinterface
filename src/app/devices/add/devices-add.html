@@ -20,7 +20,7 @@
   SOFTWARE.
 -->
 
-<guh-wizard>
+<guh-wizard control="addDevice.wizard" show-navigation="false">
   <!-- Select vendor -->
   <guh-wizard-step>
     <ul class="list">
@@ -36,7 +36,8 @@
   </guh-wizard-step>
 
   <!-- Show createMethod -->
-  <guh-wizard-step ng-if="addDevice.createMethod.templateUrl">
+  <!-- <guh-wizard-step ng-if="addDevice.createMethod.templateUrl"> -->
+  <guh-wizard-step>
     <!-- <p>createMethod</p> -->
     <ng-include src="addDevice.createMethod.templateUrl"></data-ng-include>
     
@@ -44,7 +45,8 @@
   </guh-wizard-step>
 
   <!-- Show setupMethod -->
-  <guh-wizard-step ng-if="addDevice.setupMethod.templateUrl">
+  <!-- <guh-wizard-step ng-if="addDevice.setupMethod.templateUrl"> -->
+  <guh-wizard-step>
     <!-- <p>setupMethod</p> -->
     <ng-include src="addDevice.setupMethod.templateUrl"></ng-include>
   </guh-wizard-step>

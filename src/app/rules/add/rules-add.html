@@ -43,7 +43,7 @@
 </form>
 
 <!-- Wizard: add event -->
-<guh-wizard ng-if="addRule.show.addEvent">
+<guh-wizard ng-if="addRule.show.addEvent" control="addRule.wizard" show-navigation="false">
   <guh-wizard-step>
     <!-- List devices -->
     <ul class="list">
@@ -57,7 +57,7 @@
 </guh-wizard>
 
 <!-- Wizard: add state -->
-<guh-wizard ng-if="addRule.show.addState">
+<guh-wizard ng-if="addRule.show.addState" control="addRule.wizard" show-navigation="false">
   <guh-wizard-step>
     <!-- List devices -->
     <ul class="list">
@@ -71,7 +71,7 @@
 </guh-wizard>
 
 <!-- Wizard: add action -->
-<guh-wizard ng-if="addRule.show.addAction">
+<guh-wizard ng-if="addRule.show.addAction" control="addRule.wizard" show-navigation="false">
   <guh-wizard-step>
     <!-- List devices -->
     <ul class="list">
