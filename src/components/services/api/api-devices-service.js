@@ -64,7 +64,7 @@
       return api.one(action.deviceId).one('actions', action.actionTypeId).all('execute').post({
         'device_id': action.deviceId,
         'id': action.actionTypeId,
-        'action_params': action.params
+        'params': action.params
       });
     }
 
