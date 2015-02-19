@@ -20,10 +20,17 @@
   SOFTWARE.
 -->
 
+<div class="error" ng-show="devices.errors.length > 0">
+  <p>Uuups...</p>
+  <ul>
+    <li ng-repeat="error in devices.errors">{{ error.description }}</li>
+  </ul>  
+</div>
+
 <ul class="tiles">
-  <li class="vendor-{{device.svgClass}} vendor tile" ng-repeat="device in devices.configured track by $index">
+  <li class="vendor-{{device.svgClass}} vendor tile" ng-repeat="device in devices.configured | orderBy: 'name' track by $index">
     <a class="tile-content" ui-sref="guh.devices.detail({ id: device.id })">
-      <h3>{{ device.name }}</h3>
+      <p>{{ device.name }}</p>
       <!-- <span>{{ device.name }}</span> -->
     </a>
   </li>

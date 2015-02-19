@@ -29,9 +29,9 @@
     .module('guh.devices')
     .controller('DevicesAddController', DevicesAddController);
 
-  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device', 'errors'];
+  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'DeviceClass', 'Device', 'errors'];
 
-  function DevicesAddController($log, $state, Vendor, Device, errors) {
+  function DevicesAddController($log, $state, Vendor, DeviceClass, Device, errors) {
 
     // Public Variables
     var vm = this;
@@ -82,7 +82,12 @@
      * Public method: discoverDevices()
      */
     function discoverDevices() {
-      Device
+      // Device
+      //   .discover(vm.currentDeviceClass)
+      //   .then(function(discoveredDevices) {
+      //     vm.discoveredDevices = discoveredDevices;
+      //   });
+      DeviceClass
         .discover(vm.currentDeviceClass)
         .then(function(discoveredDevices) {
           vm.discoveredDevices = discoveredDevices;
@@ -108,7 +113,15 @@
       vm.setupMethod = deviceClass.getSetupMethod();
 
       // Go to next wizard step
-      vm.wizard.next();      
+      vm.wizard.next();
+
+      // Automatically start disocvery of devices
+      $log.log('createMethod', vm.createMethod.title)
+      $log.log('discoveryParamTypes', vm.currentDeviceClass.discoveryParamTypes)
+      $log.log(vm.currentDeviceClass);
+      if(vm.createMethod.title === 'Discovery' && vm.currentDeviceClass.discoveryParamTypes.length === 0) {
+        discoverDevices();
+      }
     }
 
     /*
