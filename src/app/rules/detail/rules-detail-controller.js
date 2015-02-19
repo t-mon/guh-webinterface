@@ -41,6 +41,7 @@
     vm.id = '';
     vm.stateEvaluator = {};
 
+    // Public Methods
     vm.remove = remove;
     // vm.executeAction = executeAction;
     
@@ -49,11 +50,14 @@
      * Private methods
      */
     function _init() {
+      $log.log('init', $stateParams);
+
       _getRule($stateParams.id)
         .then(success, failure);
       
       function success(rule) {
-        $log.log(rule);
+        $log.log('rule', rule);
+
         vm.actions = rule.actions;
         vm.enabled = rule.enabled;
         vm.eventDescriptors = rule.eventDescriptors;
@@ -67,6 +71,7 @@
     }
 
     function _getRule(id) {
+      $log.log('getRule', id)
       return Rule.find(id);
     }
 

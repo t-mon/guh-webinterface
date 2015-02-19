@@ -43,11 +43,17 @@
      * Private methods
      */
     function _init() {
-      Rule.findAll().then(function(rules) {
-        vm.configured = rules;
-      }, function(error) {
-        $log.log(error);
-      });
+      Rule
+        .findAll()
+        .then(function(rules) {
+          vm.configured = rules;
+
+          angular.forEach(rules, function(rule) {
+            var configuredRule = rule;
+
+            $log.log(configuredRule);
+          });
+        });
     }
 
     _init();

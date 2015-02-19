@@ -97,6 +97,7 @@
      * Static methods
      */
     angular.extend(DeviceClass, {
+      discover: discover,
       find: find,
       findAll: findAll
     });
@@ -194,6 +195,24 @@
         .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
 
       return _checkTemplateUrl(basePath + templateName + extension);
+    }
+
+
+    /*
+     * Static method: discover(deviceClass)
+     */
+    function discover(deviceClass) {
+      var params = [];
+
+      angular.forEach(deviceClass.discoveryParamTypes, function(paramTypeData, index) {
+        var param = new Param(paramTypeData);
+        params[index] = param.getData();
+      });
+
+      return deviceClassesService.fetchDiscovered({
+        deviceClassId: deviceClass.id,
+        discoveryParams: params
+      });
     }
 
 

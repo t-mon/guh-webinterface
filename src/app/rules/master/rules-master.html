@@ -31,9 +31,9 @@
 
 <ul class="tiles">
   <li class="tile" ng-repeat="rule in rules.configured">
-    <a class="tile-content" ui-sref="guh.rules.detail({ id: rule })">
-      <h3>{{ rule }}</h3>
-      <!-- <span>{{ rule }}</span> -->
+    <a class="tile-content" ui-sref="guh.rules.detail({ id: rule.id })">
+      <p>{{ rule.id }}</p>
+      <!-- <h3>{{ rule }}</h3> -->
     </a>
   </li>
 </ul>

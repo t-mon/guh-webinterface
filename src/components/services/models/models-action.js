@@ -41,7 +41,7 @@
       data.params = [];
       angular.forEach(data.paramTypes, function(paramTypeData, index) {
         var param = new Param(paramTypeData);
-        // data.params[index] = param.getData(); => PROBLEM: guhInput gets ParamTyep => changed input value only reflected in ParamType but bot in Param
+        // data.params[index] = param.getData(); => PROBLEM: guhInput gets ParamType => changed input value only reflected in ParamType but bot in Param
         data.paramTypes[index] = param.getType();
       });
 
