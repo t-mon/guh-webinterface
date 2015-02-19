@@ -67,10 +67,10 @@
                   .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
 
                 vm.configured.push(configuredDevice);
-              });;
+              });
           });
         })
-        .catch(function(errorResponse) {
+        .catch(function(errorResponse) {
           $log.error(errorResponse);
         });
     }

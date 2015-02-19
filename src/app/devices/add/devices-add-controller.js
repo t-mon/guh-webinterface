@@ -116,9 +116,6 @@
       vm.wizard.next();
 
       // Automatically start disocvery of devices
-      $log.log('createMethod', vm.createMethod.title)
-      $log.log('discoveryParamTypes', vm.currentDeviceClass.discoveryParamTypes)
-      $log.log(vm.currentDeviceClass);
       if(vm.createMethod.title === 'Discovery' && vm.currentDeviceClass.discoveryParamTypes.length === 0) {
         discoverDevices();
       }

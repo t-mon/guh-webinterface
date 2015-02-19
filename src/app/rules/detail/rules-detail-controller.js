@@ -71,7 +71,6 @@
     }
 
     function _getRule(id) {
-      $log.log('getRule', id)
       return Rule.find(id);
     }
 
