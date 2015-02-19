@@ -25,7 +25,7 @@
      ng-repeat="eventType in deviceClass.eventTypes track by $index">
 
   <h3 class="title">{{ eventType.name }}</h3>
-  <p class="content" guh-input="paramType" ng-repeat="paramType in eventType.paramTypes track by $index"></p>
+  <p class="content" guh-input="paramType" index="{{ $parent.$index }}-{{ $index }}" ng-repeat="paramType in eventType.paramTypes track by $index"></p>
   <button class="block button" ng-click="saveEventDescriptor({eventTypeData:eventType})" type="button">Save Event</button>
 </div>
 
@@ -34,7 +34,7 @@
      ng-repeat="stateType in deviceClass.stateTypes track by $index">
 
   <h3 class="title">{{ stateType.name }}</h3>
-  <p class="content" guh-input="stateType"></p>
+  <p class="content" guh-input="stateType" index="{{ $parent.$index }}"></p>
   <button class="block button" ng-click="saveStateDescriptor({stateTypeData:stateType})" type="button">Save State</button>
 </div>
 
@@ -43,6 +43,6 @@
      ng-repeat="actionType in deviceClass.actionTypes track by $index">
 
   <h3 class="title">{{ actionType.name }}</h3>
-  <p class="content" guh-input="paramType" ng-repeat="paramType in actionType.paramTypes track by $index"></p>
+  <p class="content" guh-input="paramType" index="{{ $parent.$index }}-{{ $index }}" ng-repeat="paramType in actionType.paramTypes track by $index"></p>
   <button class="block button" ng-click="saveAction({actionData:actionType})" type="button">Save Action</button>
 </div>

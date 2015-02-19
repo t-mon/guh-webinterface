@@ -22,6 +22,6 @@
 
 <!-- TODO: Add validation -->
 <p ng-form="subForm">
-  <label>{{ model.name }}</label>
-  <input ng-model="model.value" name="input" type="checkbox" />
+  <input id="checkbox-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="model.value" name="checkbox" type="checkbox" />
+  <label for="checkbox-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
 </p>
