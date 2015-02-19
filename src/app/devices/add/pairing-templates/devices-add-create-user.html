@@ -21,8 +21,7 @@
 -->
 
 <form name="settings" ng-show="addDevice.currentDeviceClass.paramTypes.length > 0" ng-submit="addDevice.save()">
-
-  <p guh-input="paramType" ng-repeat="paramType in addDevice.currentDeviceClass.paramTypes track by $index"></p>
+  <p guh-input="paramType" index="{{ $index }}" ng-repeat="paramType in addDevice.currentDeviceClass.paramTypes track by $index"></p>
 
   <button class="block button" type="submit">Add Device</button>
 </form>

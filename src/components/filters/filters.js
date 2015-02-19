@@ -25,39 +25,7 @@
 (function(){
   "use strict";
 
-  angular
-    .module('guh.rules')
-    .controller('RulesMasterController', RulesMasterController);
-
-  RulesMasterController.$inject = ['$log', 'Rule'];
-
-  function RulesMasterController($log, Rule) {
-    /*
-     * Public variables
-     */
-    var vm = this;
-    vm.configured = [];
-
-
-    /*
-     * Private methods
-     */
-    function _init() {
-      Rule
-        .findAll()
-        .then(function(rules) {
-          vm.configured = rules;
-
-          angular.forEach(rules, function(rule) {
-            var configuredRule = rule;
-
-            $log.log(configuredRule);
-          });
-        });
-    }
-
-    _init();
-
-  }
+angular
+  .module('guh.components.filters', []);
 
 }());

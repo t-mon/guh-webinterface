@@ -39,6 +39,11 @@
     function Vendor(data) {
       this.id = data.id;
       this.name = data.name;
+      this.svgClass = data
+        .name
+        .toLowerCase()
+        .replace(/\s/g, '-')
+        .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
     }
 
     /*

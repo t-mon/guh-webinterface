@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
  * SOFTWARE.                                                                           *
  *                                                                                     *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 (function(){
 "use strict";
@@ -29,9 +29,9 @@
     .module('guh.devices')
     .controller('DevicesAddController', DevicesAddController);
 
-  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'Device'];
+  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'DeviceClass', 'Device', 'errors'];
 
-  function DevicesAddController($log, $state, Vendor, Device) {
+  function DevicesAddController($log, $state, Vendor, DeviceClass, Device, errors) {
 
     // Public Variables
     var vm = this;
@@ -39,6 +39,7 @@
     vm.supportedDeviceClasses = [];
     vm.currentDeviceClass = {};
     vm.discoveredDevices = [];
+    vm.wizard = {};
 
     // Public Methods
     vm.selectVendor = selectVendor;
@@ -76,11 +77,17 @@
         });
     }
 
+
     /*
      * Public method: discoverDevices()
      */
     function discoverDevices() {
-      Device
+      // Device
+      //   .discover(vm.currentDeviceClass)
+      //   .then(function(discoveredDevices) {
+      //     vm.discoveredDevices = discoveredDevices;
+      //   });
+      DeviceClass
         .discover(vm.currentDeviceClass)
         .then(function(discoveredDevices) {
           vm.discoveredDevices = discoveredDevices;
@@ -92,6 +99,9 @@
      */
     function selectVendor(vendor) {
       _loadVendorDeviceClasses(vendor);
+
+      // Go to next wizard step
+      vm.wizard.next();
     }
 
     /*
@@ -101,6 +111,14 @@
       vm.currentDeviceClass = deviceClass;
       vm.createMethod = deviceClass.getCreateMethod();
       vm.setupMethod = deviceClass.getSetupMethod();
+
+      // Go to next wizard step
+      vm.wizard.next();
+
+      // Automatically start disocvery of devices
+      if(vm.createMethod.title === 'Discovery' && vm.currentDeviceClass.discoveryParamTypes.length === 0) {
+        discoverDevices();
+      }
     }
 
     /*
@@ -109,12 +127,17 @@
     function save(device) {
       if(angular.isObject(device)) {
         vm.currentDeviceClass.descriptorId = device.id;
-        Device.add(vm.currentDeviceClass);
-      } else {
-        Device.add(vm.currentDeviceClass);
       }
 
-      $state.go('guh.devices.master');
+      Device
+        .add(vm.currentDeviceClass)
+        .then(function() {
+          $state.go('guh.devices.master');
+        })
+        .catch(function(error) {
+          $log.log(error);
+          $log.log(errors.device);
+        });
     }
 
     _init();

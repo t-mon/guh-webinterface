@@ -29,9 +29,9 @@
     .module('guh.components.ui')
     .directive('guhWizard', wizardDirective);
 
-  wizardDirective.$inject = [];
+  wizardDirective.$inject = ['$log'];
 
-  function wizardDirective() {
+  function wizardDirective($log) {
 
     var directive = {
       // compile: WizardCompile,
@@ -42,6 +42,7 @@
       restrict: 'E',
       scope: {
         control: '=',
+        showNavigation: '@',
         // onBeforeStepCahnge: '&',
         // onStepCahnge: '&',
         // onAfterStepCahnge: '&',
@@ -109,7 +110,7 @@
       };
 
       scope.wizardControl.external.prev = function() {
-        if(scope.wizardControl.external.hasPrev) {
+        if(scope.wizardControl.external.hasPrev()) {
           scope.wizardControl.internal.toggleSteps(scope.wizardControl.internal.currentStepIndex - 1);
         }
       };

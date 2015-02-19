@@ -34,6 +34,7 @@
       'ui.router',
 
       // Components
+      'guh.components.filters',
       'guh.components.api',
       'guh.components.models',
       'guh.components.ui',

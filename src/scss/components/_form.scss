@@ -57,9 +57,25 @@ input {
   &[type="text"] {
     background-color: rgba(255, 255, 255, 0.05);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
   }
 
-  &:focus {
-    background-color: rgba(255, 255, 255, 0.2);
+  &[type="checkbox"] {
+    display: none;
+
+    &:checked + label {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &+ label {
+      background-color: rgba(255, 255, 255, 0.05);
+      display: inline-block;
+      margin: 2% 0 0;
+      @include rem(padding, 1.2);
+      text-align: left;
+    }
   }
 }

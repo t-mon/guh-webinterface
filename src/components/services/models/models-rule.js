@@ -37,6 +37,8 @@
      * Constructor
      */
     function Rule(data) {
+      $log.log('rule data', data);
+
       this.actions = data.actions;
       this.enabled = data.enabled;
       this.eventDescriptors = data.eventDescriptors;
@@ -61,6 +63,8 @@
      * Static method: find(id)
      */
     function add(eventDescriptors, stateEvaluator, actions) {
+      $log.log('add rule', eventDescriptors, stateEvaluator, actions);
+
       return rulesService.add(eventDescriptors, stateEvaluator, actions);
     }
 

@@ -37,11 +37,12 @@
      * Constructor
      */
     function Device(data) {
+
       this.deviceClassId = data.deviceClassId;
       this.id = data.id;
       this.name = data.name;
       this.params = data.params;
-      this.setupComplete = data.setupComplete;
+      this.setupComplete = data.SetupComplete;
     }
 
     /*
@@ -49,7 +50,7 @@
      */
     angular.extend(Device, {
       add: add,
-      discover: discover,
+      // discover: discover,
       find: find,
       findAll: findAll,
       findActions: findActions,
@@ -73,33 +74,33 @@
       });
     }
 
-    /*
-     * Static method: discover()
-     */
-    function discover(deviceClass) {
-      // var clonedDeviceClass = angular.copy(deviceClass);
+    // /*
+    //  * Static method: discover()
+    //  */
+    // function discover(deviceClass) {
+    //   // var clonedDeviceClass = angular.copy(deviceClass);
 
-      // angular.forEach(clonedDeviceClass.discoveryParamTypes, function(paramType, index) {
-      //   clonedDeviceClass.discoveryParamTypes[index] = paramType.getDescriptor();
-      // });
+    //   // angular.forEach(clonedDeviceClass.discoveryParamTypes, function(paramType, index) {
+    //   //   clonedDeviceClass.discoveryParamTypes[index] = paramType.getDescriptor();
+    //   // });
 
-      // return devicesService.fetchDiscovered({
-      //   deviceClassId: clonedDeviceClass.id,
-      //   discoveryParams: clonedDeviceClass.discoveryParamTypes
-      // });
+    //   // return devicesService.fetchDiscovered({
+    //   //   deviceClassId: clonedDeviceClass.id,
+    //   //   discoveryParams: clonedDeviceClass.discoveryParamTypes
+    //   // });
 
-      var params = [];
+    //   var params = [];
 
-      angular.forEach(deviceClass.discoveryParamTypes, function(paramTypeData, index) {
-        var param = new Param(paramTypeData);
-        params[index] = param.getData();
-      });
+    //   angular.forEach(deviceClass.discoveryParamTypes, function(paramTypeData, index) {
+    //     var param = new Param(paramTypeData);
+    //     params[index] = param.getData();
+    //   });
 
-      return devicesService.fetchDiscovered({
-        deviceClassId: deviceClass.id,
-        discoveryParams: params
-      });
-    }
+    //   return devicesService.fetchDiscovered({
+    //     deviceClassId: deviceClass.id,
+    //     discoveryParams: params
+    //   });
+    // }
 
     /*
      * Static method: find(id)

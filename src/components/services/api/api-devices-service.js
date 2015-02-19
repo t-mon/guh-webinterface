@@ -34,7 +34,7 @@
   function devicesService($log, Restangular) {
     var service = {
       add: add,
-      fetchDiscovered: fetchDiscovered,
+      // fetchDiscovered: fetchDiscovered,
       executeAction: executeAction,
       fetchAll: fetchAll,
       fetch: fetch,
@@ -64,23 +64,23 @@
       return api.one(action.deviceId).one('actions', action.actionTypeId).all('execute').post({
         'device_id': action.deviceId,
         'id': action.actionTypeId,
-        'action_params': action.params
+        'params': action.params
       });
     }
 
-    // Fetch discovered devices
-    function fetchDiscovered(deviceClass) {
+    // // Fetch discovered devices
+    // function fetchDiscovered(deviceClass) {
 
-      // var discoveryParams = [];
-      // angular.forEach(discoveryParamTypes, function(discoveryParamType) {
-      //   delete discoveryParamType.type;
-      //   discoveryParams.push(discoveryParamType);
-      // });
-      // discoveryParams = angular.toJson(discoveryParams);
+    //   // var discoveryParams = [];
+    //   // angular.forEach(discoveryParamTypes, function(discoveryParamType) {
+    //   //   delete discoveryParamType.type;
+    //   //   discoveryParams.push(discoveryParamType);
+    //   // });
+    //   // discoveryParams = angular.toJson(discoveryParams);
 
-      return api.customGETLIST('discover', {'device_class_id': deviceClass.deviceClassId, 'discovery_params': angular.toJson(deviceClass.discoveryParams)});
-      // return api.customGETLIST('discover', {'device_class_id': deviceClass.deviceClassId, 'discovery_params': deviceClass.discoveryParams});
-    }
+    //   return api.customGETLIST('discover', {'device_class_id': deviceClass.deviceClassId, 'discovery_params': angular.toJson(deviceClass.discoveryParams)});
+    //   // return api.customGETLIST('discover', {'device_class_id': deviceClass.deviceClassId, 'discovery_params': deviceClass.discoveryParams});
+    // }
 
     // Fetch device list (without actions or states)
     function fetchAll() {

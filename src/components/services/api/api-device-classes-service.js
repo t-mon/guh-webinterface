@@ -34,7 +34,8 @@
   function deviceClassesService($log, Restangular) {
     var service = {
       fetchAll: fetchAll,
-      fetch: fetch
+      fetch: fetch,
+      fetchDiscovered: fetchDiscovered
     },
     api = Restangular.all('device_classes');
 
@@ -53,6 +54,16 @@
      */
     function fetch(id) {
       return api.get(id);
+    }
+
+    /*
+     * Fetch discovered devices
+     */
+    function fetchDiscovered(deviceClass) {
+      return api.one(deviceClass.deviceClassId).customGETLIST('discover', {
+        'device_class_id': deviceClass.deviceClassId,
+        'discovery_params': angular.toJson(deviceClass.discoveryParams)
+      });
     }
   }
 

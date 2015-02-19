@@ -22,42 +22,20 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
 
+
 (function(){
   "use strict";
 
   angular
-    .module('guh.rules')
-    .controller('RulesMasterController', RulesMasterController);
+    .module('guh.components.filters')
+    .filter('stringDash', filter);
 
-  RulesMasterController.$inject = ['$log', 'Rule'];
-
-  function RulesMasterController($log, Rule) {
-    /*
-     * Public variables
-     */
-    var vm = this;
-    vm.configured = [];
-
-
-    /*
-     * Private methods
-     */
-    function _init() {
-      Rule
-        .findAll()
-        .then(function(rules) {
-          vm.configured = rules;
-
-          angular.forEach(rules, function(rule) {
-            var configuredRule = rule;
-
-            $log.log(configuredRule);
-          });
-        });
-    }
-
-    _init();
-
+  function filter() {
+    return function(input) {
+      if(input) {
+        return input.toLowerCase().replace(/[^a-z0-9_]/g, '-');
+      }
+    };
   }
 
 }());

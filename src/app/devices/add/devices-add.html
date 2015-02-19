@@ -20,23 +20,31 @@
   SOFTWARE.
 -->
 
-<guh-wizard>
+<guh-wizard control="addDevice.wizard" show-navigation="false">
   <!-- Select vendor -->
   <guh-wizard-step>
-    <ul class="list">
+    <!-- <ul class="list">
       <li class="list-item" ng-click="addDevice.selectVendor(vendor)" ng-repeat="vendor in addDevice.supportedVendors track by $index">{{ vendor.name }}</li>
+    </ul> -->
+    <ul class="tiles">
+      <li class="vendor-{{vendor.svgClass}} vendor tile" ng-click="addDevice.selectVendor(vendor)" ng-repeat="vendor in addDevice.supportedVendors | orderBy: 'name' track by $index">
+        <div class="tile-content">
+          <p>{{ vendor.name }}</p>
+        </div>
+      </li>
     </ul>
   </guh-wizard-step>
 
   <!-- Select device -->
   <guh-wizard-step>
     <ul class="list">
-      <li class="list-item" ng-click="addDevice.selectDeviceClass(deviceClass)" ng-repeat="deviceClass in addDevice.supportedDeviceClasses track by $index">{{ deviceClass.name }}</li>
+      <li class="list-item" ng-click="addDevice.selectDeviceClass(deviceClass)" ng-repeat="deviceClass in addDevice.supportedDeviceClasses | orderBy: 'name' track by $index">{{ deviceClass.name }}</li>
     </ul>
   </guh-wizard-step>
 
   <!-- Show createMethod -->
-  <guh-wizard-step ng-if="addDevice.createMethod.templateUrl">
+  <!-- <guh-wizard-step ng-if="addDevice.createMethod.templateUrl"> -->
+  <guh-wizard-step>
     <!-- <p>createMethod</p> -->
     <ng-include src="addDevice.createMethod.templateUrl"></data-ng-include>
     
@@ -44,7 +52,8 @@
   </guh-wizard-step>
 
   <!-- Show setupMethod -->
-  <guh-wizard-step ng-if="addDevice.setupMethod.templateUrl">
+  <!-- <guh-wizard-step ng-if="addDevice.setupMethod.templateUrl"> -->
+  <guh-wizard-step>
     <!-- <p>setupMethod</p> -->
     <ng-include src="addDevice.setupMethod.templateUrl"></ng-include>
   </guh-wizard-step>

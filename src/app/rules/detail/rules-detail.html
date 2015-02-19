@@ -20,20 +20,45 @@
   SOFTWARE.
 -->
 
-<!-- <p>Details</p>
-<p></p>
+<div class="content" ng-show="rule.eventDescriptors.length > 0">
+  <h3>Events</h3>
 
-<div ng-if="rule.actions.length > 0">
-  <p>Actions</p>
+  <div ng-repeat="eventDescriptor in rule.eventDescriptors track by event.eventTypeId">
+    <p>TODO: Events.GetEventType(id)</p>    <!-- GET /device_classes/:device_class_id/event_types/:id.json -->
+
+    <!-- <p>Event ID: {{ eventDescriptor.eventTypeId }}</p>
+    <p>Device ID: {{ eventDescriptor.deviceId }}</p>
+
+    <h5 ng-show="eventDescriptor.eventParamDescriptor.length > 0">Params:</h5>
+    <ul ng-show="eventDescriptor.eventParamDescriptor.length > 0" ng-repeat="paramDescriptor in eventDescriptor.eventParamDescriptor track by $index">
+      <li>{{paramDescriptor.name}}: {{paramDescriptor.value}}</li>
+    </ul> -->
+  </div>
+</div>
+
+<div class="content" ng-show="rule.stateEvaluator">
+  <h3>States</h3>
+
+  <p>TODO: States.GetStateType(id)</p>    <!-- GET /device_classes/:device_class_id/state_types/:id.json -->
+</div>
+
+<div class="content" ng-show="rule.actions.length > 0">
+  <h3>Actions</h3>
 
   <div ng-repeat="action in rule.actions track by action.actionTypeId">
-    <p>{{ action.actionTypeId }}</p>
+    <p>TODO: Actions.GetActionType(id)</p>    <!-- GET /device_classes/:device_class_id/action_types/:id.json -->
+    
+    <!-- <p>Action ID: {{ action.actionTypeId }}</p>
+    <p>Device ID: {{ action.deviceId }}</p>
 
-    <h5>Params:</h5>
-    <ul ng-repeat="param in action.params track by $index">
+    <h5 ng-show="action.params.length > 0">Params:</h5>
+    <ul ng-show="action.params.length > 0" ng-repeat="param in action.params track by $index">
       <li>{{param.name}}: {{param.value}}</li>
-    </ul>
+    </ul> -->
   </div>
-</div> -->
+</div>
 
-<!-- <button class="block button" ng-click="rule.remove()">Remove rule</button> -->
+<p ng-show="rule.enabled">Rule is enabled.</p>
+<p ng-hide="rule.enabled">Rule is disabled.</p>
+
+<button class="block button" ng-click="rule.remove()">Remove rule</button>

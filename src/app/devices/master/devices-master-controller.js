@@ -37,13 +37,12 @@
      */
     var vm = this;
     vm.configured = [];
+    vm.errors = [];
 
     /*
      * Private methods
      */
     function _init() {
-      // var configuredDevice = {};
-
       Device
         .findAll()
         .then(function(devices) {
@@ -57,21 +56,22 @@
                 configuredDevice.deviceClass = deviceClass;
  
                 // Get vendor for each deviceClass (device)
-                Vendor
-                  .find(configuredDevice.deviceClass.vendorId)
-                  .then(function(vendor) {
-                    configuredDevice.vendor = vendor;
-                    configuredDevice.svgClass = vendor
-                      .name
-                      .toLowerCase()
-                      .replace(/\s/g, '-')
-                      .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
+                return Vendor.find(configuredDevice.deviceClass.vendorId);
+              })
+              .then(function(vendor) {
+                configuredDevice.vendor = vendor;
+                configuredDevice.svgClass = vendor
+                  .name
+                  .toLowerCase()
+                  .replace(/\s/g, '-')
+                  .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
 
-                    vm.configured.push(configuredDevice);
-                    $log.log(configuredDevice.svgClass);
-                  });
+                vm.configured.push(configuredDevice);
               });
           });
+        })
+        .catch(function(errorResponse) {
+          $log.error(errorResponse);
         });
     }
 
