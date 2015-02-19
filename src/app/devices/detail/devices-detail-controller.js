@@ -29,9 +29,9 @@
     .module('guh.devices')
     .controller('DevicesDetailController', DevicesDetailController);
 
-  DevicesDetailController.$inject = ['$log', '$scope', '$stateParams', '$state', '$q', 'DeviceClass', 'Device'];
+  DevicesDetailController.$inject = ['$log', '$scope', '$stateParams', '$state', '$q', 'Vendor', 'DeviceClass', 'Device'];
 
-  function DevicesDetailController($log, $scope, $stateParams, $state, $q, DeviceClass, Device) {
+  function DevicesDetailController($log, $scope, $stateParams, $state, $q, Vendor, DeviceClass, Device) {
 
     /*
      * Public variables
@@ -73,6 +73,20 @@
           vm.name = device.name;
           vm.params = device.params;
           vm.setupComplete = device.setupComplete;
+
+          return deviceClass.vendorId;
+        })
+        .then(function(vendorId) {
+          _getDeviceVendor(vendorId);
+        });
+    }
+
+    function _getDeviceVendor(vendorId) {
+      return Vendor
+        .find(vendorId)
+        .then(function(vendor) {
+          vm.vendor = vendor;
+          $log.log(vm);
         });
     }
 
@@ -85,14 +99,25 @@
      */
 
     function executeAction(action) {
-      action.execute();
+      action
+        .execute()
+        .then(
+          // Success
+          function(response) {
+            $log.log('action successfully executed');
+          },
+          // Failure
+          function(errorResponse) {
+            $log.error(errorResponse);
+          });
     }
 
     /*
      * Public method: remove()
      */
     function remove() {
-      Device.remove(vm.id).then(function() {
+      Device.remove(vm.id).then(function(response) {
+        $log.log('remove', response);
         $state.go('guh.devices.master');
       });
     }
