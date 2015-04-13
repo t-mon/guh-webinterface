@@ -20,8 +20,8 @@
   SOFTWARE.
 -->
 
-<form name="settings" ng-show="addDevice.currentDeviceClass.paramTypes.length > 0" ng-submit="addDevice.save()">
-  <p guh-input="paramType" index="{{ $index }}" ng-repeat="paramType in addDevice.currentDeviceClass.paramTypes track by $index"></p>
+<form name="settings" ng-show="addDevice.selectedDeviceClass.paramTypeInputs.length > 0" ng-submit="addDevice.save()">
+  <p guh-input="input" index="{{ $index }}" ng-repeat="input in addDevice.selectedDeviceClass.paramTypeInputs track by $index"></p>
 
   <button class="block button" type="submit">Add Device</button>
 </form>

@@ -20,18 +20,13 @@
   SOFTWARE.
 -->
 
-<ul class="list">
-  <li class="list-item" id="id-{{ device.id }}"
-      ng-class="{ active: devicesAdd.isSelected(device) }"
-      ng-repeat="device in addDevice.discoveredDevices | filter: filters.deviceName | orderBy: 'name'"
-      ng-click="addDevice.save(device)">
-    <h3>{{ device.title }}</h3>
-    <span>{{ device.description }}</span>
-  </li>
-</ul>
-
-<form name="settings" ng-if="addDevice.selectedDeviceClass.discoveryParamTypeInputs.length > 0">
-  <p guh-input="input" ng-repeat="input in addDevice.selectedDeviceClass.discoveryParamTypeInputs track by $index"></p>
-</form>
-
-<button class="block button" ng-click="addDevice.discoverDevices()">Start search</button>
+<div ng-form="subForm">
+  <p>
+    <label>{{ model.name }}</label>
+    <input ng-model="model.value" name="input" required type="text" />
+  </p>
+  
+  <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+    <p ng-message="required">Field is required.</p>
+  </div>
+</div>

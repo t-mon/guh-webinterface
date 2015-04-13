@@ -52,8 +52,7 @@
       });
 
       scope.$watch('model', function(newValue, oldValue) {
-        var templateUrl = scope.model.getInputTemplate();
-        $log.log(scope.model);
+        var templateUrl = scope.model.templateUrl;
 
         $http.get(templateUrl).success(function(template) {
           // Replace guhInput-directive with proper HTML input

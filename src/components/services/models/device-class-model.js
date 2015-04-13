@@ -30,9 +30,9 @@
     .factory('DSDeviceClass', DSDeviceClassFactory)
     .run(function(DSDeviceClass) {});
 
-  DSDeviceClassFactory.$inject = ['$log', 'DS', 'DSHttpAdapter'];
+  DSDeviceClassFactory.$inject = ['$log', 'DS', 'DSHttpAdapter', 'ModelsHelper'];
 
-  function DSDeviceClassFactory($log, DS, DSHttpAdapter) {
+  function DSDeviceClassFactory($log, DS, DSHttpAdapter, ModelsHelper) {
 
     var staticMethods = {};
 
@@ -59,14 +59,153 @@
       },
 
       // Computed properties
-      computed: {},
+      computed: {
+        discoveryParamTypeInputs: ['discoveryParamTypes', _getDiscoveryParamTypeInputs],
+        paramTypeInputs: ['paramTypes', _getParamTypeInputs]
+      },
 
       // Instance methods
-      methods: {}
+      methods: {
+        discover: discover,
+        getCreateMethod: getCreateMethod,
+        getSetupMethod: getSetupMethod
+      }
 
     });
 
     return DSDeviceClass;
+
+
+    /*
+     * Private method: _getEnhancedInputs(inputs)
+     */
+    function _getEnhancedInputs(inputs) {
+      angular.forEach(inputs, function(input) {
+        var templateData = ModelsHelper.getTemplateData(input);
+
+        input.operator = 'ValueOperatorEquals';
+        input.templateUrl = templateData.templateUrl;
+        input.value = templateData.value;
+      });
+
+      return inputs;
+    }
+
+    /*
+     * Private method: _getDiscoveryParamTypeInputs(discoveryParamTypes)
+     */
+    function _getDiscoveryParamTypeInputs(discoveryParamTypes) {
+      var discoveryParamTypeInputs = angular.copy(discoveryParamTypes);
+
+      return _getEnhancedInputs(discoveryParamTypeInputs);
+    }
+
+    /*
+     * Private method: _getParamTypeInputs(paramTypes)
+     */
+    function _getParamTypeInputs(paramTypes) {
+      var paramTypeInputs = angular.copy(paramTypes);
+
+      return _getEnhancedInputs(paramTypeInputs);
+    }
+
+
+    /*
+     * Public method: discover()
+     */
+    function discover() {
+      var self = this;
+      var discoveryParams = [];
+
+      angular.forEach(self.discoveryParamTypeInputs, function(discoveryParamTypeInput, index) {
+        var discoveryParam = {};
+
+        discoveryParam.name = discoveryParamTypeInput.name;
+        discoveryParam.value = discoveryParamTypeInput.value;
+
+        discoveryParams.push(discoveryParam);
+      });
+
+      return DSHttpAdapter.GET('/api/v1/device_classes/' + self.id + '/discover.json', {
+        params: {
+          'device_class_id': self.id,
+          'discovery_params': angular.toJson(discoveryParams)
+        }
+      });
+    }
+
+    /*
+     * Public method: getCreateMethod()
+     */
+    function getCreateMethod() {
+      var self = this;
+      var basePath = 'app/devices/add/pairing-templates/';
+      var createMethodData = null;
+
+      if(self.createMethods.indexOf('CreateMethodDiscovery') > -1) {
+        $log.log('CreateMethodDiscovery!!!');
+
+        createMethodData = {
+          title: 'Discovery',
+          template: basePath + 'devices-add-create-discovery.html'
+        };
+      } else if(self.createMethods.indexOf('CreateMethodUser') > -1) {
+        $log.log('CreateMethodUser!!!');
+
+        createMethodData = {
+          title: 'User',
+          template: basePath + 'devices-add-create-user.html'
+        };
+      } else if(self.createMethods.indexOf('CreateMethodAuto') > -1) {
+        $log.log('CreateMethodAuto!!!');
+
+        createMethodData = {
+          title: 'Auto',
+          template: null
+        };
+      } else {
+        $log.error('CreateMethod "' + createMethod + '" not implemented.');
+      }
+
+      return createMethodData;
+    }
+
+    /*
+     * Public method: getSetupMethod()
+     */
+    function getSetupMethod() {
+      var self = this;
+      var basePath = 'app/devices/add/pairing-templates/';
+      var setupMethodData = {};
+
+      switch(self.setupMethod) {
+        case 'SetupMethodJustAdd':
+          break;
+        case 'SetupMethodDisplayPin':
+          setupMethodData = {
+            title: 'Display Pin',
+            template: basePath + 'devices-add-setup-display-pin.html'
+          };
+          break;
+        case 'SetupMethodEnterPin':
+          setupMethodData = {
+            title: 'Enter Pin',
+            template: basePath + 'devices-add-setup-enter-pin.html'
+          };
+          break;
+        case 'SetupMethodPushButton':
+          setupMethodData = {
+            title: 'Enter Pin',
+            template: basePath + 'devices-add-setup-push-button.html'
+          };
+          break;
+        default:
+          $log.error('SetupMethod "' + setupMethod + '" not implemented.');
+          break;
+      }
+
+      return setupMethodData;
+    }
 
   }
 

@@ -1,3 +1,4 @@
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
  *                                                                                     *
  * Copyright (c) 2015 guh                                                              *
@@ -22,54 +23,10 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
 
+(function(){
+  "use strict";
 
-#main-navigation,
-#main-header {
-  position: fixed;
-    left: 0;
-  width: 100%;
-}
+  angular
+    .module('guh.components.helper', []);
 
-#main-navigation {
-  bottom: 0;
-  z-index: 20;
-}
-
-#main-header {
-  top: 0;
-  z-index: 10;
-}
-
-#main-content {
-  @include rem(padding, 7.2, 0, 6);
-  position: relative;
-}
-
-// Small
-@media screen and (max-width: 320px) {
-}
-
-// Medium
-@media screen and (min-width: 321px) {
-}
-
-// Large
-@media screen and (min-width: 1024px) {
-
-  #main-navigation {
-    top: 0;
-    width: 20%;
-  }
-
-  #main-header {
-    left: 20%;
-    width: 80%;
-  }
-
-  #main-content {
-    left: 20%;
-    @include rem(padding, 9.6);
-    width: 80%;
-  }
-
-}
+}());

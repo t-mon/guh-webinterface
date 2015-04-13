@@ -43,11 +43,13 @@
 @import "layout-modules/header.scss";
 
 // Components
+@import "../scss/components/bar";
 @import "../scss/components/button";
 @import "../scss/components/content";
 @import "../scss/components/error";
 @import "../scss/components/form";
 @import "../scss/components/list";
+@import "../scss/components/overlay";
 @import "../scss/components/tile";
 
 @import "../scss/components/dev";
