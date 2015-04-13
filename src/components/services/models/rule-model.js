@@ -26,32 +26,38 @@
   "use strict";
 
   angular
-    .module('guh.rules')
-    .controller('RulesMasterController', RulesMasterController);
+    .module('guh.components.models')
+    .factory('DSRule', DSRuleFactory)
+    .run(function(DSRule) {});
 
-  RulesMasterController.$inject = ['$log', 'DSRule'];
+  DSRuleFactory.$inject = ['$log', 'DS'];
 
-  function RulesMasterController($log, DSRule) {
-    
-    /*
-     * Public variables
-     */
-    var vm = this;
-    vm.configured = [];
+  function DSRuleFactory($log, DS) {
 
+    var staticMethods = {};
 
     /*
-     * Private methods
+     * DataStore configuration
      */
-    function _init() {
-      DSRule
-        .findAll()
-        .then(function(rules) {
-          vm.configured = rules;
-        });
-    }
+    var DSRule = DS.defineResource({
 
-    _init();
+      // API configuration
+      endpoint: 'rules',
+      suffix: '.json',
+
+      // Model configuration
+      idAttribute: 'id',
+      name: 'rule',
+      
+      // Computed properties
+      computed: {},
+
+      // Instance methods
+      methods: {}
+      
+    });
+
+    return DSRule;
 
   }
 
