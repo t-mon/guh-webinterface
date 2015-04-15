@@ -193,22 +193,16 @@
       var createMethodData = null;
 
       if(self.createMethods.indexOf('CreateMethodDiscovery') > -1) {
-        $log.log('CreateMethodDiscovery!!!');
-
         createMethodData = {
           title: 'Discovery',
           template: basePath + 'devices-add-create-discovery.html'
         };
       } else if(self.createMethods.indexOf('CreateMethodUser') > -1) {
-        $log.log('CreateMethodUser!!!');
-
         createMethodData = {
           title: 'User',
           template: basePath + 'devices-add-create-user.html'
         };
       } else if(self.createMethods.indexOf('CreateMethodAuto') > -1) {
-        $log.log('CreateMethodAuto!!!');
-
         createMethodData = {
           title: 'Auto',
           template: null
