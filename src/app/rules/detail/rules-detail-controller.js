@@ -29,10 +29,18 @@
     .module('guh.rules')
     .controller('RulesDetailController', RulesDetailController);
 
-  RulesDetailController.$inject = ['$log', '$stateParams', '$state', 'appConfig', 'Rule'];
+  RulesDetailController.$inject = ['$log', '$stateParams', '$state', 'appConfig', 'DSRule'];
 
-  function RulesDetailController($log, $stateParams, $state, appConfig, Rule) {
-    // Public Variables
+  function RulesDetailController($log, $stateParams, $state, appConfig, DSRule) {
+    
+    /*
+     * Private variables
+     */
+    var currentRule = {};
+
+    /*
+     * Public variables
+     */
     var vm = this;
 
     vm.actions = [];
@@ -41,22 +49,21 @@
     vm.id = '';
     vm.stateEvaluator = {};
 
-    // Public Methods
+    /*
+     * Public Methods
+     */
     vm.remove = remove;
-    // vm.executeAction = executeAction;
     
 
     /*
      * Private methods
      */
     function _init() {
-      $log.log('init', $stateParams);
-
       _getRule($stateParams.id)
         .then(success, failure);
       
       function success(rule) {
-        $log.log('rule', rule);
+        currentRule = rule;
 
         vm.actions = rule.actions;
         vm.enabled = rule.enabled;
@@ -71,7 +78,8 @@
     }
 
     function _getRule(id) {
-      return Rule.find(id);
+      return DSRule
+        .find(id);
     }
 
     
@@ -79,9 +87,19 @@
      * Public method: remove()
      */
     function remove() {
-      Rule.remove(vm.id).then(function() {
-        $state.go('guh.rules.master');
-      });
+      currentRule
+        .remove()
+        .then(function(rule) {
+          // TODO: Find a better way to update data-store after create (maybe use lifecycle hook "afterCreate")
+          DSRule
+            .findAll({}, {bypassCache:true})
+            .then(function(rules) {
+              $state.go('guh.rules.master');
+            });
+        })
+        .catch(function(error) {
+          $log.error(error);
+        });
     }
 
     _init();

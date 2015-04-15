@@ -53,11 +53,24 @@
       computed: {},
 
       // Instance methods
-      methods: {}
+      methods: {
+        remove: remove
+      }
       
     });
 
     return DSRule;
+
+
+    /*
+     * Public method: remove()
+     */
+    function remove() {
+      var self = this;
+
+      return DSRule
+        .destroy(self.id);
+    }
 
   }
 
