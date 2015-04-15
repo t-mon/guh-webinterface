@@ -22,37 +22,46 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- .content {
-   p {
-     @include rem(padding, 1.2);
-   }
- }
+.content {
+  p {
+    @include rem(padding, 1.2);
+  }
+}
 
- .info {
-   background-color: rgba(255, 255, 255, 0.05);
-   @include rem(padding, 1.2);
- }
+.info {
+  background-color: rgba(255, 255, 255, 0.05);
+  @include rem(padding, 1.2);
+}
 
- .divider {
-   background-color: rgba(255, 255, 255, 0.05);
-   // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-   // border-top: 1px solid rgba(255, 255, 255, 0.2);
-   @include rem(font-size, 1.2);
-   @include rem(line-height, 1.2);
-   @include rem(padding, 1.2);
-   text-align: center;
- }
+.info-center {
+  text-align: center;
+  width: 80%;
+}
 
- .toggle {
-   .toggle-trigger {
-     cursor: pointer;
-   }
+.padding {
+  @include rem(padding, 1.2);
+}
 
-   .toggle-content {
-     display: none;
-   }
+.divider {
+  background-color: rgba(255, 255, 255, 0.05);
+  // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  // border-top: 1px solid rgba(255, 255, 255, 0.2);
+  @include rem(font-size, 1.2);
+  @include rem(line-height, 1.2);
+  @include rem(padding, 1.2);
+  text-align: center;
+}
 
-   &.active .toggle-content {
-     display: block;
-   }
- }
+.toggle {
+  .toggle-trigger {
+    cursor: pointer;
+  }
+
+  .toggle-content {
+    display: none;
+  }
+
+  &.active .toggle-content {
+    display: block;
+  }
+}

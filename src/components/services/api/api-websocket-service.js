@@ -26,42 +26,82 @@
   "use strict";
 
   angular
-    .module('guh')
-    .controller('GuhController', GuhController);
+    .module('guh.components.api')
+    .factory('websocketService', websocketService);
 
-  GuhController.$inject = ['$log', '$scope', 'websocketService'];
+  websocketService.$inject = ['$log', '$rootScope'];
 
-  function GuhController($log, $scope, websocketService) {
+  function websocketService($log, $rootScope) {
 
-    /*
-     * Public methods
-     */
-    var vm = this;
+    var service = {
+      // Objects
+      ws: null,
+      callbacks: {},
 
-    /*
-     * Private method: _init()
-     */
-    function _init() {
-      $log.log('App Controller Init');
-      
-      websocketService.connect();
+      // Methods
+      connect: connect,
+      subscribe: subscribe,
+      unsubscribe: unsubscribe
+    };
+
+    return service;
+
+
+    function connect() {
+      if(service.ws) {
+        return;
+      }
+
+      var protocol = (window.location.protocol === 'http:') ? 'ws' : 'wss';
+      var host = window.location.hostname;
+      var port = window.location.port;
+      var ws = new ReconnectingWebSocket(protocol + '://' + host + ':' + port + '/ws');
+
+      ws.onopen = function(event) {
+        $log.log('Successfully connected with websocket.', event);
+
+        // Send broadcast event
+        $rootScope.$apply(function() {
+          $rootScope.$broadcast('WebsocketConnected', '');
+        });
+      };
+
+      ws.onclose = function(event) {
+        $log.log('Closed websocket connection.', event);
+
+        // Send broadcast event
+        $rootScope.$apply(function() {
+          $rootScope.$broadcast('WebsocketConnectionLost', 'The app has lost the connection to guh. Please check if you are connected to your network and if guh is running correctly.');
+        });
+      };
+
+      ws.onerror = function() {
+        $log.error('There was an error with the websocket connection.');
+      };
+
+      ws.onmessage = function(message) {
+        // $log.log('message', angular.fromJson(message.data));
+
+        // Execute callback-function with right ID
+        angular.forEach(service.callbacks, function(cb) {
+          cb(angular.fromJson(message.data));
+        });
+      };
+
+      service.ws = ws;
     }
 
-    /*
-     * Public method: $scope.on('WebsocketConnectionLost')
-     */
-    $scope.$on('WebsocketConnectionLost', function(event, message) {
-      vm.infoMessage = message;
-    });
+    function subscribe(deviceId, cb) {
+      if(!service.ws) {
+        service.connect();
+      }
 
-    /*
-     * Public method: $scope.on('WebsocketConnected')
-     */
-    $scope.$on('WebsocketConnected', function(event, message) {
-      vm.infoMessage = null;
-    });
+      service.callbacks[deviceId] = cb;
+    }
 
-    _init();
+    function unsubscribe(deviceId) {
+      delete service.callbacks[deviceId];
+    }
 
   }
 

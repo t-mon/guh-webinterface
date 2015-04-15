@@ -100,10 +100,12 @@
     function _getEnhancedInputs(inputs) {
       angular.forEach(inputs, function(input) {
         var templateData = ModelsHelper.getTemplateData(input);
+        
+        input.inputData = {};
 
-        input.operator = 'ValueOperatorEquals';
-        input.templateUrl = templateData.templateUrl;
-        input.value = templateData.value;
+        input.inputData.operator = 'ValueOperatorEquals';
+        input.inputData.templateUrl = templateData.templateUrl;
+        input.inputData.value = templateData.value;
       });
 
       return inputs;

@@ -1,18 +1,18 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                                     *
  * Copyright (c) 2015 guh                                                              *
  *                                                                                     *
  * Permission is hereby granted, free of charge, to any person obtaining a copy        *
  * of this software and associated documentation files (the "Software"), to deal       *
  * in the Software without restriction, including without limitation the rights        *
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           * 
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           *
  * copies of the Software, and to permit persons to whom the Software is               *
  * furnished to do so, subject to the following conditions:                            *
  *                                                                                     *
  * The above copyright notice and this permission notice shall be included in all      *
  * copies or substantial portions of the Software.                                     *
  *                                                                                     *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          *
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,            *
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE         *
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER              *
@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
  * SOFTWARE.                                                                           *
  *                                                                                     *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 (function(){
   "use strict";
@@ -29,97 +29,117 @@
     .module('guh.devices')
     .controller('DevicesDetailController', DevicesDetailController);
 
-  DevicesDetailController.$inject = ['$log', '$scope', '$stateParams', '$state', '$q', 'Vendor', 'DeviceClass', 'Device'];
+  DevicesDetailController.$inject = ['$log', '$scope', '$state', '$stateParams', '$q', 'DSDevice', 'DSDeviceClass', 'DSState'];
 
-  function DevicesDetailController($log, $scope, $stateParams, $state, $q, Vendor, DeviceClass, Device) {
+  function DevicesDetailController($log, $scope, $state, $stateParams, $q, DSDevice, DSDeviceClass, DSState) {
 
     /*
      * Public variables
      */
     var vm = this;
+    var currentDevice = {};
 
     /*
      * Public methods
      */
-
     vm.executeAction = executeAction;
     vm.remove = remove;
 
     /*
-     * Private methods
+     * Private method: _init()
      */
     function _init() {
-      _getDevice($stateParams.id)
-        .then(_getDeviceClass)
-        .catch(_reportErrors);
-    }
+      _findDevice($stateParams.id)
+        .then(function(device) {
+          currentDevice = device;
 
-    function _getDevice(id) {
-      return Device.find(id);
-    }
-
-    function _getDeviceClass(device) {
-      return DeviceClass
-        .find(device.deviceClassId)
-        .then(function(deviceClass) {
-          // Set deviceId for each Action
-          angular.forEach(deviceClass.actions, function(action) {
-            action.setDeviceId(device.id);
-          });
-
-          vm.deviceClass = deviceClass;
+          vm.deviceClass = {};
           vm.deviceClassId = device.deviceClassId;
           vm.id = device.id;
           vm.name = device.name;
           vm.params = device.params;
-          vm.setupComplete = device.setupComplete;
+          vm.setupComplete = device.SetupComplete;
+          vm.states = device.states;
 
-          return deviceClass.vendorId;
+          // Subscribe to websocket messages
+          device.subscribe(device.id, function(message) {
+            if(message.notification === 'Devices.StateChanged') {
+              angular.forEach(device.states, function(state, index) {
+                if(message.params.stateTypeId === state.stateTypeId && message.params.deviceId === vm.id) {
+                  DSState.inject([{stateTypeId: message.params.stateTypeId, value: message.params.value}]);
+                }
+              });
+            }
+          });
+
+          return device;
         })
-        .then(function(vendorId) {
-          _getDeviceVendor(vendorId);
+        .then(_findDeviceClass)
+        .then(function(deviceClass) {
+          vm.deviceClass = deviceClass;
         });
-    }
-
-    function _getDeviceVendor(vendorId) {
-      return Vendor
-        .find(vendorId)
-        .then(function(vendor) {
-          vm.vendor = vendor;
-          $log.log(vm);
-        });
-    }
-
-    function _reportErrors(error) {
-      $log.error(error);
     }
 
     /*
-     * Public method: executeAction(action)
+     * Private method: _findDevice(deviceId)
      */
+    function _findDevice(deviceId) {
+      return DSDevice
+        .find(deviceId)
+        .then(_findStates);
+    }
 
-    function executeAction(action) {
-      action
-        .execute()
-        .then(
-          // Success
-          function(response) {
-            $log.log('action successfully executed');
-          },
-          // Failure
-          function(errorResponse) {
-            $log.error(errorResponse);
-          });
+    /*
+     * Private method: _findStates(device)
+     */
+    function _findStates(device) {
+      return DSDevice
+        .loadRelations(device, ['states']);
+    }
+
+    /*
+     * Private method: _findDeviceClass(device)
+     */
+    function _findDeviceClass(device) {
+      return DSDevice
+        .loadRelations(device, ['deviceClass'])
+        .then(_findVendor);
+    }
+
+    /*
+     * Private method: _findVendor(device)
+     */
+    function _findVendor(device) {
+      return DSDeviceClass
+        .loadRelations(device.deviceClass, ['vendor']);
+    }
+
+    /*
+     * Public method: executeAction(actionType)
+     */
+    function executeAction(actionType) {
+      currentDevice
+        .executeAction(actionType)
+        .then(function(response) {
+          $log.log('Action succefully executed.', response);
+        })
+        .catch(function(error) {
+          $log.error(error.data.errorMessage);
+        });
     }
 
     /*
      * Public method: remove()
      */
     function remove() {
-      Device.remove(vm.id).then(function(response) {
-        $log.log('remove', response);
-        $state.go('guh.devices.master');
-      });
+      currentDevice
+        .remove()
+        .then(function() {
+          $state.go('guh.devices.master');
+        })
+        .catch(function(error) {
+          $log.error(error.data.errorMessage);
+        });
     }
 
     _init();

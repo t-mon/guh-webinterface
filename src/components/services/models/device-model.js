@@ -30,9 +30,9 @@
     .factory('DSDevice', DSDeviceFactory)
     .run(function(DSDevice) {});
 
-  DSDeviceFactory.$inject = ['$log', '$state', 'DS', 'DSHttpAdapter'];
+  DSDeviceFactory.$inject = ['$log', '$state', 'DS', 'DSHttpAdapter', 'websocketService'];
 
-  function DSDeviceFactory($log, $state, DS, DSHttpAdapter) {
+  function DSDeviceFactory($log, $state, DS, DSHttpAdapter, websocketService) {
     
     var staticMethods = {};
 
@@ -49,6 +49,12 @@
       idAttribute: 'id',
       name: 'device',
       relations: {
+        hasMany: {
+          state: {
+            localField: 'states',
+            foreignKey: 'deviceId'
+          }
+        },
         belongsTo: {
           deviceClass: {
             localField: 'deviceClass',
@@ -62,9 +68,13 @@
 
       // Instance methods
       methods: {
+        executeAction: executeAction,
         getAction: getAction,
         getEventDescriptor: getEventDescriptor,
-        getStateDescriptor: getStateDescriptor
+        getStateDescriptor: getStateDescriptor,
+        remove: remove,
+        subscribe: subscribe,
+        unsubscribe: unsubscribe
       }
 
     });
@@ -73,19 +83,33 @@
 
 
     /*
-     * Public method: getAction(actionInput)
+     * Public method: executeAction()
      */
-    function getAction(actionInput) {
+    function executeAction(actionType) {
+      var self = this;
+      var options = {};
+
+      options.params = actionType.getParams();
+      return DS
+        .adapters
+        .http
+        .POST('api/v1/devices/' + self.id + '/actions/' + actionType.id + '/execute.json', options);
+    }
+
+    /*
+     * Public method: getAction(actionType)
+     */
+    function getAction(actionType) {
       var self = this;
       var action = {};
       var ruleActionParams = [];
 
-      ruleActionParams = actionInput.getRuleActionParams(self.id, actionInput.paramTypes);
+      ruleActionParams = actionType.getRuleActionParams();
       if(ruleActionParams.length > 0) {
         action.ruleActionParams = ruleActionParams;
       }
 
-      action.actionTypeId = actionInput.id;
+      action.actionTypeId = actionType.id;
       action.deviceId = self.id;
 
       return action;
@@ -127,6 +151,32 @@
       $log.log('stateDescriptor', stateDescriptor);
 
       return stateDescriptor;     
+    }
+
+    /*
+     * Public method: remove()
+     */
+    function remove() {
+      var self = this;
+
+      return DSDevice
+        .destroy(self.id);
+    }
+
+    /*
+     * Public method: subscribe(deviceId, cb)
+     */
+    function subscribe(deviceId, cb) {
+      $log.log('subscribe device', deviceId, cb);
+      return websocketService.subscribe(deviceId, cb);
+    }
+
+    /*
+     * Public method: unsubscribe(deviceId)
+     */
+    function unsubscribe(deviceId) {
+      $log.log('unsubscribe device', deviceId);
+      return websocketService.unsubscribe(deviceId);
     }
 
   }

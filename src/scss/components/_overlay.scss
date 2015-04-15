@@ -42,3 +42,13 @@
     z-index: 200;  
   }
 }
+
+.overlay.center-content {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  .info-center {
+    margin-top: -40%;
+  }
+}

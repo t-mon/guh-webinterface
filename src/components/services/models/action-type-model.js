@@ -65,6 +65,7 @@
 
       // Instance methods
       methods: {
+        getParams: getParams,
         getRuleActionParams: getRuleActionParams
       },
 
@@ -121,10 +122,12 @@
 
 
     /*
-     * Public method: getRuleActionParams(deviceId, paramTypes)
+     * Public method: getParams()
      */
-    function getRuleActionParams(deviceId, paramTypes) {
+    function getParams() {
+      var self = this;
       var params = [];
+      var paramTypes = self.paramTypes;
 
       angular.forEach(paramTypes, function(paramType) {
         params.push({
@@ -134,6 +137,24 @@
       });
 
       return params;
+    }
+
+    /*
+     * Public method: getRuleActionParams()
+     */
+    function getRuleActionParams() {
+      var self = this;
+      var ruleActionParams = [];
+      var paramTypes = self.paramTypes;
+
+      angular.forEach(paramTypes, function(paramType) {
+        ruleActionParams.push({
+          name: paramType.name,
+          value: paramType.inputData.value
+        });
+      });
+
+      return ruleActionParams;
     }
 
   }
