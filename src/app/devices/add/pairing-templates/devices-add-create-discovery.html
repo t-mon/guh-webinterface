@@ -25,8 +25,8 @@
       ng-class="{ active: devicesAdd.isSelected(device) }"
       ng-repeat="device in addDevice.discoveredDevices | filter: filters.deviceName | orderBy: 'name'"
       ng-click="addDevice.save(device)">
-    <h3>{{ device.title }}</h3>
-    <span>{{ device.description }}</span>
+    <p>{{ device.title }}</p>
+    <p class="small">{{ device.description }}</p>
   </li>
 </ul>
 
