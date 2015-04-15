@@ -41,9 +41,7 @@
     /*
      * Private method: _init()
      */
-    function _init() {
-      $log.log('App Controller Init');
-      
+    function _init() {      
       websocketService.connect();
     }
 
