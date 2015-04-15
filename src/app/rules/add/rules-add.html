@@ -20,66 +20,188 @@
   SOFTWARE.
 -->
 
-<form ng-submit="addRule.saveRule()" ng-if="!addRule.show.addEvent && !addRule.show.addState && !addRule.show.addAction">
-  <!-- List events -->
-  <ul class="list" ng-if="addRule.eventDescriptors.length > 0">
-    <li class="list-item" ng-repeat="eventDescriptor in addRule.eventDescriptors track by $index">{{ eventDescriptor.device.name }}: {{ eventDescriptor.name }}</li>
-  </ul>
-  <p><button class="full-width button" ng-click="addRule.addEvent()" type="button">Add Event</button></p>
+<div class="overlay">
 
-  <!-- List states -->
-  <ul class="list" ng-if="addRule.stateDescriptors.length > 0">
-    <li class="list-item" ng-repeat="stateDescriptor in addRule.stateDescriptors track by $index">{{ stateDescriptor.device.name }}: {{ stateDescriptor.name }}</li>
-  </ul>
-  <p><button class="full-width button" ng-click="addRule.addState()" type="button">Add State</button></p>
+  <div class="bar">
+    <button class="button second-action"><a ui-sref="guh.rules.master">x</a></button>
+  </div>
 
-  <!-- List actions -->
-  <ul class="list" ng-if="addRule.actions.length > 0">
-    <li class="list-item" ng-repeat="action in addRule.actions track by $index">{{ action.device.name }}: {{ action.name }}</li>
-  </ul>
-  <p><button class="full-width button" ng-click="addRule.addAction()" type="button">Add Action</button></p>
+  <!-- Add a rule -->
+  <guh-wizard control="addRule.ruleWizard" show-navigation="true">
 
-  <p><button class="block button" type="submit">Add Rule</button></p>
-</form>
+    <!-- Step 1: Add trigger(s) -->
+    <guh-wizard-step>
+      <p class="info">When should this rule be triggered?</p>
 
-<!-- Wizard: add event -->
-<guh-wizard ng-if="addRule.show.addEvent" control="addRule.wizard" show-navigation="false">
-  <guh-wizard-step>
-    <!-- List devices -->
-    <ul class="list">
-      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithEventTypes track by $index">{{ device.name }}</li>
-    </ul>
-  </guh-wizard-step>
-  <guh-wizard-step>
-    <!-- List events -->
-    <guh-device-class model="addRule.currentDevice.deviceClass" save-event-descriptor="addRule.saveEventDescriptor(eventTypeData)" show="{events:true}"></guh-device-class>
-  </guh-wizard-step>
-</guh-wizard>
+      <!-- Show saved triggers -->
+      <div class="list-item" ng-repeat="trigger in addRule.savedTriggers track by $index">
+        <p>{{ trigger.triggerType.inputData.triggerPhrase }}</p>
+        <p class="small">{{ trigger.triggerDevice.name }}</p>
+      </div>
 
-<!-- Wizard: add state -->
-<guh-wizard ng-if="addRule.show.addState" control="addRule.wizard" show-navigation="false">
-  <guh-wizard-step>
-    <!-- List devices -->
-    <ul class="list">
-      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithStateTypes track by $index">{{ device.name }}</li>
-    </ul>
-  </guh-wizard-step>
-  <guh-wizard-step>
-    <!-- List events -->
-    <guh-device-class model="addRule.currentDevice.deviceClass" save-state-descriptor="addRule.saveStateDescriptor(stateTypeData)" show="{states:true}"></guh-device-class>
-  </guh-wizard-step>
-</guh-wizard>
+      <!-- Add trigger button -->
+      <p ng-show="addRule.savedTriggers.length <= 0"><button class="full button" ng-click="addRule.addTrigger()" type="button">Add a trigger</button></p>
+      <p ng-show="addRule.savedTriggers.length > 0"><button class="full button" ng-click="addRule.addTrigger()" type="button">Add another trigger</button></p>
 
-<!-- Wizard: add action -->
-<guh-wizard ng-if="addRule.show.addAction" control="addRule.wizard" show-navigation="false">
-  <guh-wizard-step>
-    <!-- List devices -->
-    <ul class="list">
-      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithActions track by $index">{{ device.name }}</li>
-    </ul>
-  </guh-wizard-step>
-  <guh-wizard-step>
-    <!-- List events -->
-    <guh-device-class model="addRule.currentDevice.deviceClass" save-action="addRule.saveAction(actionData)" show="{actions:true}"></guh-device-class>
-  </guh-wizard-step>
-</guh-wizard>
+      <div class="overlay" ng-show="addRule.show.addTrigger">
+
+        <div class="bar">
+          <button class="button first-action"><a ng-click="addRule.listTrigger()">&lang;</a></button>
+        </div>
+
+        <!-- Add a trigger -->
+        <guh-wizard control="addRule.triggerWizard" show-navigation="false">
+
+          <!--- Step 1: Select trigger -->
+          <guh-wizard-step>
+            <div ng-repeat="triggerDevice in addRule.availableTriggerDevices | orderBy: 'name' track by $index">
+              <p class="divider">{{ triggerDevice.deviceClass.name }}</p>
+
+              <!-- Events -->
+              <p class="list-item" ng-if="!addRule.hasState(eventType)" ng-show="eventType.paramTypes.length > 0" ng-click="addRule.selectTrigger(triggerDevice, eventType)" ng-repeat="eventType in triggerDevice.deviceClass.eventTypes">{{ eventType.inputData.triggerPhrase }}</p>
+
+              <p class="list-item" ng-if="!addRule.hasState(eventType)" ng-show="eventType.paramTypes.length == 0" ng-click="addRule.saveTrigger(triggerDevice, eventType)" ng-repeat="eventType in triggerDevice.deviceClass.eventTypes">{{ eventType.inputData.triggerPhrase }}</p>
+              
+              <!-- States -->
+              <p class="list-item" ng-click="addRule.selectTrigger(triggerDevice, stateType)" ng-repeat="stateType in triggerDevice.deviceClass.stateTypes">{{ stateType.inputData.triggerPhrase }}</p>
+            </div>
+          </guh-wizard-step>
+
+          <!--- Step 2: Save trigger -->
+          <guh-wizard-step>
+            <p><button class="full button" ng-click="addRule.addTrigger()" type="button">Choose another trigger</button></p>
+
+            <!-- EventType ParamTypes -->
+            <p guh-input="paramType" index="{{ $parent.$index }}-{{ $index }}" ng-show="addRule.triggerEvent.triggerType.paramTypes.length > 0" ng-repeat="paramType in addRule.triggerEvent.triggerType.paramTypes"></p>
+
+            <!-- StateType -->
+            <div ng-if="addRule.isState()">
+              <p class="info" ng-show="addRule.availableStateOperators.length == 1">{{ addRule.triggerStateOne.triggerType.name }} {{ addRule.availableStateOperators[0].label }}...</p>
+
+              <div ng-show="addRule.availableStateOperators.length > 1" ng-form="subForm">
+                <p>
+                  <label>{{ addRule.triggerStateOne.triggerType.name }}...</label>
+                  <select ng-model="addRule.stateOperator" ng-change="addRule.setStateOperator()" ng-options="operator as operator.label for (key, operator) in addRule.availableStateOperators track by operator.id" name="operator"></select>
+                </p>
+              </div>
+
+              <!-- Is (Is not)... -->
+              <p ng-show="addRule.stateOperator.label != 'is between'" guh-input="addRule.triggerStateOne.triggerType"></p>
+
+              <!-- From... -->
+              <p ng-show="addRule.stateOperator.label == 'is between'" guh-input="addRule.triggerStateOne.triggerType"></p>
+
+              <!-- To... -->
+              <p ng-if="addRule.stateOperator.label == 'is between'" class="info">and...</p>
+              <p ng-if="addRule.stateOperator.label == 'is between'" guh-input="addRule.triggerStateTwo.triggerType"></p>
+            </div>
+
+            <p><button class="full button" ng-click="addRule.saveTrigger()" type="button">Save trigger</button></p>
+          </guh-wizard-step>
+
+        </guh-wizard>
+
+      </div>
+    </guh-wizard-step>
+
+
+    <!-- Step 2: Add ruleAction(s) -->
+    <guh-wizard-step>
+      <p class="info">What action(s) should be executed?</p>
+
+      <div>
+        <p class="info small">When rule enters:</p>
+
+        <!-- Show saved actions -->
+        <div class="list-item" ng-repeat="action in addRule.savedActions track by $index">
+          <p>{{ action.actionType.inputData.actionPhrase }}</p>
+          <p class="small">{{ action.actionDevice.name }}</p>
+        </div>
+
+        <!-- Add action button -->
+        <p ng-show="addRule.savedActions.length <= 0"><button class="full button" ng-click="addRule.addAction(false)" type="button">Add an enter action</button></p>
+        <p ng-show="addRule.savedActions.length > 0"><button class="full button" ng-click="addRule.addAction(false)" type="button">Add another enter action</button></p>
+      </div>
+
+      <div ng-show="addRule.rule.eventDescriptors.length === 0">
+        <p class="info small">When rule exits:</p>
+
+        <!-- Show saved actions -->
+        <div class="list-item" ng-repeat="action in addRule.savedExitActions track by $index">
+          <p>{{ action.actionType.inputData.actionPhrase }}</p>
+          <p class="small">{{ action.actionDevice.name }}</p>
+        </div>
+
+        <!-- Add exit action button -->
+        <p ng-show="addRule.savedExitActions.length <= 0"><button class="full button" ng-click="addRule.addAction(true)" type="button">Add an exit action</button></p>
+        <p ng-show="addRule.savedExitActions.length > 0"><button class="full button" ng-click="addRule.addAction(true)" type="button">Add another exit action</button></p>
+      </div>
+
+      <div class="overlay" ng-show="addRule.show.addAction">
+
+        <div class="bar">
+          <button class="button first-action"><a ng-click="addRule.listActions()">&lang;</a></button>
+        </div>
+
+        <!-- Add an action -->
+        <guh-wizard control="addRule.actionWizard" show-navigation="false">
+
+          <!--- Step 1: Select action -->
+          <guh-wizard-step>
+            <div ng-repeat="actionDevice in addRule.availableActionDevices | orderBy: 'name' track by $index">
+              <p class="divider">{{ actionDevice.deviceClass.name }}</p>
+
+              <!-- Actions -->
+              <p class="list-item" ng-click="addRule.selectAction(actionDevice, actionType)" ng-show="actionType.paramTypes.length > 0" ng-repeat="actionType in actionDevice.deviceClass.actionTypes">{{ actionType.name }}</p>
+
+              <p class="list-item" ng-click="addRule.saveAction(actionDevice, actionType)" ng-show="actionType.paramTypes.length == 0" ng-repeat="actionType in actionDevice.deviceClass.actionTypes">{{ actionType.name }}</p>
+            </div>
+          </guh-wizard-step>
+
+          <!--- Step 2: Save action -->
+          <guh-wizard-step>
+            <p><button class="full button" ng-click="addRule.addAction()" type="button">Choose another action</button></p>
+
+            <p guh-input="paramType" index="{{ $parent.$index }}-{{ $index }}" ng-show="addRule.currentAction.actionType.paramTypes.length > 0" ng-repeat="paramType in addRule.currentAction.actionType.paramTypes"></p>
+
+            <p><button class="full button" ng-click="addRule.saveAction()" type="button">Save action</button></p>
+          </guh-wizard-step>
+
+        </guh-wizard>
+
+      </div>
+    </guh-wizard-step>
+
+
+    <!-- Step 3: Add rule name and enable/disable it -->
+    <guh-wizard-step>
+      <p class="info">How do you want to save your rule?</p>
+
+      <!-- Add additional rule info -->
+      <div ng-form="subForm">
+        <!-- Rule name -->
+        <p>
+          <label for="rule-name">Name</label>
+          <input id="rule-name" ng-model="addRule.rule.name" name="input" required type="text" />
+        </p>
+        
+        <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+          <p ng-message="required">Field is required.</p>
+        </div>
+
+        <!-- Rule enable/disable -->
+        <input id="rule-enabled" ng-model="addRule.rule.enabled" name="checkbox" type="checkbox" />
+        <label for="rule-enabled" ng-if="addRule.rule.enabled">Enabled</label>
+        <label for="rule-enabled" ng-if="!addRule.rule.enabled">Disabled</label>
+
+        <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+          <p ng-message="required">Field is required.</p>
+        </div>
+      </div>
+
+      <p><button class="full button" ng-click="addRule.saveRule()" type="button">Save rule</button></p>
+    </guh-wizard-step>
+
+  </guh-wizard>
+
+</div>

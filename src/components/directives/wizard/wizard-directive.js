@@ -115,6 +115,12 @@
         }
       };
 
+      scope.wizardControl.external.goToStep = function(stepIndex) {
+        if(stepIndex <= scope.wizardControl.internal.steps.length) {
+          scope.wizardControl.internal.toggleSteps(stepIndex-1);
+        }
+      };
+
       scope.wizardControl.external.hasNext = function() {
         return scope.wizardControl.internal.currentStepIndex < (scope.wizardControl.internal.steps.length - 1);
       };

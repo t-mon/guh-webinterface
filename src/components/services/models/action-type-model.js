@@ -27,106 +27,113 @@
 
   angular
     .module('guh.components.models')
-    .factory('DSDevice', DSDeviceFactory)
-    .run(function(DSDevice) {});
+    .factory('DSActionType', DSActionTypeFactory)
+    .run(function(DSActionType) {});
 
-  DSDeviceFactory.$inject = ['$log', '$state', 'DS', 'DSHttpAdapter'];
+  DSActionTypeFactory.$inject = ['$log', 'DS', 'ModelsHelper'];
 
-  function DSDeviceFactory($log, $state, DS, DSHttpAdapter) {
-    
+  function DSActionTypeFactory($log, DS, ModelsHelper) {
+
     var staticMethods = {};
 
     /*
      * DataStore configuration
      */
-    var DSDevice = DS.defineResource({
+    var DSActionType = DS.defineResource({
 
       // API configuration
-      endpoint: 'devices',
+      endpoint: 'action_types',
       suffix: '.json',
 
       // Model configuration
       idAttribute: 'id',
-      name: 'device',
+      name: 'actionType',
       relations: {
         belongsTo: {
           deviceClass: {
             localField: 'deviceClass',
-            localKey: 'deviceClassId'
+            localKey: 'deviceClassId',
+            parent: true
           }
         }
       },
-
+      
       // Computed properties
-      computed: {},
+      computed: {
+        inputData: ['name', 'paramTypes', _getInputData],
+      },
 
       // Instance methods
       methods: {
-        getAction: getAction,
-        getEventDescriptor: getEventDescriptor,
-        getStateDescriptor: getStateDescriptor
-      }
+        getRuleActionParams: getRuleActionParams
+      },
+
+      // Lifecycle Hooks
+      afterInject: _afterInject
 
     });
 
-    return DSDevice;
+    return DSActionType;
 
 
     /*
-     * Public method: getAction(actionInput)
+     * Private method: _getActionPhrase(name, paramTypes)
      */
-    function getAction(actionInput) {
-      var self = this;
-      var action = {};
-      var ruleActionParams = [];
+    function _getActionPhrase(name, paramTypes) {
+      var phrase = 'Execute ' + name;
 
-      ruleActionParams = actionInput.getRuleActionParams(self.id, actionInput.paramTypes);
-      if(ruleActionParams.length > 0) {
-        action.ruleActionParams = ruleActionParams;
+      if(paramTypes.length === 0) {
+        phrase = phrase + '.';
+      } else {
+        phrase = phrase + ' with params...';
       }
-
-      action.actionTypeId = actionInput.id;
-      action.deviceId = self.id;
-
-      return action;
+      return phrase;
     }
 
     /*
-     * Public method: getEventDescriptor(eventInput)
+     * Private method: _getInputData(name, paramTypes)
      */
-    function getEventDescriptor(eventInput) {
-      var self = this;
-      var eventDescriptor = {};
-      var paramDescriptors = [];
+    function _getInputData(name, paramTypes) {
+      var inputData = {};
+      
+      inputData.actionPhrase = _getActionPhrase(name, paramTypes);
 
-      paramDescriptors = eventInput.getParamDescriptors(self.id, eventInput.paramTypes);
-      if(paramDescriptors.length > 0) {
-        eventDescriptor.paramDescriptors = paramDescriptors;
-      }
-
-      eventDescriptor.deviceId = self.id;
-      eventDescriptor.eventTypeId = eventInput.id;
-
-      return eventDescriptor;     
+      return inputData;
     }
 
     /*
-     * Public method: getStateDescriptor(stateInput, stateOperatorValue)
+     * Private method: _afterInject(resource, actionType)
      */
-    function getStateDescriptor(stateInput, stateOperatorValue) {
-      $log.log('stateInput', stateInput);
+    function _afterInject(resource, actionType) {
+      var paramTypes = actionType.paramTypes;
 
-      var self = this;
-      var stateDescriptor = {};
+      // Enhance paramTypes with following attributes: operator, templateUrl, value
+      angular.forEach(paramTypes, function(paramType) {
+        var templateData = ModelsHelper.getTemplateData(paramType);
 
-      stateDescriptor.deviceId = self.id;
-      stateDescriptor.operator = stateOperatorValue;
-      stateDescriptor.stateTypeId = stateInput.id;
-      stateDescriptor.value = stateInput.inputData.value;      
+        paramType.inputData = {
+          operator: 'ValueOperatorEquals',
+          templateUrl: templateData.templateUrl,
+          value: templateData.value
+        };
+      });
+    }
 
-      $log.log('stateDescriptor', stateDescriptor);
 
-      return stateDescriptor;     
+    /*
+     * Public method: getRuleActionParams(deviceId, paramTypes)
+     */
+    function getRuleActionParams(deviceId, paramTypes) {
+      var params = [];
+
+      angular.forEach(paramTypes, function(paramType) {
+        params.push({
+          name: paramType.name,
+          value: paramType.inputData.value
+        });
+      });
+
+      return params;
     }
 
   }

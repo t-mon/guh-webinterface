@@ -27,107 +27,95 @@
 
   angular
     .module('guh.components.models')
-    .factory('DSDevice', DSDeviceFactory)
-    .run(function(DSDevice) {});
+    .factory('DSStateType', DSStateTypeFactory)
+    .run(function(DSStateType) {});
 
-  DSDeviceFactory.$inject = ['$log', '$state', 'DS', 'DSHttpAdapter'];
+  DSStateTypeFactory.$inject = ['$log', 'DS', 'ModelsHelper'];
 
-  function DSDeviceFactory($log, $state, DS, DSHttpAdapter) {
-    
+  function DSStateTypeFactory($log, DS, ModelsHelper) {
+
     var staticMethods = {};
+
 
     /*
      * DataStore configuration
      */
-    var DSDevice = DS.defineResource({
+    var DSStateType = DS.defineResource({
 
       // API configuration
-      endpoint: 'devices',
+      endpoint: 'state_types',
       suffix: '.json',
 
       // Model configuration
       idAttribute: 'id',
-      name: 'device',
+      name: 'stateType',
       relations: {
         belongsTo: {
           deviceClass: {
             localField: 'deviceClass',
-            localKey: 'deviceClassId'
+            localKey: 'deviceClassId',
+            parent: true
           }
         }
       },
 
-      // Computed properties
-      computed: {},
-
-      // Instance methods
+      // Model data and instance methods
+      computed: {
+        inputData: ['defaultValue', 'id', 'name', 'type', _getInputData]
+      },
       methods: {
-        getAction: getAction,
-        getEventDescriptor: getEventDescriptor,
-        getStateDescriptor: getStateDescriptor
+        // resetInput: resetInput
       }
 
     });
 
-    return DSDevice;
+    return DSStateType;
 
 
     /*
-     * Public method: getAction(actionInput)
+     * Private method: _getTriggerPhrase(name)
      */
-    function getAction(actionInput) {
-      var self = this;
-      var action = {};
-      var ruleActionParams = [];
+    function _getTriggerPhrase(name) {
+      // Get value inside Brackets []
+      var regExp = /\s\[([^)]+)\]/;
+      var searchUnit = name.replace(regExp, '');
+      var phrase = name;
 
-      ruleActionParams = actionInput.getRuleActionParams(self.id, actionInput.paramTypes);
-      if(ruleActionParams.length > 0) {
-        action.ruleActionParams = ruleActionParams;
+      // If name contains the unit in brackets []
+      if(regExp.test(name)) {
+        phrase = searchUnit;
       }
 
-      action.actionTypeId = actionInput.id;
-      action.deviceId = self.id;
-
-      return action;
+      return 'When value of ' + phrase + ' is...';
     }
 
     /*
-     * Public method: getEventDescriptor(eventInput)
+     * Private method: _getInputData(defaultValue, id, name, type)
      */
-    function getEventDescriptor(eventInput) {
-      var self = this;
-      var eventDescriptor = {};
-      var paramDescriptors = [];
+    function _getInputData(defaultValue, id, name, type) {
+      var templateParams = {
+        defaultValue: defaultValue,
+        name: name,
+        type: type
+      };
+      var templateData = ModelsHelper.getTemplateData(templateParams);
+      var inputData = {};
 
-      paramDescriptors = eventInput.getParamDescriptors(self.id, eventInput.paramTypes);
-      if(paramDescriptors.length > 0) {
-        eventDescriptor.paramDescriptors = paramDescriptors;
-      }
+      inputData.stateTypeId = id;
+      inputData.templateUrl = templateData.templateUrl;
+      inputData.triggerPhrase = _getTriggerPhrase(name);
+      inputData.unit = ModelsHelper.getUnit(name);
+      inputData.value = templateData.value;
 
-      eventDescriptor.deviceId = self.id;
-      eventDescriptor.eventTypeId = eventInput.id;
-
-      return eventDescriptor;     
+      return inputData;
     }
 
-    /*
-     * Public method: getStateDescriptor(stateInput, stateOperatorValue)
-     */
-    function getStateDescriptor(stateInput, stateOperatorValue) {
-      $log.log('stateInput', stateInput);
-
-      var self = this;
-      var stateDescriptor = {};
-
-      stateDescriptor.deviceId = self.id;
-      stateDescriptor.operator = stateOperatorValue;
-      stateDescriptor.stateTypeId = stateInput.id;
-      stateDescriptor.value = stateInput.inputData.value;      
-
-      $log.log('stateDescriptor', stateDescriptor);
-
-      return stateDescriptor;     
-    }
+    // /*
+    //  * Instance method: resetInput()
+    //  */
+    // function resetInput() {
+    //   this.input = _getInputData(this.defaultValue, this.id, this.name, this.type);
+    // }
 
   }
 

@@ -49,6 +49,20 @@
       idAttribute: 'id',
       name: 'deviceClass',
       relations: {
+        hasMany: {
+          actionType: {
+            localField: 'actionTypes',
+            foreignKey: 'deviceClassId'
+          },
+          eventType: {
+            localField: 'eventTypes',
+            foreignKey: 'deviceClassId'
+          },
+          stateType: {
+            localField: 'stateTypes',
+            foreignKey: 'deviceClassId'
+          }
+        },
         belongsTo: {
           vendor: {
             localField: 'vendor',
@@ -60,6 +74,7 @@
 
       // Computed properties
       computed: {
+        // TODO: Use afterInject method for this (solution for hook not loaded when relation is loaded, problem: https://github.com/js-data/js-data/issues/35)
         discoveryParamTypeInputs: ['discoveryParamTypes', _getDiscoveryParamTypeInputs],
         paramTypeInputs: ['paramTypes', _getParamTypeInputs]
       },
@@ -69,7 +84,10 @@
         discover: discover,
         getCreateMethod: getCreateMethod,
         getSetupMethod: getSetupMethod
-      }
+      },
+
+      // Lifecycle hooks
+      // afterInject: _afterInject
 
     });
 
@@ -90,6 +108,35 @@
 
       return inputs;
     }
+
+    /*
+     * Private method: _afterInject(resource, deviceClass)
+     */
+    // function _afterInject(resource, deviceClass) {
+    //   // Enhance discoveryParamTypes with following attributes: operator, templateUrl, value
+    //   angular.forEach(deviceClass.discoveryParamTypes, function(discoveryParamType) {
+    //     var templateData = ModelsHelper.getTemplateData(discoveryParamType);
+
+    //     discoveryParamType.inputData = {
+    //       operator: 'ValueOperatorEquals',
+    //       templateUrl: templateData.templateUrl,
+    //       value: templateData.value
+    //     };
+    //   });
+
+    //   // Enhance paramTypes with following attributes: operator, templateUrl, value
+    //   angular.forEach(deviceClass.paramTypes, function(paramType) {
+    //     var templateData = ModelsHelper.getTemplateData(paramType);
+
+    //     paramType.inputData = {
+    //       operator: 'ValueOperatorEquals',
+    //       templateUrl: templateData.templateUrl,
+    //       value: templateData.value
+    //     };
+    //   });
+
+    //   $log.log('deviceClass', deviceClass);
+    // }
 
     /*
      * Private method: _getDiscoveryParamTypeInputs(discoveryParamTypes)

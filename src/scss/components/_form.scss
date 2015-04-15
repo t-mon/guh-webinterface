@@ -37,7 +37,7 @@ select {
   @include appearance(none);
   background-color: rgba(255, 255, 255, 0.05);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 0px;
   color: #fff;
   font-family: 'Ubuntu';
@@ -56,10 +56,10 @@ input {
   &[type="password"],
   &[type="text"] {
     background-color: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 
     &:focus {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.15);
     }
   }
 
@@ -67,7 +67,7 @@ input {
     display: none;
 
     &:checked + label {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.15);
     }
 
     &+ label {

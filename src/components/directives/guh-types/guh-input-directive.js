@@ -51,8 +51,11 @@
         element.remove();
       });
 
+      scope.index = '-' + scope.index;
+
       scope.$watch('model', function(newValue, oldValue) {
-        var templateUrl = scope.model.templateUrl;
+        $log.log('scope', scope);
+        var templateUrl = scope.model.inputData.templateUrl;
 
         $http.get(templateUrl).success(function(template) {
           // Replace guhInput-directive with proper HTML input

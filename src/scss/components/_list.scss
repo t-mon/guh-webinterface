@@ -29,12 +29,12 @@
 }
 
 .list-item {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
   // border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
   display: block;
   @include rem(font-size, 1.4);
-  margin: 0 0 2%;
+  margin: 2% 0;
   @include rem(padding, 1.2);
   width: 100%;
 

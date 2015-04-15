@@ -23,8 +23,8 @@
 <!-- TODO: Verify validation (http://stackoverflow.com/questions/12010552/jquery-javascript-mac-address-validation) -->
 <div ng-form="subForm">
   <p>
-    <label>{{ model.name }}</label>
-    <input ng-model="data.value" ng-pattern="/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/" name="{{ name }}FormField" type="text" />
+    <label for="input-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="data.value" ng-pattern="/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" type="text" />
   </p>
   
   <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
