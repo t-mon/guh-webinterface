@@ -54,7 +54,6 @@
       scope.index = '-' + scope.index;
 
       scope.$watch('model', function(newValue, oldValue) {
-        $log.log('scope', scope);
         var templateUrl = scope.model.inputData.templateUrl;
 
         $http.get(templateUrl).success(function(template) {

@@ -108,6 +108,8 @@
      * Public method: selectDeviceClass(deviceClass)
      */
     function selectDeviceClass(deviceClass) {
+      $log.log('deviceClass', deviceClass);
+
       vm.selectedDeviceClass = deviceClass;
       vm.wizardData.step1 = deviceClass.getCreateMethod();
       vm.wizardData.step2 = deviceClass.getSetupMethod();
@@ -139,8 +141,8 @@
         angular.forEach(vm.selectedDeviceClass.discoveryParamTypeInputs, function(discoveryParamTypeInput) {
           var deviceParam = {};
 
-          deviceParam.name = discoveryParamTypeInput.name;
-          deviceParam.value = discoveryParamTypeInput.value;
+          deviceParam.name = discoveryParamTypeInput.inputData.name;
+          deviceParam.value = discoveryParamTypeInput.inputData.value;
 
           deviceData.deviceParams.push(deviceParam);
         });
@@ -150,8 +152,8 @@
         angular.forEach(vm.selectedDeviceClass.paramTypeInputs, function(paramTypeInput) {
           var deviceParam = {};
 
-          deviceParam.name = paramTypeInput.name;
-          deviceParam.value = paramTypeInput.value;
+          deviceParam.name = paramTypeInput.inputData.name;
+          deviceParam.value = paramTypeInput.inputData.value;
 
           deviceData.deviceParams.push(deviceParam);
         });

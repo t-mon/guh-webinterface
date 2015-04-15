@@ -103,6 +103,7 @@
         
         input.inputData = {};
 
+        input.inputData.name = input.name;
         input.inputData.operator = 'ValueOperatorEquals';
         input.inputData.templateUrl = templateData.templateUrl;
         input.inputData.value = templateData.value;
@@ -169,8 +170,8 @@
       angular.forEach(self.discoveryParamTypeInputs, function(discoveryParamTypeInput, index) {
         var discoveryParam = {};
 
-        discoveryParam.name = discoveryParamTypeInput.name;
-        discoveryParam.value = discoveryParamTypeInput.value;
+        discoveryParam.name = discoveryParamTypeInput.inputData.name;
+        discoveryParam.value = discoveryParamTypeInput.inputData.value;
 
         discoveryParams.push(discoveryParam);
       });

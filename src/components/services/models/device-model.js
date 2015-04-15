@@ -138,17 +138,13 @@
      * Public method: getStateDescriptor(stateInput, stateOperatorValue)
      */
     function getStateDescriptor(stateInput, stateOperatorValue) {
-      $log.log('stateInput', stateInput);
-
       var self = this;
       var stateDescriptor = {};
 
       stateDescriptor.deviceId = self.id;
       stateDescriptor.operator = stateOperatorValue;
       stateDescriptor.stateTypeId = stateInput.id;
-      stateDescriptor.value = stateInput.inputData.value;      
-
-      $log.log('stateDescriptor', stateDescriptor);
+      stateDescriptor.value = stateInput.inputData.value;
 
       return stateDescriptor;     
     }

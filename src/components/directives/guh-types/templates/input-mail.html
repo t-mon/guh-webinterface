@@ -23,7 +23,7 @@
 <div ng-form="subForm">
   <p>
     <label for="input-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
-    <input id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="model.value" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" required type="email" />
+    <input id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="model.inputData.value" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" required type="email" />
   </p>
   
   <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
