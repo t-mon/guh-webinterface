@@ -101,7 +101,9 @@
         case 'QString':
           value = '';
           if(inputType) {
-            if(inputType === 'InputTypeTextLine') {
+            if(angular.isArray(allowedValues)) {
+              templateUrl = basePath + 'input-select.html';
+            } else if(inputType === 'InputTypeTextLine') {
               templateUrl = basePath + 'input-text.html';
             } else if(inputType === 'InputTypeTextArea') {
               templateUrl = basePath + 'input-textarea.html';
@@ -120,8 +122,6 @@
             } else if(inputType === 'InputTypeMacAddress') {
               templateUrl = basePath + 'input-mac.html';
             }
-          } else if(angular.isArray(allowedValues)) {
-            templateUrl = basePath + 'input-select.html';
           } else {
             templateUrl = basePath + 'input-text.html';
           }
