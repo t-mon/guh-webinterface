@@ -36,6 +36,7 @@
       // Components
       'guh.components.filters',
       'guh.components.api',
+      'guh.components.helper',
       'guh.components.models',
       'guh.components.ui',
 

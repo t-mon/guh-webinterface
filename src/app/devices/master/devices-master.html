@@ -20,18 +20,18 @@
   SOFTWARE.
 -->
 
-<div class="error" ng-show="devices.errors.length > 0">
-  <p>Uuups...</p>
-  <ul>
-    <li ng-repeat="error in devices.errors">{{ error.description }}</li>
-  </ul>  
-</div>
+<ng-switch on="devices.configured.length">
 
-<ul class="tiles">
-  <li class="vendor-{{device.svgClass}} vendor tile" ng-repeat="device in devices.configured | orderBy: 'name' track by $index">
-    <a class="tile-content" ui-sref="guh.devices.detail({ id: device.id })">
-      <p>{{ device.name }}</p>
-      <!-- <span>{{ device.name }}</span> -->
-    </a>
-  </li>
-</ul>
+  <div ng-switch-when="0">
+    <p class="info">To make youe home smarter, start by connecting your devices with guh. This can be done by clicking "Add +".</p>
+  </div>
+
+  <ul class="tiles" ng-switch-default>
+    <li class="vendor-{{ device.deviceClass.vendor.name | kebabCase }} vendor tile" ng-repeat="device in devices.configured | orderBy: 'name' track by $index">
+      <a class="tile-content" ui-sref="guh.devices.detail({ id: device.id })">
+        <p>{{ device.name }}</p>
+      </a>
+    </li>
+  </ul>
+
+</ng-switch>

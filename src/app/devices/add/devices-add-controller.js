@@ -23,25 +23,30 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 (function(){
-"use strict";
+  "use strict";
 
   angular
     .module('guh.devices')
     .controller('DevicesAddController', DevicesAddController);
 
-  DevicesAddController.$inject = ['$log', '$state', 'Vendor', 'DeviceClass', 'Device', 'errors'];
+  DevicesAddController.$inject = ['$log', '$state', 'errors', 'DSVendor', 'DSDeviceClass', 'DSDevice'];
 
-  function DevicesAddController($log, $state, Vendor, DeviceClass, Device, errors) {
+  function DevicesAddController($log, $state, errors, DSVendor, DSDeviceClass, DSDevice) {
 
-    // Public Variables
+    /*
+     * Public Variables
+     */
     var vm = this;
     vm.supportedVendors = [];
-    vm.supportedDeviceClasses = [];
-    vm.currentDeviceClass = {};
+    vm.selectedVendor = {};
+    vm.selectedDeviceClass = {};
     vm.discoveredDevices = [];
     vm.wizard = {};
+    vm.wizardData = {};
 
-    // Public Methods
+    /*
+     * Public Methods
+     */
     vm.selectVendor = selectVendor;
     vm.selectDeviceClass = selectDeviceClass;
     vm.discoverDevices = discoverDevices;
@@ -52,95 +57,127 @@
      * Private method: _init()
      */
     function _init() {
-      _loadVendors();
-    }
-
-    /*
-     * Private method: _loadVendors()
-     */
-    function _loadVendors() {
-      Vendor
-        .findAll()
+      _findAllVendors()
         .then(function(vendors) {
           vm.supportedVendors = vendors;
-        });
+        })
     }
 
     /*
-     * Private method: _loadVendorDeviceClasses(vendor)
+     * Private method: _findAllVendors()
      */
-    function _loadVendorDeviceClasses(vendor) {
-      Vendor
-        .findDeviceClasses(vendor)
-        .then(function(deviceClasses) {
-          vm.supportedDeviceClasses = deviceClasses;
-        });
+    function _findAllVendors() {
+      return DSVendor
+        .findAll();
+    }
+
+    /*
+     * Private method: _findDeviceClasses(vendor)
+     */
+    function _findDeviceClasses(vendor) {
+      return DSVendor
+        .loadRelations(vendor, ['deviceClasses']);
     }
 
 
     /*
-     * Public method: discoverDevices()
+     * Public method: discoverDevices(deviceClass)
      */
     function discoverDevices() {
-      // Device
-      //   .discover(vm.currentDeviceClass)
-      //   .then(function(discoveredDevices) {
-      //     vm.discoveredDevices = discoveredDevices;
-      //   });
-      DeviceClass
-        .discover(vm.currentDeviceClass)
+      vm.selectedDeviceClass
+        .discover()
         .then(function(discoveredDevices) {
-          vm.discoveredDevices = discoveredDevices;
+          vm.discoveredDevices = discoveredDevices.data;
         });
     }
 
     /*
-     * Public method: selectVendor()
+     * Public method: selectVendor(vendor)
      */
     function selectVendor(vendor) {
-      _loadVendorDeviceClasses(vendor);
+      _findDeviceClasses(vendor)
+        .then(function(vendor) {
+          vm.selectedVendor = vendor;
+        });
 
       // Go to next wizard step
       vm.wizard.next();
     }
 
     /*
-     * Public method: selectDeviceClass()
+     * Public method: selectDeviceClass(deviceClass)
      */
     function selectDeviceClass(deviceClass) {
-      vm.currentDeviceClass = deviceClass;
-      vm.createMethod = deviceClass.getCreateMethod();
-      vm.setupMethod = deviceClass.getSetupMethod();
+      $log.log('deviceClass', deviceClass);
+
+      vm.selectedDeviceClass = deviceClass;
+      vm.wizardData.step1 = deviceClass.getCreateMethod();
+      vm.wizardData.step2 = deviceClass.getSetupMethod();
+
+      // Automatically start disocvery of devices if there are no DiscoveryParams
+      if(vm.wizardData.step1 &&
+         vm.wizardData.step1.title === 'Discovery' &&
+         vm.selectedDeviceClass.discoveryParamTypes.length === 0) {
+        discoverDevices();
+      }
 
       // Go to next wizard step
       vm.wizard.next();
-
-      // Automatically start disocvery of devices
-      if(vm.createMethod.title === 'Discovery' && vm.currentDeviceClass.discoveryParamTypes.length === 0) {
-        discoverDevices();
-      }
     }
 
     /*
-     * Public method: save()
+     * Public method: save(device)
      */
     function save(device) {
+      var deviceData = {};
+      deviceData.deviceClassId = vm.selectedDeviceClass.id;
+
       if(angular.isObject(device)) {
-        vm.currentDeviceClass.descriptorId = device.id;
+        // For discovered devices only
+        deviceData.deviceDescriptorId = device.id;
+
+        // For devices with params
+        deviceData.deviceParams = [];
+        angular.forEach(vm.selectedDeviceClass.discoveryParamTypeInputs, function(discoveryParamTypeInput) {
+          var deviceParam = {};
+
+          deviceParam.name = discoveryParamTypeInput.inputData.name;
+          deviceParam.value = discoveryParamTypeInput.inputData.value;
+
+          deviceData.deviceParams.push(deviceParam);
+        });
+      } else {
+        // For devices with params
+        deviceData.deviceParams = [];
+        angular.forEach(vm.selectedDeviceClass.paramTypeInputs, function(paramTypeInput) {
+          var deviceParam = {};
+
+          deviceParam.name = paramTypeInput.inputData.name;
+          deviceParam.value = paramTypeInput.inputData.value;
+
+          deviceData.deviceParams.push(deviceParam);
+        });
       }
 
-      Device
-        .add(vm.currentDeviceClass)
-        .then(function() {
-          $state.go('guh.devices.master');
+      DSDevice
+        .create({
+          device: deviceData
+        })
+        .then(function(device) {
+          // TODO: Find a better way to update data-store after create (maybe use lifecycle hook "afterCreate")
+          DSDevice
+            .findAll({}, {bypassCache:true})
+            .then(function(devices) {
+              $state.go('guh.devices.master');
+            });
         })
         .catch(function(error) {
-          $log.log(error);
-          $log.log(errors.device);
+          $log.error(error);
         });
     }
 
     _init();
 
   }
+
 }());

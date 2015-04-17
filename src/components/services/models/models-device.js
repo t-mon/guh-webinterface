@@ -74,34 +74,6 @@
       });
     }
 
-    // /*
-    //  * Static method: discover()
-    //  */
-    // function discover(deviceClass) {
-    //   // var clonedDeviceClass = angular.copy(deviceClass);
-
-    //   // angular.forEach(clonedDeviceClass.discoveryParamTypes, function(paramType, index) {
-    //   //   clonedDeviceClass.discoveryParamTypes[index] = paramType.getDescriptor();
-    //   // });
-
-    //   // return devicesService.fetchDiscovered({
-    //   //   deviceClassId: clonedDeviceClass.id,
-    //   //   discoveryParams: clonedDeviceClass.discoveryParamTypes
-    //   // });
-
-    //   var params = [];
-
-    //   angular.forEach(deviceClass.discoveryParamTypes, function(paramTypeData, index) {
-    //     var param = new Param(paramTypeData);
-    //     params[index] = param.getData();
-    //   });
-
-    //   return devicesService.fetchDiscovered({
-    //     deviceClassId: deviceClass.id,
-    //     discoveryParams: params
-    //   });
-    // }
-
     /*
      * Static method: find(id)
      */

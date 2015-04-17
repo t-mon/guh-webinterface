@@ -20,6 +20,10 @@
   SOFTWARE.
 -->
 
+<div class="overlay center-content" ng-show="guh.infoMessage">
+  <p class="info info-center">{{ guh.infoMessage }}</p>
+</div>
+
 <nav id="main-navigation" ui-view="navigation"></nav>
 <header id="main-header" ui-view="header"></header>
 <main id="main-content" ui-view="main" role="main"></main>

@@ -23,8 +23,8 @@
 <!-- TODO: Add validation -->
 <div ng-form="subForm">
   <p>
-    <label>{{ model.name }}</label>
-    <select ng-model="model.value" ng-options="value for value in model.allowedValues" name="input"></select>
+    <label for="input-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
+    <select id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="model.inputData.value" ng-options="value for value in model.allowedValues" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}"></select>
   </p>
   
   <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">

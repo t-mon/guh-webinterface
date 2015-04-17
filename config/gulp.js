@@ -65,6 +65,8 @@ module.exports = {
       src + '/components/filters/**/*.js',
       src + '/components/services/api/api.js',
       src + '/components/services/api/*.js',
+      src + '/components/services/helper/helper.js',
+      src + '/components/services/helper/*.js',
       src + '/components/services/models/models.js',
       src + '/components/services/models/*.js',
 

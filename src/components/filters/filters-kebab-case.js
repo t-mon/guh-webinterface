@@ -22,47 +22,20 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
 
+
 (function(){
   "use strict";
 
   angular
-    .module('guh.components.ui')
-    .directive('guhInput', input);
+    .module('guh.components.filters')
+    .filter('kebabCase', filter);
 
-  input.$inject = ['$log', '$http', '$compile'];
-
-  function input($log, $http, $compile) {
-    var directive = {
-      link: inputLink,
-      restrict: 'A',
-      scope: {
-        index: '@',
-        model: '=guhInput'
+  function filter() {
+    return function(input) {
+      if(input) {
+        return input.toLowerCase().replace(/[^a-z0-9_]/g, '-');
       }
     };
-
-    return directive;
-
-
-    /* jshint unused: vars */
-    function inputLink(scope, element, attributes) {      
-      scope.$on('$destroy', function() {
-        // Remove only element, scope needed afterwards
-        element.remove();
-      });
-
-      scope.index = '-' + scope.index;
-
-      scope.$watch('model', function(newValue, oldValue) {
-        var templateUrl = scope.model.inputData.templateUrl;
-
-        $http.get(templateUrl).success(function(template) {
-          // Replace guhInput-directive with proper HTML input
-          element.html(template);
-          $compile(element.contents())(scope);
-        });
-      });
-    }
   }
 
 }());

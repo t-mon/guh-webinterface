@@ -22,26 +22,11 @@
 
 <div ng-form="subForm">
   <p>
-    <label>{{ model.name }}</label>
-    <input ng-model="model.value" name="input" required type="text" />
+    <label for="input-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="model.inputData.value" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" required type="text" />
   </p>
   
   <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
     <p ng-message="required">Field is required.</p>
   </div>
 </div>
-
-<!-- <p ng-form="textSubForm">
-  <label>{{ data.name }} (Text)</label> -->
-  <!-- <input ng-change="formField.inputChanged(this)" ng-model="data.value" name="{{ name }}FormField" ng-minlength="5" type="text" /> -->
-  <!-- <input ng-change="formField.inputChanged(this)" ng-model="data.value" name="textFormField" ng-minlength="5" type="text" />
-  <span>{{ data.value }}</span>
-
-  <div ng-messages="textSubForm.textFormField.$valid">
-    <p ng-message="minlength">Valid</p>
-  </div>
-
-  <div ng-messages="textSubForm.textFormField.$error">
-    <div ng-message="minlength">Your email address is too short...</div>
-  </div>
-</p> -->

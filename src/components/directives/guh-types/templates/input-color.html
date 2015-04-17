@@ -25,8 +25,8 @@
 
 <div ng-form="subForm">
   <p>
-    <label>R</label>
-    <input ng-model="model.value" min="0" max="255" name="inputR" required type="number" />
+    <label for="input-{{ model.name | stringDash }}{{ '-' + (index+1) || '' }}">R</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + (index+1) || '' }}" ng-model="model.inputData.value" min="0" max="255" name="inputR" required type="number" />
   </p>
   <div ng-messages="subForm.inputR.$error" ng-if="subForm.input.$dirty">
     <p ng-message="required">Field is required.</p>
@@ -35,8 +35,8 @@
   </div>
 
   <p>
-    <label>G</label>
-    <input ng-model="model.value" min="0" max="255" name="inputG" required type="number" />
+    <label for="input-{{ model.name | stringDash }}{{ '-' + (index+2) || '' }}">G</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + (index+2) || '' }}" ng-model="model.inputData.value" min="0" max="255" name="inputG" required type="number" />
   </p>
   <div ng-messages="subForm.inputG.$error" ng-if="subForm.input.$dirty">
     <p ng-message="required">Field is required.</p>
@@ -45,8 +45,8 @@
   </div>
 
   <p>
-    <label>B</label>
-    <input ng-model="model.value" min="0" max="255" name="inputB" required type="number" />
+    <label for="input-{{ model.name | stringDash }}{{ '-' + (index+3) || '' }}">B</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + (index+3) || '' }}" ng-model="model.inputData.value" min="0" max="255" name="inputB" required type="number" />
   </p>
   <div ng-messages="subForm.inputB.$error" ng-if="subForm.input.$dirty">
     <p ng-message="required">Field is required.</p>

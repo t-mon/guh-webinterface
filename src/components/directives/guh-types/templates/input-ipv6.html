@@ -20,22 +20,4 @@
   SOFTWARE.
 -->
 
-<!-- States -->
-<ul ng-show="addRule.stateDescriptors.length > 0">
-  <li ng-repeat="stateDescriptor in addRule.stateDescriptors track by $index">{{ stateDescriptor.device.name }}: {{ stateDescriptor.name }}</li>
-</ul>
-
-<guh-wizard ng-if="addRule.show.addState">
-  <guh-wizard-step>
-    <!-- List devices -->
-    <ul>
-      <li ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithStateTypes track by $index">{{ device.name }}</li>
-    </ul>
-  </guh-wizard-step>
-  <guh-wizard-step>
-    <!-- List events -->
-    <guh-device-class model="addRule.currentDevice.deviceClass" save-state-descriptor="addRule.saveStateDescriptor(stateTypeData)" show="{states:true}"></guh-device-class>
-  </guh-wizard-step>
-</guh-wizard>
-
-<p><button ng-click="addRule.addState()" type="button">Add State</button></p>
+<p>TODO: Create input-template for "{{ model.name }}"</p>

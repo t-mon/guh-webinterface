@@ -1,18 +1,18 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                                     *
  * Copyright (c) 2015 guh                                                              *
  *                                                                                     *
  * Permission is hereby granted, free of charge, to any person obtaining a copy        *
  * of this software and associated documentation files (the "Software"), to deal       *
  * in the Software without restriction, including without limitation the rights        *
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           * 
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           *
  * copies of the Software, and to permit persons to whom the Software is               *
  * furnished to do so, subject to the following conditions:                            *
  *                                                                                     *
  * The above copyright notice and this permission notice shall be included in all      *
  * copies or substantial portions of the Software.                                     *
  *                                                                                     *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          *
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,            *
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE         *
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER              *
@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
  * SOFTWARE.                                                                           *
  *                                                                                     *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 (function(){
 "use strict";
@@ -29,201 +29,395 @@
     .module('guh.rules')
     .controller('RulesAddController', RulesAddController);
 
-  RulesAddController.$inject = ['$log', '$state', 'DeviceClass', 'Device', 'Rule', 'Action', 'Event', 'StateDescriptor'];
+  RulesAddController.$inject = ['$log', '$state', 'DSRule', 'DSDevice', 'DSDeviceClass', 'DSEventType', 'DSStateType'];
 
-  function RulesAddController($log, $state, DeviceClass, Device, Rule, Action, Event, StateDescriptor) {
-    // Private variables
-    var serverData = {
-      eventDescriptors: [],
-      stateDescriptors: [],
-      actions: [],
-    };
-
-    // Public variables
-    var vm = this;
-    angular.extend(vm, {
-      show: {
-        addEvent: false,
-        addState: false,
-        addAction: false
-      },
-      eventDescriptors: [],
-      stateDescriptors: [],
-      actions: [],
-      devicesWithEventTypes: [],
-      devicesWithStateTypes: [],
-      devicesWithActions: [],
-      currentDevice: {},
-      currentDeviceClass: {},
-      wizard: {}
-    });
-
-    // Public methods
-    angular.extend(vm, {
-      addEvent: addEvent,
-      addState: addState,
-      addAction: addAction,
-      saveRule: saveRule,
-      selectDevice: selectDevice,
-      saveAction: saveAction,
-      saveEventDescriptor: saveEventDescriptor,
-      saveStateDescriptor: saveStateDescriptor
-    });
-
+  function RulesAddController($log, $state, DSRule, DSDevice, DSDeviceClass, DSEventType, DSStateType) {
 
     /*
-     * Private methods
+     * Private variables
+     */
+    var valueOperators = {
+      is: {
+        id: 1,
+        label: 'is',
+        values: ['ValueOperatorEquals']
+      },
+      isNot: {
+        id: 2,
+        label: 'is not',
+        values: ['ValueOperatorNotEquals']
+      },
+      isGreaterThan: {
+        id: 3,
+        label: 'is greater than',
+        values: ['ValueOperatorGreater']
+      },
+      isLessThan: {
+        id: 4,
+        label: 'is less than',
+        values: ['ValueOperatorLess']
+      },
+      between: {
+        id: 5,
+        label: 'is between',
+        values: ['ValueOperatorGreaterOrEqual', 'ValueOperatorLessOrEqual']
+      }
+    };
+
+    /*
+     * Public variables
      */
 
-    function _resetShow() {
-      vm.show.addEvent = false;
-      vm.show.addState = false;
-      vm.show.addAction = false;
-    }
+    var vm = this;
+    
+    vm.show = {
+      addTrigger: false,
+      addAction: false
+    };
 
-    function _resetDevices() {
-      vm.devicesWithEventTypes = [];
-      vm.devicesWithStateTypes = [];
-      vm.devicesWithActions = [];
-    }
+    vm.ruleWizard = {};
+    vm.triggerWizard = {};
+    vm.actionWizard = {};
+    
+    vm.availableTriggerDevices = [];
+    vm.currentTrigger = {};
+    vm.triggerStateOne = null;
+    vm.triggerStateTwo = null;
+    vm.savedTriggers = [];
 
-    function _loadDevices() {
-      _resetDevices();
+    vm.availableActionDevices = [];
+    vm.currentAction = {};
+    vm.exitAction = false;
+    vm.savedActions = [];
+    vm.savedExitActions = [];
 
-      return Device
-        .findAll()
-        .then(function(devices) {
-          // Iterate over all devices to add deviceClass to each of them
-          angular.forEach(devices, function(device) {
-            DeviceClass
-              .find(device.deviceClassId)
-              .then(function(deviceClass) {
-                device.deviceClass = deviceClass;
+    vm.rule = {
+      actions: [],
+      enabled: false,
+      eventDescriptors: [],
+      exitActions: [],
+      name: '',
+      stateDescriptors: [],
+      stateEvaluator: {}
+    };
 
-                if(deviceClass.eventTypes.length !== 0) {
-                  vm.devicesWithEventTypes.push(device);
-                }
-
-                if(deviceClass.stateTypes.length !== 0) {
-                  vm.devicesWithStateTypes.push(device);
-                }
-
-                if(deviceClass.actionTypes.length !== 0) {
-                  vm.devicesWithActions.push(device);
-                }
-              });
-          });
-        });
-    }
+    vm.stateOperator = valueOperators.is;
 
 
     /*
      * Public methods
      */
 
-    function addEvent() {
-      // Set devices that have EventTypes defined
-      _loadDevices();
+    vm.listTrigger = listTrigger;
+    vm.hasState = hasState;
+    vm.addTrigger = addTrigger;
+    vm.selectTrigger = selectTrigger;
+    vm.isState = isState;
+    vm.saveTrigger = saveTrigger;
 
-      _resetShow();
-      vm.show.addEvent = true;
+    vm.listActions = listActions;
+    vm.addAction = addAction;
+    vm.selectAction = selectAction;
+    vm.saveAction = saveAction;
+
+    vm.saveRule = saveRule;
+
+    vm.setStateOperator = setStateOperator;
+
+    function setStateOperator() {
+      if(vm.stateOperator.label === 'is between') {
+        vm.triggerStateTwo = angular.copy(vm.currentTrigger);
+      }
     }
 
-    function addState() {
-      // Set devices that have EventTypes defined
-      _loadDevices();
 
-      _resetShow();
-      vm.show.addState = true;
+    /*
+     * Private methods
+     */
+
+    function _init() {
+      _resetView();
+      _getConfiguredDevices();
     }
 
-    function addAction() {
-      // Set devices that have EventTypes defined
-      _loadDevices();
+    function _resetView() {
+      vm.show.addTrigger = false;
+      vm.show.addAction = false;
+      vm.currentTriggerDevice = {};
+    }
 
-      _resetShow();
+    function _resetStates() {
+      // vm.triggerStateOne = null;
+      vm.triggerStateTwo = null;
+      vm.stateOperator = valueOperators.is;
+    }
+
+    function _getConfiguredDevices() {
+      return DSDevice
+        .findAll()
+        .then(function(devices) {
+          angular.forEach(devices, function(device) {
+            _getDeviceClass(device);
+          });
+        });
+    }
+
+    function _getDeviceClass(device) {
+      return DSDevice
+        .loadRelations(device, ['deviceClass'])
+        .then(_setAvailableItem);
+    }
+
+    function _setAvailableItem(device) {
+      var deviceClass = device.deviceClass;
+
+      if(deviceClass.eventTypes.length > 0 || deviceClass.stateTypes.length > 0) {
+        _addAvailableTrigger(device);
+      }
+
+      if(deviceClass.actionTypes.length > 0) {
+        _addAvailableAction(device);
+      }
+    }
+
+    function _addAvailableTrigger(device) {
+      vm.availableTriggerDevices.push(device);
+    }
+
+    function _setCurrentTrigger(triggerDevice, triggerType) {
+      vm.currentTrigger = {
+        triggerDevice: triggerDevice,
+        triggerType: triggerType
+      };
+
+      vm.triggerEvent = angular.copy(vm.currentTrigger);
+      vm.triggerStateOne = angular.copy(vm.currentTrigger);
+    }
+
+    function _addAvailableAction(device) {
+      vm.availableActionDevices.push(device);
+    }
+
+    function _setCurrentAction(actionDevice, actionType) {
+      vm.currentAction = {
+        actionDevice: actionDevice,
+        actionType: actionType
+      };
+    }
+
+    function _setAvailableOperators(type) {
+      switch(type) {
+        case 'bool':
+          vm.availableStateOperators = [
+            valueOperators.is
+          ];
+          name = name;
+        case 'QString':
+          vm.availableStateOperators = [
+            valueOperators.is
+          ];
+          break;
+        case 'int':
+        case 'uint':
+        case 'double':
+          vm.availableStateOperators = [
+            valueOperators.is,
+            valueOperators.isNot,
+            valueOperators.isGreaterThan,
+            valueOperators.isLessThan,
+            valueOperators.between
+          ];
+          break;
+        default:
+          vm.availableStateOperators = valueOperators;
+          break;
+      }
+    }
+
+    function _getStateEvaluator() {
+      var operator = 'StateOperatorAnd';
+      var stateDescriptor = vm.rule.stateDescriptors.pop();
+
+      if(vm.rule.stateDescriptors.length >= 1) {
+        var childEvaluator = {
+          operator: operator,
+          stateDescriptor: stateDescriptor
+        };
+
+        if(!vm.rule.stateEvaluator.childEvaluators) {
+          vm.rule.stateEvaluator.childEvaluators = [];
+        }
+
+        vm.rule.stateEvaluator.childEvaluators.push(childEvaluator);
+        _getStateEvaluator();
+      } else {
+        vm.rule.stateEvaluator.operator = operator;
+        vm.rule.stateEvaluator.stateDescriptor = stateDescriptor;
+      }
+    }
+
+
+    /*
+     * Public methods: Definition
+     */
+
+    function listTrigger() {
+      _resetView();
+      _resetStates();
+
+      vm.ruleWizard.goToStep(1);
+    }
+
+    function hasState(eventType) {
+      var state = false;
+      var stateTypes = eventType.deviceClass.stateTypes;
+
+      // Check if eventType depends on a stateType
+      angular.forEach(stateTypes, function(stateType) {
+        if(eventType.id === stateType.id) {
+          state = true;
+        }
+      });
+
+      return state;
+    }
+
+    function addTrigger() {
+      vm.show.addAction = false;
+      vm.show.addTrigger = true;
+
+      _resetStates();
+      vm.triggerWizard.goToStep(1);
+    }
+
+    function selectTrigger(triggerDevice, triggerType) {
+      _setAvailableOperators(triggerType.type);
+      _setCurrentTrigger(triggerDevice, triggerType);
+
+      vm.triggerWizard.next();
+    }
+
+    function isState() {
+      return DSStateType.is(vm.currentTrigger.triggerType);
+    }
+
+    function saveTrigger(triggerDevice, triggerType) {
+      if(triggerDevice && triggerType) {
+        _setCurrentTrigger(triggerDevice, triggerType);
+      }
+
+      if(DSEventType.is(vm.currentTrigger.triggerType)) {
+        var eventDescriptor = vm.currentTrigger.triggerDevice.getEventDescriptor(vm.triggerEvent.triggerType);
+
+        vm.savedTriggers.push(vm.currentTrigger);
+        vm.rule.eventDescriptors.push(eventDescriptor);
+      } else {
+        if(vm.triggerStateTwo !== null) {
+          var stateDescriptorOne = vm.triggerStateOne.triggerDevice.getStateDescriptor(vm.triggerStateOne.triggerType, vm.stateOperator.values[0]);
+          var stateDescriptorTwo = vm.triggerStateTwo.triggerDevice.getStateDescriptor(vm.triggerStateTwo.triggerType, vm.stateOperator.values[1]);
+
+          vm.savedTriggers.push(vm.currentTrigger);
+          vm.rule.stateDescriptors.push(stateDescriptorOne);
+          vm.rule.stateDescriptors.push(stateDescriptorTwo);
+        } else {
+          var stateDescriptorOne = vm.triggerStateOne.triggerDevice.getStateDescriptor(vm.triggerStateOne.triggerType, vm.stateOperator.values[0]);
+
+          vm.savedTriggers.push(vm.currentTrigger);
+          vm.rule.stateDescriptors.push(stateDescriptorOne);
+        }
+      }
+
+      _resetView();
+      vm.ruleWizard.goToStep(1);
+    }
+
+    function listActions() {
+      _resetView();
+
+      vm.ruleWizard.goToStep(2);
+    }
+
+    function addAction(isExitAction) {
+      if(isExitAction) {
+        vm.exitAction = true;
+      } else {
+        vm.exitAction = false;
+      }
+
       vm.show.addAction = true;
+      vm.show.addTrigger = false;
+
+      vm.actionWizard.goToStep(1);
+    }
+
+    function selectAction(actionDevice, actionType) {
+      _setCurrentAction(actionDevice, actionType);
+
+      vm.actionWizard.next();
+    }
+
+    function saveAction(actionDevice, actionType) {
+      if(actionDevice && actionType) {
+        _setCurrentAction(actionDevice, actionType);
+      }
+      var action = vm.currentAction.actionDevice.getAction(vm.currentAction.actionType);
+
+      if(vm.exitAction) {
+        vm.savedExitActions.push(vm.currentAction);
+        vm.rule.exitActions.push(action);
+      } else {
+        vm.savedActions.push(vm.currentAction);
+        vm.rule.actions.push(action);
+      }
+
+      _resetView();
+      vm.ruleWizard.goToStep(2);
     }
 
     function saveRule() {
-      // Check stateDescriptors and create stateEvaluator
-      var stateEvaluator = {};
-
-      if(serverData.stateDescriptors.length > 1) {
-        stateEvaluator.childEvaluators = [];
-
-        var childStateEvaluator = {};
-        angular.forEach(serverData.stateDescriptors, function(stateDescriptor) {
-          childStateEvaluator.stateDescriptor = stateDescriptor;
-          stateEvaluator.childEvaluators.push(childStateEvaluator);
-        });
-        stateEvaluator.operator = 'StateOperatorOr';
-      } else if(serverData.stateDescriptors) {
-        stateEvaluator.stateEvaluator = serverData.stateDescriptors;
+      // eventDescriptor or eventDescriptorList
+      if(vm.rule.eventDescriptors.length > 1) {
+        vm.rule.eventDescriptorList = vm.rule.eventDescriptors;
+      } else if(vm.rule.eventDescriptors.length === 1) {
+        vm.rule.eventDescriptor = vm.rule.eventDescriptors[0];
       }
 
-      Rule
-        .add(serverData.eventDescriptors, stateEvaluator, serverData.actions)  
-        .then(function() {
-          $state.go('guh.rules.master');
+      // stateEvaluator
+      if(vm.rule.stateDescriptors.length > 0) {
+        _getStateEvaluator();
+      }
+
+      // Actions
+      if(vm.rule.actions.length === 0) {
+        delete vm.rule.actions;
+      }
+
+      // ExitActions
+      if(vm.rule.exitActions.length === 0 || vm.rule.eventDescriptors.length >= 1) {
+        delete vm.rule.exitActions;
+      }
+      
+      delete vm.rule.eventDescriptors;
+      delete vm.rule.stateDescriptors;
+
+      DSRule.create({
+          'rule': vm.rule
+        })
+        .then(function(rule) {
+          // TODO: Find a better way to update data-store after create (maybe use lifecycle hook "afterCreate")
+          DSRule
+            .findAll({}, {bypassCache:true})
+            .then(function(rules) {
+              $state.go('guh.rules.master');
+            });
+        })
+        .catch(function(error) {
+          $log.error(error);
         });
     }
 
-    function selectDevice(device) {
-      vm.currentDevice = device;
+    _init();
 
-      // Go to next wizard step
-      vm.wizard.next();
-    }
-
-    function saveAction(actionData) {
-      var action = new Action(actionData);
-      var newAction = {
-        name: actionData.name,
-        device: vm.currentDevice,
-        data: action
-      };
-
-      action.setDeviceId(vm.currentDevice.id);
-
-      // newAction[actionData.name] = action;
-      serverData.actions.push(action.getData());
-      vm.actions.push(newAction);
-
-      _resetShow();
-    }
-
-    function saveEventDescriptor(eventTypeData) {
-      var event = new Event(eventTypeData);
-      event.setDeviceId(vm.currentDevice.id);
-      var eventDescriptor = event.getDescriptor();
-      var newEvent = {
-        name: eventTypeData.name,
-        device: vm.currentDevice,
-        data: eventDescriptor
-      };
-
-      // newEvent[eventTypeData.name] = eventDescriptor;
-      serverData.eventDescriptors.push(eventDescriptor);
-      vm.eventDescriptors.push(newEvent);
-
-      _resetShow();
-    }
-
-    function saveStateDescriptor(stateTypeData) {
-      var stateDescriptor = new StateDescriptor(vm.currentDevice.id, stateTypeData);
-      var newState = {
-        name: stateTypeData.name,
-        device: vm.currentDevice,
-        data: stateDescriptor
-      };
-
-      // newState[stateTypeData.name] = stateDescriptor;
-      serverData.stateDescriptors.push(stateDescriptor);
-      vm.stateDescriptors.push(newState);
-
-      _resetShow();
-    }
   }
 
 }());

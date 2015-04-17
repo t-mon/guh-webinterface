@@ -26,43 +26,83 @@
   "use strict";
 
   angular
-    .module('guh.components.ui')
-    .directive('guhInput', input);
+    .module('guh.components.api')
+    .factory('websocketService', websocketService);
 
-  input.$inject = ['$log', '$http', '$compile'];
+  websocketService.$inject = ['$log', '$rootScope'];
 
-  function input($log, $http, $compile) {
-    var directive = {
-      link: inputLink,
-      restrict: 'A',
-      scope: {
-        index: '@',
-        model: '=guhInput'
-      }
+  function websocketService($log, $rootScope) {
+
+    var service = {
+      // Objects
+      ws: null,
+      callbacks: {},
+
+      // Methods
+      connect: connect,
+      subscribe: subscribe,
+      unsubscribe: unsubscribe
     };
 
-    return directive;
+    return service;
 
 
-    /* jshint unused: vars */
-    function inputLink(scope, element, attributes) {      
-      scope.$on('$destroy', function() {
-        // Remove only element, scope needed afterwards
-        element.remove();
-      });
+    function connect() {
+      if(service.ws) {
+        return;
+      }
 
-      scope.index = '-' + scope.index;
+      var protocol = (window.location.protocol === 'http:') ? 'ws' : 'wss';
+      var host = window.location.hostname;
+      var port = window.location.port;
+      var ws = new ReconnectingWebSocket(protocol + '://' + host + ':' + port + '/ws');
 
-      scope.$watch('model', function(newValue, oldValue) {
-        var templateUrl = scope.model.inputData.templateUrl;
+      ws.onopen = function(event) {
+        $log.log('Successfully connected with websocket.', event);
 
-        $http.get(templateUrl).success(function(template) {
-          // Replace guhInput-directive with proper HTML input
-          element.html(template);
-          $compile(element.contents())(scope);
+        // Send broadcast event
+        $rootScope.$apply(function() {
+          $rootScope.$broadcast('WebsocketConnected', '');
         });
-      });
+      };
+
+      ws.onclose = function(event) {
+        $log.log('Closed websocket connection.', event);
+
+        // Send broadcast event
+        $rootScope.$apply(function() {
+          $rootScope.$broadcast('WebsocketConnectionLost', 'The app has lost the connection to guh. Please check if you are connected to your network and if guh is running correctly.');
+        });
+      };
+
+      ws.onerror = function() {
+        $log.error('There was an error with the websocket connection.');
+      };
+
+      ws.onmessage = function(message) {
+        // $log.log('message', angular.fromJson(message.data));
+
+        // Execute callback-function with right ID
+        angular.forEach(service.callbacks, function(cb) {
+          cb(angular.fromJson(message.data));
+        });
+      };
+
+      service.ws = ws;
     }
+
+    function subscribe(deviceId, cb) {
+      if(!service.ws) {
+        service.connect();
+      }
+
+      service.callbacks[deviceId] = cb;
+    }
+
+    function unsubscribe(deviceId) {
+      delete service.callbacks[deviceId];
+    }
+
   }
 
 }());

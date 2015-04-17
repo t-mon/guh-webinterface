@@ -26,6 +26,17 @@
   "use strict";
 
   angular
-    .module('guh.components.models', []);
+    .module('guh.components.models', [
+      'js-data'
+    ])
+    .config(config);
+
+  config.$inject = ['DSProvider'];
+
+  function config(DSProvider) {
+    DSProvider
+      .defaults
+      .basePath = '/api/v1';
+  }
 
 }());

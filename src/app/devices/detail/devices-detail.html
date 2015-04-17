@@ -20,130 +20,22 @@
   SOFTWARE.
 -->
 
-
-<div class="dev">
-  <h3>Device</h3>
-  <div class="block">
-    <p class="small">ID: {{ device.id }}</p>
-    <p class="small">Name: {{ device.name }}</p>
-    <p class="small">SetupComplete: {{ device.setupComplete }}</p>
-
-    <p class="large">Params</p>
-    <ul>
-      <li class="small" ng-repeat="param in device.params track by $index">{{ param.name }}: {{ param.value }}</li>
-    </ul>
-  </div>
-
-  <h3>DeviceClass</h3>
-  <div class="block">
-    <p class="small">ID: {{ device.deviceClass.id }}</p>
-    <p class="small">Name: {{ device.deviceClass.name }}</p>
-    <p class="small">Vendor ID: {{ device.deviceClass.vendorId }}</p>
-
-    <p class="large">ActionTypes</p>
-    <ul>
-      <li class="small block" ng-repeat="actionType in device.deviceClass.actionTypes track by $index">
-        <p>ID: {{ actionType.id }}</p>
-        <p>Name: {{ actionType.name }}</p>
-        <ul>
-          <li ng-repeat="paramType in actionType.paramTypes">Param {{ $index + 1 }}: {{ paramType.name }} | {{ paramType.type }}</li>
-        </ul>
-      </li>
-    </ul>
-
-    <p class="large">DiscoveryParamTypes</p>
-    <ul>
-      <li class="small block" ng-repeat="paramType in device.deviceClass.discoveryParamTypes track by $index">
-        <p>Name: {{ paramType.name }}</p>
-        <p>Allowed Values:</p>
-        <ul>
-          <li ng-repeat="allowedValue in paramType.allowedValues">{{ allowedValue }}</li>
-        </ul>
-        <p>Default Value: {{ paramType.defaultValue }}</p>
-        <p>Max Value: {{ paramType.maxValue }}</p>
-        <p>Min Value: {{ paramType.minValue }}</p>
-        <p>Type: {{ paramType.type }}</p>
-      </li>
-    </ul>
-
-    <p class="large">EventTypes</p>
-    <ul>
-      <li class="small block" ng-repeat="eventType in device.deviceClass.eventTypes track by $index">
-        <p>ID: {{ eventType.id }}</p>
-        <p>Name: {{ eventType.name }}</p>
-        <ul>
-          <li ng-repeat="paramType in eventType.paramTypes">Param {{ $index + 1 }}: {{ paramType.name }} | {{ paramType.type }}</li>
-        </ul>
-      </li>
-    </ul>
-
-    <p class="large">ParamTypes</p>
-    <ul>
-      <li class="small block" ng-repeat="paramType in device.deviceClass.paramTypes track by $index">
-        Param {{ $index + 1 }}: {{ paramType.name }} | {{ paramType.type }}
-      </li>
-    </ul>
-
-    <p class="large">StateTypes</p>
-    <ul>
-      <li class="small block" ng-repeat="stateType in device.deviceClass.stateTypes track by $index">
-        <p>Default Value: {{ stateType.defaultValue }}</p>
-        <p>ID: {{ stateType.id }}</p>
-        <p>Name: {{ stateType.name }}</p>
-        <p>Type: {{ stateType.type }}</p>
-      </li>
-    </ul>
-  </div>
-
-  <h3>Vendor</h3>
-  <div class="block">
-    <p class="small">ID: {{ device.vendor.id }}</p>
-    <p class="small">Name: {{ device.vendor.name }}</p>
-    <p class="small">Icon: {{ device.vendor.svgClass }}.svg</p>
-  </div>
+<h2 class="info">Actions</h2>
+<div ng-repeat="actionType in device.deviceClass.actionTypes track by $index">
+  <h3>{{ actionType.name }}</h3>
+  <p guh-input="input" ng-repeat="input in actionType.inputs track by $index" ng-if="actionType.inputs.length > 0"></p>
+  <button class="block button" ng-click="device.executeAction(actionType)" type="button">Execute</button>
 </div>
 
-<!-- <div ng-if="device.params.length > 0">
-  <p>Params</p>
-  <ul>
-    <li guh-input="param" ng-repeat="param in device.params track by $index">{{ param.name }}: {{ param.value }}</li>
-  </ul>
-</div> -->
-
-<!-- <div ng-if="device.deviceClass.paramTypes.length > 0">
-  <p>Params</p>
-  <ul>
-    <li guh-input="paramType" ng-repeat="paramType in device.deviceClass.paramTypes track by $index">{{ paramType.name }}: {{ paramType.value }}</li>
-  </ul>
-</div> -->
-
-<!-- <div ng-if="device.actions.length > 0"> -->
-<div ng-if="device.deviceClass.actionTypes.length > 0">
-  <!-- <button class="block button" ng-show="action.type.paramTypes.length == 0" ng-click="device.executeAction(action)" ng-repeat="action in device.deviceClass.actions track by $index">{{ action.type.name }}</button> -->
-
-  <div ng-repeat="action in device.deviceClass.actions track by $index">
-    <div class="panel" ng-show="action.type.paramTypes.length > 0">
-      <h3 class="title">{{ action.type.name }}</h3>
-      <p guh-input="paramType" ng-repeat="paramType in action.type.paramTypes track by $index" ng-if="action.type.paramTypes.length > 0"></p>
-      <button class="block button" ng-click="device.executeAction(action)" type="button">Execute {{ action.type.name }}</button>
-    </div>
-
-    <button class="block button" ng-show="action.type.paramTypes.length == 0" ng-click="device.executeAction(action)" type="button">{{ action.type.name }}</button>
-  </div>
+<h2 class="info">States</h2>
+<div>
+  <p class="padding" ng-repeat="state in device.states track by $index">{{ state.stateType.name }}: {{ state.value }} ({{ state.stateType.type }})</p>
 </div>
 
-<!-- <div ng-if="device.states.length > 0">
-  <p>States</p>
-  <ul>
-    <li ng-repeat="state in device.states track by $index">{{ state.name }}: {{ state.value.value }}</li>
-  </ul>
-</div> -->
-
-<!-- <div ng-if="device.deviceClass.stateTypes.length > 0">
-  <p>States</p>
-  <ul>
-    <li ng-repeat="stateType in device.deviceClass.stateTypes track by $index">{{ stateType }}</li>
-  </ul>
-</div> -->
+<h2 class="info">Parameters</h2>
+<div>
+  <p class="padding">ID: {{ device.id }}</p>
+  <p class="padding" ng-repeat="param in device.params track by $index">{{ param.name }}: {{ param.value }}</p>
+</div>
 
 <button class="block button" ng-click="device.remove()">Remove device</button>

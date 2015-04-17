@@ -29,50 +29,55 @@
     .module('guh.devices')
     .controller('DevicesMasterController', DevicesMasterController);
 
-  DevicesMasterController.$inject = ['$log', 'Vendor', 'Device'];
+  DevicesMasterController.$inject = ['$log', 'DSDevice', 'DSDeviceClass'];
 
-  function DevicesMasterController($log, Vendor, Device) {
+  function DevicesMasterController($log, DSDevice, DSDeviceClass) {
+
     /*
      * Public variables
      */
     var vm = this;
     vm.configured = [];
-    vm.errors = [];
 
     /*
-     * Private methods
+     * Private method: _init()
      */
     function _init() {
-      Device
-        .findAll()
+      _findAllDevices()
+        .then(_findDeviceClass)
         .then(function(devices) {
-          angular.forEach(devices, function(device) {
-            var configuredDevice = device;
-
-            // Get deviceClass for each device
-            Device
-              .findDeviceClass(device)
-              .then(function(deviceClass) {
-                configuredDevice.deviceClass = deviceClass;
- 
-                // Get vendor for each deviceClass (device)
-                return Vendor.find(configuredDevice.deviceClass.vendorId);
-              })
-              .then(function(vendor) {
-                configuredDevice.vendor = vendor;
-                configuredDevice.svgClass = vendor
-                  .name
-                  .toLowerCase()
-                  .replace(/\s/g, '-')
-                  .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '');
-
-                vm.configured.push(configuredDevice);
-              });
-          });
+          vm.configured = devices;
         })
-        .catch(function(errorResponse) {
-          $log.error(errorResponse);
+        .catch(function(error) {
+          $log.error(error);
         });
+    }
+
+    /*
+     * Private method: _findAllDevices()
+     */
+    function _findAllDevices() {
+      return DSDevice
+        .findAll();
+    }
+
+    /*
+     * Private method: _findDeviceClass(devices)
+     */
+    function _findDeviceClass(devices) {
+      return angular.forEach(devices, function(device) {
+        return DSDevice
+          .loadRelations(device, ['deviceClass'])
+          .then(_findVendor);
+      });
+    }
+
+    /*
+     * Private method: _findVendor(device)
+     */
+    function _findVendor(device) {
+      return DSDeviceClass
+        .loadRelations(device.deviceClass, ['vendor']);
     }
 
     _init();

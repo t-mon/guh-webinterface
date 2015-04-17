@@ -29,9 +29,38 @@
     .module('guh')
     .controller('GuhController', GuhController);
 
-  GuhController.$inject = [];
+  GuhController.$inject = ['$log', '$scope', 'websocketService'];
 
-  function GuhController() {
+  function GuhController($log, $scope, websocketService) {
+
+    /*
+     * Public methods
+     */
+    var vm = this;
+
+    /*
+     * Private method: _init()
+     */
+    function _init() {      
+      websocketService.connect();
+    }
+
+    /*
+     * Public method: $scope.on('WebsocketConnectionLost')
+     */
+    $scope.$on('WebsocketConnectionLost', function(event, message) {
+      vm.infoMessage = message;
+    });
+
+    /*
+     * Public method: $scope.on('WebsocketConnected')
+     */
+    $scope.$on('WebsocketConnected', function(event, message) {
+      vm.infoMessage = null;
+    });
+
+    _init();
+
   }
 
 }());

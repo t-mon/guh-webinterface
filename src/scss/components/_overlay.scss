@@ -1,4 +1,4 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                                     *
  * Copyright (c) 2015 guh                                                              *
  *                                                                                     *
@@ -20,49 +20,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
  * SOFTWARE.                                                                           *
  *                                                                                     *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */ 
-
-(function(){
-  "use strict";
-
-  angular
-    .module('guh.components.ui')
-    .directive('guhInput', input);
-
-  input.$inject = ['$log', '$http', '$compile'];
-
-  function input($log, $http, $compile) {
-    var directive = {
-      link: inputLink,
-      restrict: 'A',
-      scope: {
-        index: '@',
-        model: '=guhInput'
-      }
-    };
-
-    return directive;
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-    /* jshint unused: vars */
-    function inputLink(scope, element, attributes) {      
-      scope.$on('$destroy', function() {
-        // Remove only element, scope needed afterwards
-        element.remove();
-      });
+.overlay {
+  @include background(linear-gradient($c-green-standard, $c-turquoise-standard));
+  background-repeat: no-repeat;
+  background-attachment: fixed !important;
+  display: block;
+  height: 100%;
+  // min-height: 100%;
+  overflow-y: scroll;
+  @include rem(padding, 4.8, 0, 0);
+  position: fixed;
+    left: 0;
+    top: 0;
+  width: 100%;
+  z-index: 100;
 
-      scope.index = '-' + scope.index;
-
-      scope.$watch('model', function(newValue, oldValue) {
-        var templateUrl = scope.model.inputData.templateUrl;
-
-        $http.get(templateUrl).success(function(template) {
-          // Replace guhInput-directive with proper HTML input
-          element.html(template);
-          $compile(element.contents())(scope);
-        });
-      });
-    }
+  .overlay {
+    z-index: 200;  
   }
+}
 
-}());
+.overlay.center-content {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  .info-center {
+    margin-top: -40%;
+  }
+}

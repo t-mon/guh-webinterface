@@ -20,22 +20,15 @@
   SOFTWARE.
 -->
 
-<!-- Events -->
-<ul class="list" ng-show="addRule.eventDescriptors.length > 0">
-  <li class="list-item" ng-repeat="eventDescriptor in addRule.eventDescriptors track by $index">{{ eventDescriptor.device.name }}: {{ eventDescriptor.name }}</li>
-</ul>
-
-<guh-wizard ng-if="addRule.show.addEvent">
-  <guh-wizard-step>
-    <!-- List devices -->
-    <ul classt="list">
-      <li class="list-item" ng-click="addRule.selectDevice(device)" ng-repeat="device in addRule.devicesWithEventTypes track by $index">{{ device.name }}</li>
-    </ul>
-  </guh-wizard-step>
-  <guh-wizard-step>
-    <!-- List events -->
-    <guh-device-class model="addRule.currentDevice.deviceClass" save-event-descriptor="addRule.saveEventDescriptor(eventTypeData)" show="{events:true}"></guh-device-class>
-  </guh-wizard-step>
-</guh-wizard>
-
-<p><button ng-click="addRule.addEvent()" type="button">Add Event</button></p>
+<!-- TODO: Verify validation (http://stackoverflow.com/questions/12010552/jquery-javascript-mac-address-validation) -->
+<div ng-form="subForm">
+  <p>
+    <label for="input-{{ model.name | stringDash }}{{ '-' + index || '' }}">{{ model.name }}</label>
+    <input id="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" ng-model="data.inputData.value" ng-pattern="/^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/" name="input-{{ model.name | stringDash }}{{ '-' + index || '' }}" type="text" />
+  </p>
+  
+  <div ng-messages="subForm.input.$error" ng-if="subForm.input.$dirty">
+    <p ng-message="required">Field is required.</p>
+    <p ng-message="pattern">Entered MAC addres ist not valid.</p>
+  </div>
+</div>
