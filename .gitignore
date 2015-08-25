@@ -1,7 +1,8 @@
 # Gulp #
 ########
 .sass-cache
-build
+dist
+docs
 
 # Node (https://github.com/github/gitignore/blob/master/Node.gitignore) #
 #########################################################################

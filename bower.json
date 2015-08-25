@@ -1,0 +1,80 @@
+{
+  "name": "guh-webinterface",
+  "version": "0.1.0",
+  "authors": [
+    "Lukas Mayerhofer <lukas.mayerhofer@guh.guru>"
+  ],
+  "description": "Webinterface of guh (gear up your home)",
+  "main": "gulpfile.js",
+  "license": "MIT",
+  "homepage": "http://www.guh.guru",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "**/*_test.js",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.3",
+    "angular-hotkeys": "chieffancypants/angular-hotkeys#~1.4.5",
+    "angular-ui-router": "~0.2.15",
+    "guh-libjs": "guh/guh-libjs",
+    "lodash": "~3.10.0",
+    "js-data": "~2.2.3",
+    "js-data-angular": "~3.0.0",
+    "reconnectingWebsocket": "~1.0.0",
+    "angular-animate": "~1.4.3",
+    "angular-messages": "~1.4.3",
+    "angular-sanitize": "~1.4.3",
+    "ngDialog": "~0.4.0"
+  },
+  "devDependencies": {},
+  "overrides": {
+    "angular": {
+      "main": "./angular.js"
+    },
+    "angular-animate": {
+      "main": "./angular-animate.js"
+    },
+    "angular-hotkeys": {
+      "main": "./build/hotkeys.js"
+    },
+    "angular-messages": {
+      "main": "./angular-messages.js"
+    },
+    "angular-sanitize": {
+      "main": "./angular-sanitize.js"
+    },
+    "angular-ui-router": {
+      "main": "./release/angular-ui-router.js"
+    },
+    "guh-libjs": {
+      "main": "./dist/guh-libjs.js"
+    },
+    "js-data": {
+      "main": {
+        "development": "./dist/js-data-debug.js",
+        "production": "./dist/js-data.js"
+      }
+    },
+    "js-data-angular": {
+      "main": "./dist/js-data-angular.js"
+    },
+    "lodash": {
+      "main": "./lodash.js"
+    },
+    "ngDialog": {
+      "main": [
+        "./css/ngDialog.css",
+        "./js/ngDialog.js"
+      ]
+    },
+    "reconnectingWebsocket": {
+      "main": "./reconnecting-websocket.js"
+    }
+  },
+  "resolutions": {
+    "angular": "~1.4.3"
+  }
+}

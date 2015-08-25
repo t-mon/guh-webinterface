@@ -1,0 +1,70 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                                     *
+ * Copyright (C) 2015 Lukas Mayerhofer <lukas.mayerhofer@guh.guru>                     *
+ *                                                                                     *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy        *
+ * of this software and associated documentation files (the "Software"), to deal       *
+ * in the Software without restriction, including without limitation the rights        *
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell           *
+ * copies of the Software, and to permit persons to whom the Software is               *
+ * furnished to do so, subject to the following conditions:                            *
+ *                                                                                     *
+ * The above copyright notice and this permission notice shall be included in all      *
+ * copies or substantial portions of the Software.                                     *
+ *                                                                                     *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR          *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,            *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE         *
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER              *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,       *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE       *
+ * SOFTWARE.                                                                           *
+ *                                                                                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+/*
+ * Create gradient single stop for baseline
+ *
+ */
+
+@function baseline-stop($visual-grid-baseline, $color: $visual-grid-baseline-color, $opacity: $visual-grid-opacity) {
+  $transparent: transparent;
+
+  $values: (rgba($color, $opacity) 0, $transparent 0);
+  $values: append($values, $transparent $visual-grid-baseline - 1, comma);
+  $values: append($values, rgba($color, $opacity) $visual-grid-baseline - 1, comma);
+  $values: append($values, rgba($color, $opacity) $visual-grid-baseline, comma);
+
+  @return $values;
+}
+
+
+/*
+ * Create gradient single stop for striped background
+ * Code from bourbon-neat/app/assets/stylesheets/functions/_private.scss
+ *
+ */
+// @function gradient-stops($grid-columns, $color: $visual-grid-color) {
+//   $transparent: transparent;
+
+//   $column-width: flex-grid(1, $grid-columns);
+//   $gutter-width: flex-gutter($grid-columns);
+//   $column-offset: $column-width;
+
+//   $values: ($transparent 0, $color 0);
+
+//   @for $i from 1 to $grid-columns*2 {
+//     @if is-even($i) {
+//       $values: append($values, $transparent $column-offset, comma);
+//       $values: append($values, $color $column-offset, comma);
+//       $column-offset: $column-offset + $column-width;
+//     } @else {
+//       $values: append($values, $color $column-offset, comma);
+//       $values: append($values, $transparent $column-offset, comma);
+//       $column-offset: $column-offset + $gutter-width;
+//     }
+//   }
+
+//   @return $values;
+// }
