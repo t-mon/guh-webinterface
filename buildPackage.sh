@@ -14,4 +14,6 @@ npm install
 bower install
 gulp -e production -d
 
+mv dist/docs ./
+
 debuild -us -uc
