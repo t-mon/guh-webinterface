@@ -12,6 +12,8 @@ echo "License check PASSED"
 
 npm install
 bower install
-gulp
+gulp -e production -d
+
+mv dist/docs ./
 
 debuild -us -uc
