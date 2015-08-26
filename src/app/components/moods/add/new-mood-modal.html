@@ -29,8 +29,6 @@
 
 <div guh-wizard handle="newMood" show-navigation="true">
   <div guh-wizard-step class="list" title="What should this mood do when turned on?">
-    <!-- <h3 class="wizard-title">What should this mood do when turned on?</h3> -->
-
     <div ng-if="newMood.actionDevices.length === 0">No configured devices where found which can be controlled with a mood.</div>
     <div ng-repeat="device in newMood.actionDevices | orderBy: 'name' track by $index" ng-if="newMood.actionDevices.length > 0" class="list">
       <!-- Device -->
@@ -63,7 +61,7 @@
   </div>
 
   <div guh-wizard-step title="What should this mood do when turned off?">
-    <guh-form name="set-action-params"
+    <guh-form name="setActionParams"
               on-form-submit="newMood.addEnterActionParams(params)"
               class="list">
 
@@ -77,17 +75,4 @@
       <button type="submit" class="full">Save action details</button>
     </guh-form>
   </div>
-
-  <!-- <div guh-wizard-step ng-include="'app/components/moods/add/add-actions-wizard.html'"></div> -->
-
-<!--   <div guh-wizard-step>
-    <guh-form-field label="Name"
-                    name="Name"
-                    on-value-change="newMood.setName(params)"
-                    param-type="newMood.name",
-                    template="app/shared/ui/form/form-field-templates/form-field-text.html"
-                    class="item"></guh-form-field>
-
-    <button ng-click="newMood.save()" class="full">Save mood</button>
-  </div> -->
 </div>
