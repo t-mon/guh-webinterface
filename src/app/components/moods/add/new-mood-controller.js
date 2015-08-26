@@ -127,7 +127,7 @@
         if(actionType.paramTypes.length > 0) {
           vm.selectedActionDevice = device;
           vm.selectedActionType = actionType;
-          $rootScope.$broadcast('wizard.next', 'newMood');
+          $rootScope.$broadcast('wizard.next', 'addEnterActions');
         }
 
         // Add "selected" class
@@ -151,7 +151,7 @@
     function addEnterActionParams(params) {
       var ruleAction = _getRuleActionData(vm.selectedActionDevice, vm.selectedActionType, params);
       vm.rule.actions[vm.rule.actions.length - 1] = ruleAction;
-      $rootScope.$broadcast('wizard.prev', 'newMood');
+      $rootScope.$broadcast('wizard.prev', 'addEnterActions');
     }
 
     function addExitActionParams(params) {
