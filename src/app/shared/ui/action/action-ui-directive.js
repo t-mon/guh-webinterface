@@ -123,7 +123,9 @@
       }
 
 
-      function actionLink(scope, element, attrs) {}
+      function actionLink(scope, element, attrs) {
+        /* jshint unused: false */
+      }
     }
 
 }());

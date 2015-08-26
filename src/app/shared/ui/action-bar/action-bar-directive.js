@@ -58,9 +58,7 @@
         vm.openEditModal = openEditModal;
         vm.closeAddModal = closeAddModal;
         vm.closeEditModal = closeEditModal;
-        vm.addModal;
-        vm.editModal;
-        vm.modal;
+        vm.modal = null;
         
         var stateCtrlAs = '';
         var stateCtrlAsSingular = '';

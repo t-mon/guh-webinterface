@@ -96,11 +96,11 @@
      */
 
     function _findAllDevices(bypassCache) {
-      // if(bypassCache) {
+      if(bypassCache) {
         return DSDevice.findAll({}, { bypassCache: true });
-      // }
+      }
       
-      // return DSDevice.findAll();
+      return DSDevice.findAll();
     }
 
 
@@ -145,7 +145,7 @@
 
     
     // Initialize controller
-    _loadViewData();
+    _loadViewData(true);
 
   }
 

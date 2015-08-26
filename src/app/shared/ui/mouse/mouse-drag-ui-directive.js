@@ -34,7 +34,6 @@
     mouseDrag.$inject = ['$log', '$document'];
 
     function mouseDrag($log, $document) {
-      var id = 0;
       var directive = {
         link: mouseDragLink,
         restrict: 'A'
@@ -49,8 +48,6 @@
         var startTypes = 'touchstart mousedown';
         var startX;
         var startY;
-        var dragX;
-        var dragY;
 
 
         element.bind(startTypes, _startDrag);
@@ -77,7 +74,7 @@
           scope.$eval(attrs.guhMouseDrag);
         }
 
-        function _stopDrag(event) {
+        function _stopDrag() {
           $document.unbind(moveTypes);
         }
       }

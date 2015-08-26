@@ -70,7 +70,7 @@
       return DSDevice.findAll();
     }
 
-    function _removeRule(rule) {
+    function _removeRule() {
       return vm.rule.remove();
     }
 
@@ -85,7 +85,7 @@
           device
             .remove()
             .then(function() {
-              _removeRule(vm.rule);
+              _removeRule();
             });
         }
       });

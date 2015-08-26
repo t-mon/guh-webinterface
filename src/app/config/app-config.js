@@ -33,12 +33,16 @@
         websocket: 'ws'
       };
       var host = {
-        restApi: '10.0.0.2',
-        websocket: '10.0.0.2'
+        // restApi: '10.0.0.2',
+        // websocket: '10.0.0.2'
+        restApi: '172.16.43.129',
+        websocket: '172.16.43.129'
       };
       var port = {
-        restApi: '3000',
-        websocket: '3000'
+        // restApi: '3000',
+        // websocket: '3000'
+        restApi: '3333',
+        websocket: '4444'
       };
       var environment = 'development';
 

@@ -29,9 +29,9 @@
     .module('guh.utils')
     .factory('File', FileFactory);
 
-  FileFactory.$inject = ['$log', '$q', 'app'];
+  FileFactory.$inject = [];
 
-  function FileFactory($log, $q, app) {
+  function FileFactory() {
     
     var File = {
       checkFile: checkFile
