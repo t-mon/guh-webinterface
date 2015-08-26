@@ -33,8 +33,8 @@
         websocket: 'ws'
       };
       var host = {
-        restApi: '172.0.0.1',
-        websocket: '172.0.0.1'
+        restApi: '127.0.0.1',
+        websocket: '127.0.0.1'
       };
       var port = {
         restApi: '3333',
