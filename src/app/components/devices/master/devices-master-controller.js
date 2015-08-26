@@ -100,11 +100,11 @@
      */
 
     function _findAllDevices(bypassCache) {
-      // if(bypassCache) {
+      if(bypassCache) {
         return DSDevice.findAll({}, { bypassCache: true });
-      // }
+      }
       
-      // return DSDevice.findAll();
+      return DSDevice.findAll();
     }
 
 
@@ -164,12 +164,6 @@
         controller: 'NewDeviceCtrl',
         controllerAs: 'newDevice',
         overlay: false,
-        preCloseCallback: function(value) {
-          if(confirm('Are you sure you want to close without saving your changes?')) {
-            return true;
-          }
-          return false;
-        },
         template: 'app/components/devices/add/new-device-modal.html'
       });
     }
@@ -179,7 +173,7 @@
     // if(angular.isDefined(initialData) && angular.isDefined(initialData.devices)) {
     //   _loadViewData(true);
     // } else {
-      _loadViewData(false);
+      _loadViewData(true);
     // }
 
   }

@@ -106,7 +106,9 @@
       }
 
 
-      function formLink(scope, element, attrs) {}
+      function formLink(scope, element, attrs) {
+        /* jshint unused: false */
+      }
     }
 
 }());

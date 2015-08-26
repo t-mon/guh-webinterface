@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhWizardNavigation', wizardNavigation);
 
-  wizardNavigation.$inject = ['$log'];
+  wizardNavigation.$inject = [];
 
-  function wizardNavigation($log) {
+  function wizardNavigation() {
 
     var directive = {
       bindToController: {},

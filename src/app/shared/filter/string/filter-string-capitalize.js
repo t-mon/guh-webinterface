@@ -30,13 +30,11 @@
     .module('guh.filter')
     .filter('capitalize', filter);
 
-  filter.$inject = ['$log'];
+  filter.$inject = [];
 
   // Credits to: https://gist.github.com/paulakreuger/b2af1958f3d67f46447e
-  function filter($log) {
+  function filter() {
     return function(input) {
-      $log.log('input', input);
-
       if(input !== null) {
         var stringArr = input.split(' ');
         var result = '';
@@ -54,7 +52,7 @@
         
         return result;
       }
-    }
+    };
   }
 
 }());

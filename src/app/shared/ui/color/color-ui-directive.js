@@ -60,7 +60,7 @@
          */
 
         vm.error = false;
-        vm.firstColor;
+        vm.firstColor = null;
         vm.colorSaved = false;
 
 
@@ -98,14 +98,14 @@
               switch(key) {
                 case 'lightness':
                   if(!angular.isNumber(vm.lightness)) {
-                    $log.error('guh.ui.colorCtrl:controller | The value of parameter lightness has to be a number.');
+                    $log.error('guh.ui.colorCtrl:controller | The value of parameter lightness has to be a number.');
                     vm.error = true;
                   }
 
                   break;
                 case 'state':
                   if(!angular.isString(vm.state)) {
-                    $log.error('guh.ui.colorCtrl:controller | The value of parameter state has to be a string.');
+                    $log.error('guh.ui.colorCtrl:controller | The value of parameter state has to be a string.');
                     vm.error = true;
                   }
 
@@ -121,7 +121,7 @@
          */
 
         function getElementDimensions(element, selector) {
-          var selector = angular.isDefined(selector) ? selector : null;
+          selector = angular.isDefined(selector) ? selector : null;
           var computedStyles = window.getComputedStyle(element, selector);
 
           var dimensions = {
@@ -180,6 +180,7 @@
 
 
       function colorCompile(tElement, tAttrs) {
+        /* jshint unused: false */
 
         /*
          * Variables
@@ -249,7 +250,9 @@
           function _hsvToRgb(h, s, v) {
               var r, g, b, i, f, p, q, t;
               if (arguments.length === 1) {
-                  s = h.s, v = h.v, h = h.h;
+                  s = h.s;
+                  v = h.v;
+                  h = h.h;
               }
               i = Math.floor(h * 6);
               f = h * 6 - i;
@@ -257,12 +260,36 @@
               q = v * (1 - f * s);
               t = v * (1 - (1 - f) * s);
               switch (i % 6) {
-                  case 0: r = v, g = t, b = p; break;
-                  case 1: r = q, g = v, b = p; break;
-                  case 2: r = p, g = v, b = t; break;
-                  case 3: r = p, g = q, b = v; break;
-                  case 4: r = t, g = p, b = v; break;
-                  case 5: r = v, g = p, b = q; break;
+                  case 0:
+                    r = v;
+                    g = t;
+                    b = p;
+                    break;
+                  case 1:
+                    r = q;
+                    g = v;
+                    b = p;
+                    break;
+                  case 2:
+                    r = p;
+                    g = v;
+                    b = t;
+                    break;
+                  case 3:
+                    r = p;
+                    g = q;
+                    b = v;
+                    break;
+                  case 4:
+                    r = t;
+                    g = p;
+                    b = v;
+                    break;
+                  case 5:
+                    r = v;
+                    g = p;
+                    b = q;
+                    break;
               }
               return {
                   r: Math.round(r * 255),
@@ -303,7 +330,7 @@
               color.style.backgroundColor = hex;
               ctrl.state = hex;
             }
-          }
+          };
 
 
           if(!ctrl.error) {

@@ -63,7 +63,7 @@
             description: 'Toggles the layout grid for CSS development.',
             callback: scope.toggle
           });
-        }
+        };
 
 
         /*
@@ -73,7 +73,7 @@
 
         scope.toggle = function() {
           element.toggleClass(gridClass);
-        }
+        };
 
 
         /*

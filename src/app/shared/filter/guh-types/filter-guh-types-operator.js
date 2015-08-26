@@ -30,9 +30,9 @@
     .module('guh.filter')
     .filter('operator', filter);
 
-  filter.$inject = ['$log', 'app', 'libs'];
+  filter.$inject = [];
 
-  function filter($log, app, libs) {
+  function filter() {
     return function(input) {
       var operatorText = '';
 

@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhTabset', guhTabset);
 
-    guhTabset.$inject = ['$log'];
+    guhTabset.$inject = [];
 
-    function guhTabset($log) {
+    function guhTabset() {
       var directive = {
         controller: tabsetCtrl,
         controllerAs: 'tabset',
@@ -81,7 +81,9 @@
       }
 
 
-      function tabsetLink(scope, element, attrs) {}
+      function tabsetLink(scope, element, attrs) {
+        /* jshint unused: false */
+      }
     }
 
 }());
