@@ -31,7 +31,6 @@ var gulp = require('gulp');
 var plumber = require('gulp-plumber');
 var svgSprite = require('gulp-svg-sprite');
 var gulpIgnore = require('gulp-ignore');
-var size = require('gulp-size');
 
 
 /*
@@ -40,7 +39,6 @@ var size = require('gulp-size');
 
 var pathConfig = require('../config/gulp').paths;
 var svgSpriteConfig = require('../config/gulp').svgSprite;
-var sizeConfig = require('../config/gulp').size;
 
 
 /*
@@ -67,7 +65,6 @@ module.exports = {
 
     return gulp.src(pathConfig.svg.ui)
       .pipe(plumber())
-      .pipe(svgSprite(svgSpriteConfig))
-      .pipe(size(sizeConfig));
+      .pipe(svgSprite(svgSpriteConfig));
   }
 };
