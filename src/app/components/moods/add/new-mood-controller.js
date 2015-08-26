@@ -118,7 +118,6 @@
         // Remove ruleAction
         _removeRuleAction('enter', actionType);
         actionType.selected = _isSelected('enter', actionType);
-        $log.log('vm.rule', vm.rule);
       } else {
         // Add ruleAction
         var ruleAction = _getRuleActionData(device, actionType);
