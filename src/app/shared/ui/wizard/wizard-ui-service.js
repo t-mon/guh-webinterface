@@ -29,11 +29,11 @@
     .module('guh.ui')
     .factory('wizardService', wizardService);
 
-  wizardService.$inject = ['$log', '$rootScope', 'libs', 'app'];
+  wizardService.$inject = [];
 
-  function wizardService($log, $rootScope, libs, app) {
+  function wizardService() {
 
-    var wizardService = {
+    var factory = {
       // Data
       handleInstances: {},
 
@@ -42,15 +42,15 @@
       getByHandle: getByHandle
     };
 
-    return wizardService;
+    return factory;
 
     function addHandle(scope) {
-      wizardService.handleInstances[scope.wizard.handle] = scope;
+      factory.handleInstances[scope.wizard.handle] = scope;
     }
 
     function getByHandle(handle) {
       if(angular.isString(handle)) {
-        return wizardService.handleInstances[handle];
+        return factory.handleInstances[handle];
       }
 
       return undefined;

@@ -29,10 +29,9 @@
     .module('guh.ui')
     .directive('guhRange', guhRange);
 
-    guhRange.$inject = ['$log', '$window', '$timeout', 'libs'];
+    guhRange.$inject = ['$log', '$window', '$timeout'];
 
-    function guhRange($log, $window, $timeout, libs) {
-      var id = 0;
+    function guhRange($log, $window, $timeout) {
       var directive = {
         bindToController: {
           disabled: '=?',
@@ -58,7 +57,7 @@
       return directive;
 
 
-      function rangeCtrl($scope, $attrs) {
+      function rangeCtrl() {
 
         /* jshint validthis: true */
         var vm = this;
@@ -94,7 +93,7 @@
               switch(key) {
                 case 'min':
                   if(!angular.isNumber(vm.min)) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter min has to be a number.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter min has to be a number.');
                     vm.error = true;
                   }
 
@@ -102,7 +101,7 @@
 
                 case 'max':
                   if(!angular.isNumber(vm.max)) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter max has to be a number.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter max has to be a number.');
                     vm.error = true;
                   }
 
@@ -110,17 +109,17 @@
 
                 case 'stateMin':
                   if(!angular.isNumber(vm.stateMin)) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be a number.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be a number.');
                     vm.error = true;
                   }
 
                   if(vm.stateMin < vm.min || vm.stateMin > vm.max) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be between min=' + vm.min + ' and max=' + vm.max + '.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be between min=' + vm.min + ' and max=' + vm.max + '.');
                     vm.error = true;
                   }
 
-                  if(vm.stateMin > vm.stateMax) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be lower than or equal to stateMax=' + vm.stateMax + '.');
+                  if(vm.stateMin > vm.stateMax) {
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMin has to be lower than or equal to stateMax=' + vm.stateMax + '.');
                     vm.error = true;
                   }
 
@@ -128,17 +127,17 @@
 
                 case 'stateMax':
                   if(!angular.isNumber(vm.stateMax)) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be a number.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be a number.');
                     vm.error = true;
                   }
 
                   if(vm.stateMax < vm.min || vm.stateMin > vm.max) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be between min=' + vm.min + ' and max=' + vm.max + '.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be between min=' + vm.min + ' and max=' + vm.max + '.');
                     vm.error = true;
                   }
 
-                  if(vm.stateMax < vm.stateMin) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be greater than or equal to stateMin=' + vm.stateMax + '.');
+                  if(vm.stateMax < vm.stateMin) {
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stateMax has to be greater than or equal to stateMin=' + vm.stateMax + '.');
                     vm.error = true;
                   }
 
@@ -146,13 +145,13 @@
 
                 case 'stepSize':
                   if(!angular.isNumber(vm.stepSize)) {
-                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stepSize has to be a number.');
+                    $log.error('guh.ui.rangeCtrl:controller | The value of parameter stepSize has to be a number.');
                     vm.error = true;
                   }
 
                   if(vm.stepSize !== 0) {
                     if((vm.max - vm.min) % vm.stepSize !== 0) {
-                      $log.error('guh.ui.rangeCtrl:controller | The value of parameter stepSize has to be a multiple of range (max-min=' + (vm.max - vm.min) + ').');
+                      $log.error('guh.ui.rangeCtrl:controller |The value of parameter stepSize has to be a multiple of range (max-min=' + (vm.max - vm.min) + ').');
                       vm.error = true;
                     }
                   }
@@ -192,7 +191,6 @@
         // jQLite
         // var runner = angular.element(element[0].querySelector('.runner'));
         var runner = angular.element(element[0].getElementsByClassName('runner'));
-        var bar = angular.element(element[0].getElementsByClassName('bar'));
         var barActive = angular.element(element[0].getElementsByClassName('bar-active'));
         var minHandle = angular.element(element[0].querySelector('.handle.min'));
         var maxHandle = angular.element(element[0].querySelector('.handle.max'));
@@ -333,13 +331,13 @@
             var currentState = Math.round(ctrl.min + _percentToRange(minHandlePosition), 0);
 
             // Assign value only if stepSize (default: every 1 step)
-            if(currentState === ctrl.min || (currentState - ctrl.min) % ctrl.stepSize === 0) {
+            if(currentState === ctrl.min || (currentState - ctrl.min) % ctrl.stepSize === 0) {
               scope.range.stateMin = currentState;
             }
 
             ctrl.changeCallback();
           });
-        }
+        };
 
         // Drag maxHandle
         scope.dragMaxHandle = function($event) {
@@ -356,7 +354,7 @@
 
             ctrl.changeCallback();
           });
-        }
+        };
 
         // Resize window
         w.bind('resize', function() {

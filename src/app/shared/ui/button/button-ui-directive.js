@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhButton', guhButton);
 
-    guhButton.$inject = ['$log'];
+    guhButton.$inject = [];
 
-    function guhButton($log) {
+    function guhButton() {
       var directive = {
         bindToController: {
           label: '@',
@@ -48,41 +48,12 @@
       return directive;
 
 
-      function buttonCtrl() {
-        
-        /*
-         * Variables
-         */
-
-        /* jshint validthis: true */
-        var vm = this;
+      function buttonCtrl() {}
 
 
-        /*
-         * API
-         */
-
-        vm.setValue = setValue;
-
-
-        /*
-         * Private methods
-         */
-
-        function _init() {}
-
-
-        /*
-         * Public methods
-         */
-
-
-        _init();
-        
+      function buttonLink(scope, element, attrs) {
+        /* jshint unused: false */
       }
-
-
-      function formFieldLink(scope, element, attrs) {}
     }
 
 }());

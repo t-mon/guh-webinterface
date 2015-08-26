@@ -78,14 +78,6 @@ module.exports = {
     defaultProxyServer: 'localhost:3000'
   },
 
-  // Functions
-  dynamic: {
-    setSvgType: function(type) {
-      svgType = type;
-      console.log('svgType', type, svgType);
-    }
-  },
-
   // Plugins
   browserSync: {
     app: {

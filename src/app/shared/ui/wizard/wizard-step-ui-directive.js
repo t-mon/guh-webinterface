@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhWizardStep', wizardStep);
 
-  wizardStep.$inject = ['$log'];
+  wizardStep.$inject = [];
 
-  function wizardStep($log) {
+  function wizardStep() {
 
     var directive = {
       bindToController: {

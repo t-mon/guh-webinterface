@@ -70,7 +70,7 @@
       return DSVendor.findAll();
     }
 
-    function _findVendorRelations() {
+    function _findVendorRelations(vendor) {
       return DSVendor.loadRelations(vendor, ['deviceClass']);
     }
 
@@ -81,7 +81,7 @@
     function selectVendor(vendor) {
       // Check relations & set selected vendor
       if(angular.isUndefined(vendor.deviceClass) && vendor.deviceClass === {}) {
-        _findVendorRelations()
+        _findVendorRelations(vendor)
           .then(function(vendor) {
             vm.selectedVendor = vendor;
           });
@@ -103,7 +103,7 @@
       $rootScope.$broadcast('wizard.next', 'newService');
     }
 
-    function selectDeviceClass(deviceClass) {
+    function selectDeviceClass(deviceClass) {
       var createMethod = deviceClass.getCreateMethod();
       var setupMethod = deviceClass.getSetupMethod();
 
@@ -120,9 +120,6 @@
       vm.selectedDeviceClass = deviceClass;
       vm.createMethod = createMethod;
       vm.setupMethod = setupMethod;
-
-      $log.log('vm.createMethod', vm.createMethod);
-      $log.log('vm.setupMethod', vm.setupMethod)
 
       // Next step
       $rootScope.$broadcast('wizard.next', 'newService');

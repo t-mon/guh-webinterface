@@ -39,8 +39,8 @@
     .module('guh.moods')
     .controller('MoodsDetailCtrl', MoodsDetailCtrl);
 
-  MoodsDetailCtrl.$inject = ['$log'];
+  MoodsDetailCtrl.$inject = [];
 
-  function MoodsDetailCtrl($log) {}
+  function MoodsDetailCtrl() {}
 
 }());

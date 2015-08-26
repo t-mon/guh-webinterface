@@ -137,7 +137,6 @@
         function _setDefaults() {
           // Value
           if(angular.isDefined(vm.state) && vm.state !== null) {
-            // vm.value = (angular.isDefined(vm.state.defaultValue) && vm.state.defaultValue !== null) ? vm.state.defaultValue : _getDefault(vm.state.type);
             if(angular.isDefined(vm.state.value) && vm.state.value !== null) {
               vm.value = vm.state.value;
             } else if(angular.isDefined(vm.state.defaultValue) && vm.state.defaultValue !== null) {
@@ -176,7 +175,7 @@
         //   }
         // }
 
-        function _invokeCallback() {
+        function _invokeCallback() {
           // TODO: Validate if no parent form => not necessary?
 
           // if(vm.value === null) {
@@ -220,18 +219,18 @@
           var invokeWait;
           var invokeOptions;
 
-          if(typeof wait !== 'undefined') {
+          if(typeof wait !== 'undefined') {
             invokeWait = wait || 0;
           }
 
-          if(typeof options !== 'undefined') {
+          if(typeof options !== 'undefined') {
             invokeOptions = {
-              leading: options.leading || false,
+              leading: options.leading || false,
               trailing: options.trailing || true
             };
 
             if(typeof type !== 'undefined' && type === 'throttle') {
-              invokeOptions.maxWait = options.maxWait || invokeWait;
+              invokeOptions.maxWait = options.maxWait || invokeWait;
             }
           } else {
             invokeOptions = {

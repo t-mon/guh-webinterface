@@ -52,6 +52,7 @@
 
     function wizardCtrl() {
 
+      /* jshint validthis: true */
       var vm = this;
       var currentStep;
 

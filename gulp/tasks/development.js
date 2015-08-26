@@ -42,8 +42,6 @@ gulp.task('development', function(done) {
   // Setting node envrionment
   process.env.NODE_ENV = 'development';
 
-  console.log('isWatch', argsParser.isWatch());
-
   runSequence(
     'copy-fonts-development',
     'build-ui-svg-sprites',

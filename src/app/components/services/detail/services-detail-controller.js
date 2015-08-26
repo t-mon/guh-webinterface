@@ -172,7 +172,7 @@
       currentService
         .remove()
         .then(function(response) {
-          $log.log('Device succesfully removed');
+          $log.log('Device succesfully removed', response);
         })
         .catch(function(error) {
           // TODO: Build general error handler
