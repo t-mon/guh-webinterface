@@ -4,7 +4,3 @@ export DH_VERBOSE=1
 
 %:
 	dh $@ 
-
-override_dh_install:
-	dh_install dist/* /usr/share/guh-webinterface/public/
-	dh_install docs/* /usr/share/doc/guh-webinterface/html
