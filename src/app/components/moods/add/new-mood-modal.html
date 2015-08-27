@@ -32,30 +32,30 @@
 
     <div guh-wizard handle="addEnterActions" show-navigation="false">
       <div guh-wizard-step>
-        <div ng-if="newMood.actionDevices.length === 0">No configured devices where found which can be controlled with a mood.</div>
-        <div ng-repeat="device in newMood.actionDevices | orderBy: 'name' track by $index" ng-if="newMood.actionDevices.length > 0" class="list">
+        <div ng-if="newMood.enterActionDevices.length === 0">No configured devices where found which can be controlled with a mood.</div>
+        <div ng-repeat="device in newMood.enterActionDevices | orderBy: 'name' track by $index" ng-if="newMood.enterActionDevices.length > 0" class="list">
           <!-- Device -->
           <div class="item-divider">
             <span>{{ device.name }}, {{ device.deviceClass.name }}</span>
           </div>
 
           <!-- Actions -->
-          <p class="item" ng-class="{ 'selected': actionType.selected }" ng-if="actionType.paramTypes.length === 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+          <p class="item" ng-class="{ 'selected': newMood.selectedEnterActionTypes[actionType.id] }" ng-if="actionType.paramTypes.length === 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
             <span>{{ actionType.phrase }}</span>
-            <svg class="icon" ng-show="!actionType.selected">
+            <svg class="icon" ng-show="!newMood.selectedEnterActionTypes[actionType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#plus"></use>
             </svg>
-            <svg class="icon" ng-show="actionType.selected">
+            <svg class="icon" ng-show="newMood.selectedEnterActionTypes[actionType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
             </svg>
           </p>
-          <p class="item" ng-class="{ 'selected': actionType.selected }" ng-if="actionType.paramTypes.length > 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+          <p class="item" ng-class="{ 'selected': newMood.selectedEnterActionTypes[actionType.id] }" ng-if="actionType.paramTypes.length > 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
             <span>{{ actionType.phrase }}</span>
-            <svg class="icon" ng-show="!actionType.selected">
+            <svg class="icon" ng-show="!newMood.selectedEnterActionTypes[actionType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
             </svg>
-            <svg class="icon" ng-show="actionType.selected">
+            <svg class="icon" ng-show="newMood.selectedEnterActionTypes[actionType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
             </svg>
@@ -72,7 +72,7 @@
                           name="{{ paramType.name }}"
                           param-type="paramType"
                           template="{{ paramType.inputTemplateUrl }}"
-                          ng-repeat="paramType in newMood.selectedActionType.paramTypes track by $index"
+                          ng-repeat="paramType in newMood.selectedEnterActionType.paramTypes track by $index"
                           class="item"></guh-form-field>
 
           <button type="submit" class="full">Save action details</button>
@@ -81,7 +81,57 @@
     </div>
   </div>
 
-  <div guh-wizard-step title="What should this mood do when turned off?"></div>
+  <div guh-wizard-step title="What should this mood do when turned off?">
+    <div guh-wizard handle="addExitActions" show-navigation="false">
+      <div guh-wizard-step>
+        <div ng-if="newMood.exitActionDevices.length === 0">No configured devices where found which can be controlled with a mood.</div>
+        <div ng-repeat="device in newMood.exitActionDevices | orderBy: 'name' track by $index" ng-if="newMood.exitActionDevices.length > 0" class="list">
+          <!-- Device -->
+          <div class="item-divider">
+            <span>{{ device.name }}, {{ device.deviceClass.name }}</span>
+          </div>
+
+          <!-- Actions -->
+          <p class="item" ng-class="{ 'selected': newMood.selectedExitActionTypes[actionType.id] }" ng-if="actionType.paramTypes.length === 0" ng-click="newMood.selectExitAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+            <span>{{ actionType.selected }} {{ actionType.phrase }}</span>
+            <svg class="icon" ng-show="!newMood.selectedExitActionTypes[actionType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#plus"></use>
+            </svg>
+            <svg class="icon" ng-show="newMood.selectedExitActionTypes[actionType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
+            </svg>
+          </p>
+          <p class="item" ng-class="{ 'selected': newMood.selectedExitActionTypes[actionType.id] }" ng-if="actionType.paramTypes.length > 0" ng-click="newMood.selectExitAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+            <span>{{ actionType.phrase }}</span>
+            <svg class="icon" ng-show="!newMood.selectedExitActionTypes[actionType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
+            </svg>
+            <svg class="icon" ng-show="newMood.selectedExitActionTypes[actionType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
+            </svg>
+          </p>
+        </div>
+      </div>
+
+      <div guh-wizard-step>
+        <guh-form name="setActionParams"
+                  on-form-submit="newMood.addExitActionParams(params)"
+                  class="list">
+
+          <guh-form-field label="{{ paramType.name }}"
+                          name="{{ paramType.name }}"
+                          param-type="paramType"
+                          template="{{ paramType.inputTemplateUrl }}"
+                          ng-repeat="paramType in newMood.selectedExitActionType.paramTypes track by $index"
+                          class="item"></guh-form-field>
+
+          <button type="submit" class="full">Save action details</button>
+        </guh-form>
+      </div>
+    </div>
+  </div>
 
   <div guh-wizard-step title="How should this mood be called?"></div>
 </div>

@@ -46,9 +46,15 @@
     // View data
     var vm = this;
     vm.rule = {};
-    vm.actionDevices = [];
-    vm.selectedActionDevice = {};
-    vm.selectedActionType = {};
+    vm.enterActionDevices = [];
+    vm.exitActionDevices = [];
+    vm.selectedEnterActionDevice = {};
+    vm.selectedExitActionDevice = {};
+    vm.selectedEnterActionType = {};
+    vm.selectedExitActionType = {};
+
+    vm.selectedEnterActionTypes = {};
+    vm.selectedExitActionTypes = {};
 
     // View methods
     vm.selectEnterAction = selectEnterAction;
@@ -72,7 +78,33 @@
     function _setActionDevices() {
       // TODO: Replace this with initialData from app-routes.js (new dialog/modal service needed)
       var devices = DSDevice.getAll();
-      vm.actionDevices = devices.filter(_hasActions);
+      var actionDevices = devices.filter(_hasActions);
+
+      vm.enterActionDevices = actionDevices.map(function(actionDevice) {
+        var actionDeviceDeepCopy = angular.copy(actionDevice);
+
+        actionDeviceDeepCopy.deviceClass.actionTypes = actionDeviceDeepCopy.deviceClass.actionTypes.map(function(actionType) {
+          var actionTypeDeepCopy = angular.copy(actionType);
+
+          return actionTypeDeepCopy;
+        });
+
+        return actionDeviceDeepCopy;
+      });
+      // $log.log('vm.enterActionDevices', vm.enterActionDevices);
+
+      vm.exitActionDevices = actionDevices.map(function(actionDevice) {
+        var actionDeviceDeepCopy = angular.copy(actionDevice);
+
+        actionDeviceDeepCopy.deviceClass.actionTypes = actionDeviceDeepCopy.deviceClass.actionTypes.map(function(actionType) {
+          var actionTypeDeepCopy = angular.copy(actionType);
+
+          return actionTypeDeepCopy;
+        });
+
+        return actionDeviceDeepCopy;
+      });
+      // $log.log('vm.exitActionDevices', vm.exitActionDevices);
     }
 
     function _hasActions(device) {
@@ -114,10 +146,12 @@
     }
 
     function selectEnterAction(device, actionType) {
-      if(actionType.selected) {
+      // if(actionType.selected) {
+      if(vm.selectedEnterActionTypes[actionType.id]) {
         // Remove ruleAction
         _removeRuleAction('enter', actionType);
-        actionType.selected = _isSelected('enter', actionType);
+        // actionType.selected = _isSelected('enter', actionType);
+        vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
       } else {
         // Add ruleAction
         var ruleAction = _getRuleActionData(device, actionType);
@@ -125,39 +159,60 @@
         vm.rule.actions.push(ruleAction);
 
         if(actionType.paramTypes.length > 0) {
-          vm.selectedActionDevice = device;
-          vm.selectedActionType = actionType;
+          vm.selectedEnterActionDevice = device;
+          vm.selectedEnterActionType = actionType;
           $rootScope.$broadcast('wizard.next', 'addEnterActions');
         }
 
         // Add "selected" class
-        actionType.selected = _isSelected('enter', actionType);
+        // actionType.selected = _isSelected('enter', actionType);
+        vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
       }
+
+      $log.log('vm.rule', vm.rule);
     }
 
     function selectExitAction(device, actionType) {
-      var ruleAction = _getRuleActionData(device, actionType);
-
-      if(actionType.paramTypes.length === 0) {
-        vm.rule.exitActions.push(ruleAction);
-        actionType.selected = _isSelected('enter', actionType);
+      // if(actionType.selected) {
+      if(vm.selectedExitActionTypes[actionType.id]) {
+        // Remove ruleAction
+        _removeRuleAction('exit', actionType);
+        // actionType.selected = _isSelected('exit', actionType);
+        vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
       } else {
-        vm.selectedActionDevice = device;
-        vm.selectedActionType = actionType;
-        $rootScope.$broadcast('wizard.next', 'newMood');
+        // Add ruleAction
+        var ruleAction = _getRuleActionData(device, actionType);
+
+        if(angular.isUndefined(vm.rule.exitActions)) {
+          vm.rule.exitActions = [];
+        }
+
+        vm.rule.exitActions.push(ruleAction);
+
+        if(actionType.paramTypes.length > 0) {
+          vm.selectedExitActionDevice = device;
+          vm.selectedExitActionType = actionType;
+          $rootScope.$broadcast('wizard.next', 'addExitActions');
+        }
+
+        // Add "selected" class
+        // actionType.selected = _isSelected('exit', actionType);
+        vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
       }
+
+      $log.log('vm.rule', vm.rule);
     }
 
     function addEnterActionParams(params) {
-      var ruleAction = _getRuleActionData(vm.selectedActionDevice, vm.selectedActionType, params);
+      var ruleAction = _getRuleActionData(vm.selectedEnterActionDevice, vm.selectedEnterActionType, params);
       vm.rule.actions[vm.rule.actions.length - 1] = ruleAction;
       $rootScope.$broadcast('wizard.prev', 'addEnterActions');
     }
 
     function addExitActionParams(params) {
-      var ruleAction = _getRuleActionData(vm.selectedActionDevice, vm.selectedActionType, params);
+      var ruleAction = _getRuleActionData(vm.selectedExitActionDevice, vm.selectedExitActionType, params);
       vm.rule.exitActions[vm.rule.exitActions.length - 1] = ruleAction;
-      $rootScope.$broadcast('wizard.prev', 'newMood');
+      $rootScope.$broadcast('wizard.prev', 'addExitActions');
     }
 
 
