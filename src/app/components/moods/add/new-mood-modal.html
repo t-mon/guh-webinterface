@@ -133,5 +133,21 @@
     </div>
   </div>
 
-  <div guh-wizard-step title="How should this mood be called?"></div>
+  <div guh-wizard-step title="How should this mood be called?">
+    <guh-form name="setName"
+              on-form-submit="newMood.save(params)"
+              class="list">
+
+      <guh-form-field  label="Name"
+                       name="Name"
+                       param-type="newMood.rule.name"
+                       template="app/shared/ui/form/form-field-templates/form-field-text.html"
+                       class="item"></guh-form-field>
+
+      <footer>
+        <button type="submit" ng-disabled="newMood.loading" class="full">Save mood</button>
+      </footer>
+
+    </guh-form>
+  </div>
 </div>

@@ -39,9 +39,9 @@
     .module('guh.moods')
     .controller('NewMoodCtrl', NewMoodCtrl);
 
-  NewMoodCtrl.$inject = ['$log', '$rootScope', 'DSDevice', 'libs'];
+  NewMoodCtrl.$inject = ['$log', '$rootScope', '$scope', '$state', 'DSDevice', 'DSRule', 'libs'];
 
-  function NewMoodCtrl($log, $rootScope, DSDevice, libs) {
+  function NewMoodCtrl($log, $rootScope, $scope, $state, DSDevice, DSRule, libs) {
 
     // View data
     var vm = this;
@@ -61,13 +61,14 @@
     vm.selectExitAction = selectExitAction;
     vm.addEnterActionParams = addEnterActionParams;
     vm.addExitActionParams = addExitActionParams;
+    vm.save = save;
 
 
     function _init() {
       // Prepare rule object
       vm.rule = {
         actions: [],
-        enabled: false,
+        enabled: true,
         name: ''
       };
 
@@ -80,31 +81,8 @@
       var devices = DSDevice.getAll();
       var actionDevices = devices.filter(_hasActions);
 
-      vm.enterActionDevices = actionDevices.map(function(actionDevice) {
-        var actionDeviceDeepCopy = angular.copy(actionDevice);
-
-        actionDeviceDeepCopy.deviceClass.actionTypes = actionDeviceDeepCopy.deviceClass.actionTypes.map(function(actionType) {
-          var actionTypeDeepCopy = angular.copy(actionType);
-
-          return actionTypeDeepCopy;
-        });
-
-        return actionDeviceDeepCopy;
-      });
-      // $log.log('vm.enterActionDevices', vm.enterActionDevices);
-
-      vm.exitActionDevices = actionDevices.map(function(actionDevice) {
-        var actionDeviceDeepCopy = angular.copy(actionDevice);
-
-        actionDeviceDeepCopy.deviceClass.actionTypes = actionDeviceDeepCopy.deviceClass.actionTypes.map(function(actionType) {
-          var actionTypeDeepCopy = angular.copy(actionType);
-
-          return actionTypeDeepCopy;
-        });
-
-        return actionDeviceDeepCopy;
-      });
-      // $log.log('vm.exitActionDevices', vm.exitActionDevices);
+      vm.enterActionDevices = angular.copy(actionDevices);
+      vm.exitActionDevices = angular.copy(actionDevices);
     }
 
     function _hasActions(device) {
@@ -150,7 +128,6 @@
       if(vm.selectedEnterActionTypes[actionType.id]) {
         // Remove ruleAction
         _removeRuleAction('enter', actionType);
-        // actionType.selected = _isSelected('enter', actionType);
         vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
       } else {
         // Add ruleAction
@@ -165,11 +142,8 @@
         }
 
         // Add "selected" class
-        // actionType.selected = _isSelected('enter', actionType);
         vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
       }
-
-      $log.log('vm.rule', vm.rule);
     }
 
     function selectExitAction(device, actionType) {
@@ -177,7 +151,6 @@
       if(vm.selectedExitActionTypes[actionType.id]) {
         // Remove ruleAction
         _removeRuleAction('exit', actionType);
-        // actionType.selected = _isSelected('exit', actionType);
         vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
       } else {
         // Add ruleAction
@@ -196,11 +169,8 @@
         }
 
         // Add "selected" class
-        // actionType.selected = _isSelected('exit', actionType);
         vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
       }
-
-      $log.log('vm.rule', vm.rule);
     }
 
     function addEnterActionParams(params) {
@@ -213,6 +183,28 @@
       var ruleAction = _getRuleActionData(vm.selectedExitActionDevice, vm.selectedExitActionType, params);
       vm.rule.exitActions[vm.rule.exitActions.length - 1] = ruleAction;
       $rootScope.$broadcast('wizard.prev', 'addExitActions');
+    }
+
+    function save(params) {
+      // Set name
+      vm.rule.name = params[0].value;
+
+      DSRule
+        .create(vm.rule)
+        .then(function(rule) {
+          $log.log('guh.moods.NewMoodCtrl:controller | Rule created successfully.', rule);
+
+          $scope.closeThisDialog();
+
+          $state.go('guh.moods.master', { bypassCache: true }, {
+            reload: true,
+            inherit: false,
+            notify: true
+          });
+        })
+        .catch(function(error) {
+          $log.log('guh.moods.NewMoodCtrl:controller | Rule not created.', error);
+        });
     }
 
 
