@@ -48,8 +48,10 @@
     vm.rule = {};
     vm.enterActionDevices = [];
     vm.exitActionDevices = [];
+
     vm.selectedEnterActionDevice = {};
     vm.selectedExitActionDevice = {};
+
     vm.selectedEnterActionType = {};
     vm.selectedExitActionType = {};
 
@@ -124,11 +126,10 @@
     }
 
     function selectEnterAction(device, actionType) {
-      // if(actionType.selected) {
-      if(vm.selectedEnterActionTypes[actionType.id]) {
+      if(vm.selectedEnterActionTypes[device.id] && vm.selectedEnterActionTypes[device.id][actionType.id]) {
         // Remove ruleAction
         _removeRuleAction('enter', actionType);
-        vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
+        vm.selectedEnterActionTypes[device.id][actionType.id] = _isSelected('enter', actionType);
       } else {
         // Add ruleAction
         var ruleAction = _getRuleActionData(device, actionType);
@@ -142,16 +143,18 @@
         }
 
         // Add "selected" class
-        vm.selectedEnterActionTypes[actionType.id] = _isSelected('enter', actionType);
+        if(!vm.selectedEnterActionTypes[device.id]) {
+          vm.selectedEnterActionTypes[device.id] = {};
+        }
+        vm.selectedEnterActionTypes[device.id][actionType.id] = _isSelected('enter', actionType);
       }
     }
 
     function selectExitAction(device, actionType) {
-      // if(actionType.selected) {
-      if(vm.selectedExitActionTypes[actionType.id]) {
+      if(vm.selectedExitActionTypes[device.id] && vm.selectedExitActionTypes[device.id][actionType.id]) {
         // Remove ruleAction
         _removeRuleAction('exit', actionType);
-        vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
+        vm.selectedExitActionTypes[device.id][actionType.id] = _isSelected('exit', actionType);
       } else {
         // Add ruleAction
         var ruleAction = _getRuleActionData(device, actionType);
@@ -169,7 +172,10 @@
         }
 
         // Add "selected" class
-        vm.selectedExitActionTypes[actionType.id] = _isSelected('exit', actionType);
+        if(!vm.selectedExitActionTypes[device.id]) {
+          vm.selectedExitActionTypes[device.id] = {};
+        }
+        vm.selectedExitActionTypes[device.id][actionType.id] = _isSelected('exit', actionType);
       }
     }
 
