@@ -39,8 +39,172 @@
     .module('guh.moods')
     .controller('MoodsDetailCtrl', MoodsDetailCtrl);
 
-  MoodsDetailCtrl.$inject = [];
+  MoodsDetailCtrl.$inject = ['$log', 'app', '$state', '$stateParams', 'DSRule', 'DSDevice', 'DSEventType', 'DSStateType', 'DSActionType'];
 
-  function MoodsDetailCtrl() {}
+  function MoodsDetailCtrl($log, app, $state, $stateParams, DSRule, DSDevice, DSEventType, DSStateType, DSActionType) {
+
+    var vm = this;
+
+    // Public variables
+
+    // Public methods
+    vm.remove = remove;
+
+    function _loadViewData(bypassCache) {
+      var moodId = $stateParams.moodId;
+
+      if(angular.isUndefined(moodId)) {
+        $state.go('guh.moods.master');
+        return;
+      }
+
+      _findMood(bypassCache, moodId)
+        .then(function(mood) {
+          $log.log('mood', mood);
+
+          vm.actions = mood.actions;
+          vm.active = mood.active;
+          vm.enabled = mood.enabled;
+          vm.eventDescriptors = mood.eventDescriptors;
+          vm.exitActions = mood.exitActions;
+          vm.id = mood.id;
+          vm.name = mood.name;
+          vm.stateEvaluator = mood.stateEvaluator;
+
+          // Event descriptors
+          angular.forEach(vm.eventDescriptors, function(eventDescriptor, index) {
+            // _findDevice(eventDescriptor.deviceId)
+            //   .then(function(device) {
+            //     vm.eventDescriptors[index].device = device;
+            //   });
+
+            _findEventType(bypassCache, eventDescriptor.eventTypeId)
+              .then(function(eventType) {
+                // vm.eventDescriptors[index].name = eventType.name;
+                vm.eventDescriptors[index].phrase = eventType.phrase;
+              });
+          });
+
+          // State evaluator
+          if(angular.isDefined(vm.stateEvaluator) && angular.isDefined(vm.stateEvaluator.stateDescriptor)) {
+            _findStateType(bypassCache, vm.stateEvaluator.stateDescriptor.stateTypeId)
+              .then(function(stateType) {
+                vm.stateEvaluator.stateDescriptor.phrase = stateType.phrase;
+              });
+          }
+          angular.forEach(vm.stateEvaluator.childEvaluators, function(stateEvaluator) {
+            if(angular.isDefined(stateEvaluator.stateDescriptor)) {
+              _findStateType(bypassCache, stateEvaluator.stateDescriptor.stateTypeId)
+                .then(function(stateType) {
+                  vm.stateEvaluator.stateDescriptor.phrase = stateType.phrase;
+                });
+            }
+          });
+
+          // Enter actions
+          angular.forEach(vm.actions, function(action, index) {
+            _findActionType(bypassCache, action.actionTypeId)
+              .then(function(actionType) {
+                // vm.actions[index].name = actionType.name;
+                vm.actions[index].phrase = actionType.phrase;
+              });
+
+            // RuleActionParams
+            angular.forEach(action.ruleActionParams, function(ruleActionParam) {
+              $log.log('ruleActionParam', ruleActionParam);
+
+              if(angular.isUndefined(ruleActionParam.value)) {
+                ruleActionParam.value = null;
+              }
+
+              if(angular.isDefined(ruleActionParam.eventTypeId)) {
+                _findEventType(bypassCache, ruleActionParam.eventTypeId)
+                  .then(function(eventType) {
+                    $log.log('EVENTTYPE', eventType);
+                    ruleActionParam.eventType = eventType;
+                  });
+              }
+            });
+          });
+
+          // Exit actions
+          angular.forEach(vm.exitActions, function(exitAction, index) {
+            $log.log('exitAction', exitAction);
+
+            _findActionType(bypassCache, exitAction.actionTypeId)
+              .then(function(actionType) {
+                // vm.exitActions[index].name = actionType.name;
+                vm.exitActions[index].phrase = actionType.phrase;
+              });
+
+            // RuleActionParams
+            angular.forEach(exitAction.ruleActionParams, function(ruleActionParam) {
+              $log.log('ruleActionParam', ruleActionParam);
+
+              if(angular.isUndefined(ruleActionParam.value)) {
+                ruleActionParam.value = null;
+              }
+
+              if(angular.isDefined(ruleActionParam.eventTypeId)) {
+                _findEventType(bypassCache, ruleActionParam.eventTypeId)
+                  .then(function(eventType) {
+                    $log.log('EVENTTYPE', eventType);
+                    ruleActionParam.eventType = eventType;
+                  });
+              }
+            });
+          });
+        });
+    }
+
+    function _findMood(bypassCache, moodId) {
+      if(bypassCache) {
+        return DSRule.find(moodId, { bypassCache: true });
+      }
+      
+      return DSRule.find(moodId);
+    }
+
+    // function _findDevice(deviceId) {
+    //   if(bypassCache) {
+    //     return DSDevice.find(deviceId, { bypassCache: true });
+    //   }
+
+    //   return DSDevice.find(deviceId);
+    // }
+
+    function _findEventType(bypassCache, eventTypeId) {
+      if(bypassCache) {
+        return DSEventType.find(eventTypeId, { bypassCache: true });
+      }
+
+      return DSEventType.find(eventTypeId);
+    }
+
+    function _findStateType(bypassCache, stateTypeId) {
+      if(bypassCache) {
+        return DSStateType.find(stateTypeId, { bypassCache: true });
+      }
+
+      return DSStateType.find(stateTypeId);
+    }
+
+    function _findActionType(bypassCache, actionTypeId) {
+      if(bypassCache) {
+        return DSActionType.find(actionTypeId, { bypassCache: true });
+      }
+
+      return DSActionType.find(actionTypeId);
+    }
+
+    function remove() {
+      // Remove rule and associated mood-toggle device
+    }
+
+
+    // True to load all rule details (not loaded when rule list is loaded)
+    _loadViewData(true);
+
+  }
 
 }());
