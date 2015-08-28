@@ -39,15 +39,17 @@
     .module('guh.moods')
     .controller('MoodsDetailCtrl', MoodsDetailCtrl);
 
-  MoodsDetailCtrl.$inject = ['$log', 'app', '$state', '$stateParams', 'DSRule', 'DSDevice', 'DSEventType', 'DSStateType', 'DSActionType'];
+  MoodsDetailCtrl.$inject = ['$log', 'app', '$state', '$stateParams', 'ngDialog', 'DSRule', 'DSDevice', 'DSEventType', 'DSStateType', 'DSActionType'];
 
-  function MoodsDetailCtrl($log, app, $state, $stateParams, DSRule, DSDevice, DSEventType, DSStateType, DSActionType) {
+  function MoodsDetailCtrl($log, app, $state, $stateParams, ngDialog, DSRule, DSDevice, DSEventType, DSStateType, DSActionType) {
 
     var vm = this;
 
     // Public variables
+    vm.triggerModal = null;
 
     // Public methods
+    vm.addTrigger = addTrigger;
     vm.remove = remove;
 
     function _loadViewData(bypassCache) {
@@ -195,6 +197,17 @@
       }
 
       return DSActionType.find(actionTypeId);
+    }
+
+    function addTrigger() {
+      vm.triggerModal = ngDialog.open({
+        className: 'modal',
+        controller: 'AddTriggerCtrl',
+        controllerAs: 'addTrigger',
+        overlay: true,
+        showClose: false,
+        template: 'app/components/moods/detail/add-trigger.html'
+      });
     }
 
     function remove() {

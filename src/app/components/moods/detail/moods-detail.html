@@ -43,6 +43,8 @@
       <p ng-repeat="childEvaluator in mood.stateEvaluator.childEvaluators">{{ childEvaluator.stateDescriptor.phrase }} {{ childEvaluator.stateDescriptor.operator | operator }} {{ childEvaluator.stateDescriptor.value }}.</p>
     </div>
   </div>
+
+  <button class="full" ng-click="mood.addTrigger()">Add a trigger</button>
 </div>
 
 
