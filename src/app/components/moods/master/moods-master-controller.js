@@ -39,8 +39,42 @@
     .module('guh.moods')
     .controller('MoodsMasterCtrl', MoodsMasterCtrl);
 
-  MoodsMasterCtrl.$inject = [];
+  MoodsMasterCtrl.$inject = ['$log', '$stateParams', 'DSRule', 'DSDevice'];
 
-  function MoodsMasterCtrl() {}
+  function MoodsMasterCtrl($log, $stateParams, DSRule, DSDevice) {
+
+    // Don't show debugging information
+    DSRule.debug = false;
+
+    var vm = this;
+    
+
+    // Public variables
+    vm.configured = [];
+
+
+    function _loadViewData(bypassCache) {
+      _findAllRules(bypassCache)
+        .then(function(rules) {
+          vm.configured = rules;
+        });
+    }
+
+    function _findAllRules(bypassCache) {
+      if(bypassCache) {
+        return DSRule.findAll({}, { bypassCache: true });
+      }
+      
+      return DSRule.findAll();
+    }
+
+    function _findAllDevices() {
+      return DSDevice.findAll();
+    }
+
+
+    _loadViewData(true);
+
+  }
 
 }());
