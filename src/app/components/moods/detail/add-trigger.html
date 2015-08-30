@@ -21,12 +21,15 @@
 -->
 
 
+<!-- Modal: close -->
 <button class="close" ng-click="closeThisDialog()">
   <svg class="icon">
     <use xlink:href="./assets/svg/ui/ui.symbol.svg#close"></use>
   </svg>
 </button>
 
+
+<!-- Wizard: addTrigger -->
 <div guh-wizard handle="addTrigger" show-navigation="true">
   <div guh-wizard-step class="list" title="When should this mood be automatically turned on?">
 
@@ -52,57 +55,71 @@
             </svg>
           </p>
 
-          <!-- <p class="item" ng-class="{ 'selected': newMood.selectedEnterActionTypes[device.id][actionType.id] }" ng-if="actionType.paramTypes.length === 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
-            <span>{{ actionType.phrase }}</span>
-            <svg class="icon" ng-show="!newMood.selectedEnterActionTypes[device.id][actionType.id]">
-              <use xlink:href="./assets/svg/ui/ui.symbol.svg#plus"></use>
+          <p class="item" ng-class="{ 'selected': addTrigger.selectedEventTypes[device.id][eventType.id] }" ng-if="!eventType.hasState && eventType.paramTypes.length > 0" ng-click="addTrigger.selectTrigger(device, eventType)" ng-repeat="eventType in device.deviceClass.eventTypes | orderBy: 'phrase' track by $index" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+            <span>{{ eventType.phrase }}</span>
+            <svg class="icon" ng-show="!addTrigger.selectedEventTypes[device.id][eventType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
             </svg>
-            <svg class="icon" ng-show="newMood.selectedEnterActionTypes[device.id][actionType.id]">
+            <svg class="icon" ng-show="addTrigger.selectedEventTypes[device.id][eventType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
-            </svg>
-          </p> -->
-
-          <p class="item" ng-if="!eventType.hasState && eventType.paramTypes.length > 0" ng-click="addTrigger.selectTrigger(device, eventType)" ng-repeat="eventType in device.deviceClass.eventTypes | orderBy: 'phrase' track by $index">
-            <span>{{ eventType.phrase }}</span>
-            <svg class="icon">
-              <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
             </svg>
           </p>
 
-          <!-- <p class="item" ng-class="{ 'selected': newMood.selectedEnterActionTypes[device.id][actionType.id] }" ng-if="actionType.paramTypes.length === 0" ng-click="newMood.selectEnterAction(device, actionType)" ng-repeat="actionType in device.deviceClass.actionTypes" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
-            <span>{{ actionType.phrase }}</span>
-            <svg class="icon" ng-show="!newMood.selectedEnterActionTypes[device.id][actionType.id]">
-              <use xlink:href="./assets/svg/ui/ui.symbol.svg#plus"></use>
+          <!-- States -->
+          <p class="item" ng-class="{ 'selected': addTrigger.selectedStateTypes[device.id][stateType.id] }" ng-click="addTrigger.selectTrigger(device, stateType)" ng-repeat="stateType in device.deviceClass.stateTypes | orderBy: 'phrase' track by $index" ng-mouseenter="remove = true" ng-mouseleave="remove = false" ng-init="remove = false">
+            <span>{{ stateType.phrase }}</span>
+            <svg class="icon" ng-show="!addTrigger.selectedStateTypes[device.id][stateType.id]">
+              <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
             </svg>
-            <svg class="icon" ng-show="newMood.selectedEnterActionTypes[device.id][actionType.id]">
+            <svg class="icon" ng-show="addTrigger.selectedStateTypes[device.id][stateType.id]">
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#checkmark" ng-show="!remove"></use>
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#close" ng-show="remove"></use>
-            </svg>
-          </p> -->
-
-          <!-- States -->
-          <p class="item" ng-click="addTrigger.selectTrigger(device, stateType)" ng-repeat="stateType in device.deviceClass.stateTypes | orderBy: 'phrase' track by $index">
-            <span>{{ stateType.phrase }}</span>
-            <svg class="icon">
-              <use xlink:href="./assets/svg/ui/ui.symbol.svg#chevron-right"></use>
             </svg>
           </p>
         </div>
       </div>
 
-      <!-- Select parameters -->
+      <!-- Set parameters -->
       <div guh-wizard-step>
         <!-- EventType -->
-        <guh-form name="setTriggerParams"
-                  on-form-submit="addTrigger.addEventDescriptorParams(params)"
+        <guh-form ng-if="addTrigger.selectedTriggerType.paramTypes"
+                  name="setEventTypeParams"
+                  on-form-submit="addTrigger.selectDetails(params)"
                   class="list">
 
-          <guh-form-field label="{{ paramType.name }}"
-                          name="{{ paramType.name }}"
-                          param-type="paramType"
-                          template="{{ paramType.inputTemplateUrl }}"
-                          ng-repeat="paramType in addTrigger.selectedTriggerEventType.paramTypes track by $index"
+          <div ng-repeat="paramType in addTrigger.selectedTriggerType.paramTypes track by $index">
+            <!-- Value operator -->
+            <label class="item" ng-show="paramType.availableOperators.length > 1">
+              <div>{{ paramType.name }}</div>
+              <select ng-model="paramType.selectedOperator" ng-change="addTrigger.setOperator(paramType)" ng-options="operator as operator.label for (key, operator) in paramType.availableOperators track by operator.id" name="operator"></select>
+            </label>
+
+            <guh-form-field label=""
+                            name="{{ paramType.name }}"
+                            param-type="paramType"
+                            template="{{ paramType.inputTemplateUrl }}"
+                            class="item"></guh-form-field>
+          </div>
+
+          <button type="submit" class="full">Save trigger details</button>
+        </guh-form>
+
+        <!-- StateType -->
+        <guh-form ng-if="!addTrigger.selectedTriggerType.paramTypes"
+                  name="setStateType"
+                  on-form-submit="addTrigger.selectDetails(params)"
+                  class="list">
+
+          <!-- Value operator -->
+          <label class="item" ng-show="addTrigger.selectedTriggerType.availableOperators.length > 1">
+            <div>{{ addTrigger.selectedTriggerType.name }}</div>
+            <select ng-model="addTrigger.selectedTriggerType.selectedOperator" ng-change="addTrigger.setOperator(addTrigger.selectedTriggerType)" ng-options="operator as operator.label for (key, operator) in selectedTriggerType.availableOperators track by operator.id" name="operator"></select>
+          </label>
+
+          <guh-form-field label=""
+                          name="{{ addTrigger.selectedTriggerType.name }}"
+                          template="{{ addTrigger.selectedTriggerType.inputTemplateUrl }}"
                           class="item"></guh-form-field>
 
           <button type="submit" class="full">Save trigger details</button>
@@ -111,5 +128,5 @@
     </div>
   </div>
 
-  <div guh-wizard-step></div>
+  <div guh-wizard-step title="Title?"></div>
 </div>

@@ -39,34 +39,74 @@
     .module('guh.moods')
     .controller('AddTriggerCtrl', AddTriggerCtrl);
 
-  AddTriggerCtrl.$inject = ['$log', '$rootScope', 'DSDevice', 'DSEventType', 'DSStateType', 'libs'];
+  AddTriggerCtrl.$inject = ['$log', '$rootScope', '$stateParams', 'DSRule', 'DSDevice', 'DSEventType', 'DSStateType', 'libs', 'app'];
 
-  function AddTriggerCtrl($log, $rootScope, DSDevice, DSEventType, DSStateType, libs) {
+  function AddTriggerCtrl($log, $rootScope, $stateParams, DSRule, DSDevice, DSEventType, DSStateType, libs, app) {
 
     // View data
     var vm = this;
 
-    // Public variables
+    // View variables
     vm.rule = {};
-    vm.triggerDevices = [];
-
-    vm.selectedTriggerDevice = {};
-    vm.selectedTriggerEventType = {};
-
     vm.selectedEventTypes = {};
     vm.selectedStateTypes = {};
+    vm.availableOperators = {};
 
-    // Public methods
+    // View methods
     vm.selectTrigger = selectTrigger;
-    vm.addEventDescriptorParams = addEventDescriptorParams;
+    vm.selectDetails = selectDetails;
 
 
     function _init() {
       // Set rule data
-      // ...
+      var rule = _getRule($stateParams.moodId);
+      vm.rule = _cleanRule(rule);
 
       // Set devices with actions
       _setTriggerDevices();
+    }
+
+    function _getRule(ruleId) {
+      return DSRule.get(ruleId);
+    }
+
+    function _cleanRule(rule) {
+      var cleanedRule = angular.copy(rule);
+
+      // rule.actions
+      if(angular.isDefined(cleanedRule.actions)) {
+        cleanedRule.actions = cleanedRule.actions.map(function(action) {
+          delete action.phrase;
+          return action;
+        });
+      }
+
+      // rule.exitActions
+      if(angular.isDefined(cleanedRule.exitActions)) {
+        cleanedRule.exitActions = cleanedRule.exitActions.map(function(action) {
+          delete action.phrase;
+          return action;
+        });
+      }
+
+      // rule.eventDescriptors
+      if(cleanedRule.eventDescriptors.length > 1) {
+        cleanedRule.eventDescriptorList = angular.copy(cleanedRule.eventDescriptors);
+      } else if(cleanedRule.eventDescriptors.length === 1) {
+        cleanedRule.eventDescriptor = angular.copy(cleanedRule.eventDescriptors[0]);
+      }
+      delete cleanedRule.eventDescriptors;
+
+      // rule.stateEvaluator
+      delete cleanedRule.stateEvaluator.stateDescriptor.phrase;
+      if(angular.isDefined(cleanedRule.stateEvaluator.childEvaluators)) {
+        cleanedRule.stateEvaluator.childEvaluators = cleanedRule.stateEvaluator.childEvaluators.map(function(childEvaluator) {
+          delete childEvaluator.stateDescriptor.phrase;
+          return childEvaluator;
+        });
+      }
+
+      return cleanedRule;
     }
 
     function _setTriggerDevices() {
@@ -80,24 +120,6 @@
       return angular.isDefined(device.deviceClass) && (device.deviceClass.eventTypes.length > 0 || device.deviceClass.stateTypes.length > 0) && device.name.indexOf('mood-toggle') === -1;
     }
 
-    function _getEventDescriptorData(device, eventType, eventTypeParams) {
-      var eventDescriptor = {};
-
-      if(angular.isDefined(device) && angular.isDefined(eventType)) {
-        eventDescriptor.eventTypeId = eventType.id;
-        eventDescriptor.deviceId = device.id;
-
-        if(eventType.paramTypes.length > 0 && angular.isDefined(eventTypeParams)) {
-          eventDescriptor.paramDescriptors = eventTypeParams.map(function(eventParam) {
-            eventParam.operator = 'ValueOperatorEquals';
-            return eventParam;
-          });
-        }
-      }
-
-      return eventDescriptor;
-    }
-
     function _isSelected(eventStateType) {
       var isSelected = false;
 
@@ -108,10 +130,36 @@
           isSelected = vm.rule.eventDescriptor.eventTypeId === eventStateType.id ? true : false;
         }
       } else if(DSStateType.is(eventStateType)) {
+        $log.log('is state!');
+        if(angular.isDefined(vm.rule.stateEvaluator)) {
+          $log.log('stateEvaluator defined');
+          isSelected = (vm.rule.stateEvaluator.stateDescriptor && vm.rule.stateEvaluator.stateDescriptor.stateTypeId === eventStateType.id) ? true : false;
 
+          if(!isSelected && angular.isDefined(vm.rule.stateEvaluator.childEvaluators)) {
+            $log.log('childEvaluators defined');
+            isSelected = libs._.some(vm.rule.stateEvaluator.childEvaluators, 'stateDescriptor.stateTypeId', eventStateType.id);
+          }
+        }
       }
 
+      $log.log('isSelected', isSelected);
+
       return isSelected;
+    }
+
+    function _addEventDescriptor(eventDescriptor) {
+      if(angular.isDefined(vm.rule.eventDescriptorList)) {
+        vm.rule.eventDescriptorList.push(eventDescriptor);
+      } else if(angular.isDefined(vm.rule.eventDescriptor)) {
+        vm.rule.eventDescriptorList = [];
+
+        vm.rule.eventDescriptorList.push(vm.rule.eventDescriptor);    
+        delete vm.rule.eventDescriptor;
+
+        vm.rule.eventDescriptorList.push(eventDescriptor);            
+      } else {
+        vm.rule.eventDescriptor = eventDescriptor;
+      }
     }
 
     function _removeEventDescriptor(device, eventType) {
@@ -130,77 +178,171 @@
       return removedEventDescriptor;
     }
 
-    function _removeStateEvaluator(stateEvaluator) {
+    function _addStateEvaluator(stateDescriptor) {
+      var stateEvaluator = {
+        operator: app.stateOperator.StateOperatorAnd,
+        stateDescriptor: stateDescriptor
+      };
 
+      if(angular.isDefined(vm.rule.stateEvaluator)) {
+        if(angular.isUndefined(vm.rule.stateEvaluator.childEvaluators)) {
+          vm.rule.stateEvaluator.childEvaluators = [];
+        }
+
+        vm.rule.stateEvaluator.childEvaluators.push(stateEvaluator);
+      } else {
+        vm.rule.stateEvaluator = stateEvaluator;
+      }
     }
 
-    function _removeStateType(stateType) {
+    function _removeStateEvaluator(device, stateType) {
+      $log.log('_removeStateEvaluator');
+      $log.log('device', device);
+      $log.log('stateType', stateType);
 
+      var removedStateDescriptor = {};
+
+      if(angular.isDefined(vm.rule.stateEvaluator)) {
+        // TODO: Remove vm.rule.stateEvaluator.stateDescriptor AND replace it with first childEvaluator
+        // if(delete vm.rule.stateEvaluator.stateDescriptor) {
+        //   var removedStateDescriptor = vm.rule.stateEvaluator.stateDescriptor;
+        // }
+
+        if(angular.isDefined(vm.rule.stateEvaluator.childEvaluators)) {
+          removedStateDescriptor = libs._.remove(vm.rule.stateEvaluator.childEvaluators, function(childEvaluator) {
+            return (childEvaluator.stateDescriptor.deviceId === device.id && childEvaluator.stateDescriptor.stateTypeId === stateType.id);
+          });
+        }
+      }
+
+      return removedStateDescriptor;
+    }
+
+    function _markAsSelected(device, eventStateType) {
+      var isMarked = false;
+      $log.log('_markAsSelected');
+
+      if(DSEventType.is(eventStateType)) {
+        var eventType = eventStateType;
+
+        if(vm.selectedEventTypes[device.id] && vm.selectedEventTypes[device.id][eventType.id]) {
+          // If already added => remove trigger
+          _removeEventDescriptor(device, eventType);
+          isMarked = _isSelected(eventType);
+          vm.selectedEventTypes[device.id][eventType.id] = isMarked;
+        } else {
+          // Add "selected" class
+          if(angular.isUndefined(vm.selectedEventTypes[device.id])) {
+            $log.log('add selected class');
+            vm.selectedEventTypes[device.id] = {};
+          }
+          $log.log('vm.selectedEventTypes', vm.selectedEventTypes);
+          isMarked = _isSelected(eventType);
+          vm.selectedEventTypes[device.id][eventType.id] = isMarked;
+        }
+      } else if(DSStateType.is(eventStateType)) {
+        var stateType = eventStateType;
+
+        $log.log('vm.selectedStateTypes', vm.selectedStateTypes);
+        $log.log('device.id', device.id);
+        $log.log('stateType.id', stateType.id);
+
+        if(vm.selectedStateTypes[device.id] && vm.selectedStateTypes[device.id][stateType.id]) {
+          // If already added => remove trigger
+          $log.log('REMOVE');
+          _removeStateEvaluator(device, stateType);
+          isMarked = _isSelected(stateType);
+          vm.selectedStateTypes[device.id][stateType.id] = isMarked;
+        } else {
+          // Add "selected" class
+          if(angular.isUndefined(vm.selectedStateTypes[device.id])) {
+            $log.log('add selected class');
+            vm.selectedStateTypes[device.id] = {};
+          }
+          $log.log('vm.selectedStateTypes', vm.selectedStateTypes);
+          isMarked = _isSelected(stateType);
+          vm.selectedStateTypes[device.id][stateType.id] = isMarked;
+        }
+      }
+
+      return isMarked;
     }
 
     function selectTrigger(device, eventStateType) {
       if(DSEventType.is(eventStateType)) {
         var eventType = eventStateType;
 
-        // $log.log('device', device);
-        // $log.log('eventStateType', eventStateType);
-        // $log.log('vm.selectedEventTypes', vm.selectedEventTypes);
+        if(eventType.paramTypes.length === 0) {
+          // If not added previously => add eventDescriptor
+          var eventDescriptor = device.getEventDescriptor(eventType);
+          _addEventDescriptor(eventDescriptor);
+          _markAsSelected(device, eventType);
+        } else if(eventType.paramTypes.length > 0) {
+          vm.selectedTriggerDevice = device;
+          vm.selectedTriggerType = eventType;
 
-        if(vm.selectedEventTypes[device.id] && vm.selectedEventTypes[device.id][eventType.id]) {
-          // Remove trigger
-          _removeEventDescriptor(device, eventType);
-          // $log.log('_isSelected(eventType)', _isSelected(eventType));
-          vm.selectedEventTypes[device.id][eventType.id] = _isSelected(eventType);
-        } else {
-          // Add eventDescriptor
-          var eventDescriptor = _getEventDescriptorData(device, eventType);
+          // angular.forEach(eventType.paramTypes, function(paramType) {
+          //   paramType.availableOperators = _getAvailableOperators(paramType.type);
+          // });
 
-          if(angular.isDefined(vm.rule.eventDescriptorList)) {
-            vm.rule.eventDescriptorList.push(eventDescriptor);
-          } else if(angular.isDefined(vm.rule.eventDescriptor)) {
-            vm.rule.eventDescriptorList = [];
-
-            vm.rule.eventDescriptorList.push(vm.rule.eventDescriptor);    
-            delete vm.rule.eventDescriptor;
-
-            vm.rule.eventDescriptorList.push(eventDescriptor);            
-          } else {
-            vm.rule.eventDescriptor = eventDescriptor;
-          }
-
-          if(eventType.paramTypes.length > 0) {
-            vm.selectedTriggerDevice = device;
-            vm.selectedTriggerEventType = eventType;
+          // $log.log(vm.availableOperators);
+          $log.log('vm.selectedTriggerType', vm.selectedTriggerType);
+          if(!_isSelected(eventType)) {
             $rootScope.$broadcast('wizard.next', 'addTriggerDetails');
+          } else {
+            _markAsSelected(device, eventType); 
           }
-
-          // Add "selected" class
-          if(!vm.selectedEventTypes[device.id]) {
-            vm.selectedEventTypes[device.id] = {};
-          }
-          vm.selectedEventTypes[device.id][eventType.id] = _isSelected(eventType);
         }
       } else if(DSStateType.is(eventStateType)) {
         var stateType = eventStateType;
 
-        if(vm.selectedEventTypes[device.id] && vm.selectedEventTypes[device.id][stateType.id]) {
-          // Remove trigger
-          _removeStateEvaluator(stateType);
+        vm.selectedTriggerDevice = device;
+        vm.selectedTriggerType = stateType;
+
+        $log.log('vm.selectedTriggerType', vm.selectedTriggerType);
+        if(!_isSelected(stateType)) {
+          $rootScope.$broadcast('wizard.next', 'addTriggerDetails');
         } else {
-          
+          _markAsSelected(device, stateType); 
         }
+
+        $log.log('vm.selectedStateTypes', vm.selectedStateTypes);
       }
 
       $log.log('vm.rule', vm.rule);
     }
 
-    function addEventDescriptorParams(params) {
-      var eventDescriptor = _getEventDescriptorData(vm.selectedTriggerDevice, vm.selectedTriggerEventType, params);
+    function selectDetails(params) {
+      if(DSEventType.is(vm.selectedTriggerType)) {
+        var eventDescriptor = {};
+        var paramDescriptors = [];
 
-      if(angular.isDefined(vm.rule.eventDescriptorList)) {
-        vm.rule.eventDescriptorList[vm.rule.eventDescriptorList.length - 1] = eventDescriptor;
-      } else if(angular.isDefined(vm.rule.eventDescriptor)) {
-        vm.rule.eventDescriptor = eventDescriptor;
+        paramDescriptors = vm.selectedTriggerType.paramTypes.map(function(paramType, index) {
+          var param = params[index];
+          return vm.selectedTriggerType.getParamDescriptor(paramType, param.value, 'ValueOperatorEquals');
+        });
+        eventDescriptor = vm.selectedTriggerDevice.getEventDescriptor(vm.selectedTriggerType, paramDescriptors);
+        
+        // if(angular.isDefined(vm.rule.eventDescriptorList)) {
+          // vm.rule.eventDescriptorList[vm.rule.eventDescriptorList.length - 1] = eventDescriptor;
+        // } else if(angular.isDefined(vm.rule.eventDescriptor)) {
+        //   vm.rule.eventDescriptor = eventDescriptor;
+        // }
+
+        // var isMarked = _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
+        // if(!isMarked) {
+          _addEventDescriptor(eventDescriptor);
+          _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
+        // }
+      } else if(DSStateType.is(vm.selectedTriggerType)) {
+        var stateDescriptor = {};
+        stateDescriptor = vm.selectedTriggerDevice.getStateDescriptor(vm.selectedTriggerType, params[0].value, 'ValueOperatorEquals');
+
+        // var isMarked = _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
+        // if(!isMarked) {
+          _addStateEvaluator(stateDescriptor);
+          _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
+        // }
       }
 
       $log.log('vm.rule', vm.rule);

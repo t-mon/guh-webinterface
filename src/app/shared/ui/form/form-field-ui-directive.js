@@ -273,15 +273,19 @@
         }
 
         // Get template
-        if(angular.isString(templateUrl)) {
-          $http.get(templateUrl).success(function(template) {
-            // Replace guhFormField-directive with proper HTML input
-            element.html(template);
-            $compile(element.contents())(scope);
-          });
-        } else {
-          $log.error('guh.ui.guhFormField:directive', 'TemplateURL is not set.');
-        }
+        scope.$watch('formField.template', function(newValue, oldValue) {
+          templateUrl = newValue;
+
+          if(angular.isString(templateUrl)) {
+            $http.get(templateUrl).success(function(template) {
+              // Replace guhFormField-directive with proper HTML input
+              element.html(template);
+              $compile(element.contents())(scope);
+            });
+          } else {
+            $log.error('guh.ui.guhFormField:directive', 'TemplateURL is not set.');
+          }
+        });
       }
     }
 

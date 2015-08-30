@@ -115,12 +115,14 @@
       return isSelected;
     }
 
-    function _removeRuleAction(enterExitAction, actionType) {
+    function _removeRuleAction(enterExitAction, device, actionType) {
       var ruleActions = enterExitAction === 'enter' ? vm.rule.actions : vm.rule.exitActions;
       
       var removedRuleAction = libs._.remove(ruleActions, function(ruleAction) {
-        return ruleAction.actionTypeId === actionType.id;
+        return (ruleAction.deviceId === device.id && ruleAction.actionTypeId === actionType.id);
       });
+
+      $log.log('removedRuleAction', removedRuleAction, ruleActions);
 
       return removedRuleAction;
     }
@@ -208,7 +210,7 @@
     function selectEnterAction(device, actionType) {
       if(vm.selectedEnterActionTypes[device.id] && vm.selectedEnterActionTypes[device.id][actionType.id]) {
         // Remove ruleAction
-        _removeRuleAction('enter', actionType);
+        _removeRuleAction('enter', device, actionType);
         vm.selectedEnterActionTypes[device.id][actionType.id] = _isSelected('enter', actionType);
       } else {
         // Add ruleAction
@@ -233,7 +235,7 @@
     function selectExitAction(device, actionType) {
       if(vm.selectedExitActionTypes[device.id] && vm.selectedExitActionTypes[device.id][actionType.id]) {
         // Remove ruleAction
-        _removeRuleAction('exit', actionType);
+        _removeRuleAction('exit', device, actionType);
         vm.selectedExitActionTypes[device.id][actionType.id] = _isSelected('exit', actionType);
       } else {
         // Add ruleAction
