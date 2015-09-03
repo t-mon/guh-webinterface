@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhForm', guhForm);
 
-    guhForm.$inject = ['$log'];
+    guhForm.$inject = ['$log', 'libs', 'app'];
 
-    function guhForm($log) {
+    function guhForm($log, libs, app) {
       var directive = {
         bindToController: {
           name: '@',
@@ -65,6 +65,8 @@
          */
 
         vm.addFormField = addFormField;
+        vm.removeFormField = removeFormField;
+        vm.updateFormField = updateFormField;
         vm.submit = submit;
 
 
@@ -78,16 +80,57 @@
          * Public methods
          */
 
-        function addFormField(formField) {
-          vm.formFields.push(formField);
+        function addFormField(formFieldScope) {
+          vm.formFields.push(formFieldScope);
+        }
+
+        function removeFormField(formFieldScope) {
+          vm.formFields = vm.formFields.filter(function(formField) {
+            return formField.$id === formFieldScope.$id;
+          });
+        }
+
+        function updateFormField(formFieldScopeId, selectedOperator) {
+          if(angular.isDefined(formFieldScopeId) && angular.isDefined(selectedOperator)) {
+            var index = libs._.findIndex(vm.formFields, { '$id': formFieldScopeId });
+
+            if(index !== -1) {
+              vm.formFields[index].selectedOperator = selectedOperator;
+            }
+          }
         }
 
         function submit() {
           // Check if form is valid
           if($scope[vm.name].$valid) {
+            var paramDescriptors = [];
             var params = [];
 
             angular.forEach(vm.formFields, function(scope) {
+              if(angular.isDefined(scope.formField.selectedValueOperator)) {
+                if(angular.toJson(scope.formField.selectedValueOperator) === angular.toJson(app.valueOperator.between)) {
+                  // Between
+                  paramDescriptors.push({
+                    name: scope.formField.from.name,
+                    operator: scope.formField.selectedOperator,
+                    value: scope.formField.from.value,
+                  });
+
+                  paramDescriptors.push({
+                    name: scope.formField.to.name,
+                    operator: scope.formField.selectedOperator,
+                    value: scope.formField.to.value,
+                  });
+                } else {
+                  // Is, is not, greater than, less than
+                  paramDescriptors.push({
+                    name: scope.formField.name,
+                    operator: scope.formField.selectedOperator,
+                    value: scope.formField.value,
+                  });
+                }
+              }
+
               params.push({
                 name: scope.formField.name,
                 value: scope.formField.value
@@ -96,6 +139,7 @@
 
             // TODO: Validation
             vm.submitCallback({
+              paramDescriptors: paramDescriptors,
               params: params
             });
           } else {

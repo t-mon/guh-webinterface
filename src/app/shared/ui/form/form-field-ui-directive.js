@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhFormField', guhFormField);
 
-    guhFormField.$inject = ['$log', '$http', '$compile', 'libs'];
+    guhFormField.$inject = ['$log', '$http', '$q', '$compile', 'libs', 'app'];
 
-    function guhFormField($log, $http, $compile, libs) {
+    function guhFormField($log, $http, $q, $compile, libs, app) {
       var directive = {
         bindToController: {
           changeCallback: '&onValueChange',
@@ -40,7 +40,10 @@
           paramType: '=',
           required: '@',
           state: '=',
-          template: '@'
+          template: '@',
+          selectedOperator: '=',
+          stateType: '=',
+          valueOperator: '='
         },
         controller: formFieldCtrl,
         controllerAs: 'formField',
@@ -53,7 +56,7 @@
       return directive;
 
 
-      function formFieldCtrl($attrs) {
+      function formFieldCtrl($scope, $attrs) {
         
         /*
          * Variables
@@ -69,22 +72,37 @@
          * API
          */
 
+        // Variables
+        vm.availableValueOperators = [];
+        vm.selectedValueOperator = app.valueOperator.is;
+        vm.is = null;
+        vm.from = null;
+        vm.to = null;
+
+        // Methods
+        vm.init = init;
         vm.setValue = setValue;
+        vm.selectValueOperator = selectValueOperator;
 
 
         /*
          * Private methods
          */
 
-        function _init() {
+        function init() {
           _setDefaults();
+          _setValueOperators();
 
-          // $log.log(vm.label, vm.name);
-          // $log.log('vm.template', vm.template);
-          // $log.log('vm.value', vm.value);
-          // $log.log('--------------------');
+          if(vm.valueOperator) {
+            vm.is = app.valueOperator.is;
+            vm.is.paramType = angular.copy(vm.paramType);
+            vm.is.stateType = angular.copy(vm.stateType);
 
-          // _setInitialValue();
+            if(vm.selectedValueOperator) {
+              vm.selectedOperator = vm.selectedValueOperator.operators[0];
+              vm.selectValueOperator();
+            }
+          }
         }
 
         function _getDefault(type) {
@@ -118,10 +136,8 @@
             case 'number-integer':
             case 'range':
               value = 0;
-              // $log.log('RANGE', value);
               break;
             case 'select':
-              // value = ['no options'];
               break;
             case 'not-available':
               value = null;
@@ -144,14 +160,11 @@
             } else {
               vm.value = _getDefault(vm.state.type);
             }
-
-            // $log.log('Set default with state.', vm.state);
           } else if(angular.isDefined(vm.template) && vm.template !== '') {
             var filename = vm.template.substring(vm.template.lastIndexOf('/') + 1, vm.template.lastIndexOf('.'));
             var type = filename.replace('form-field-', '');
 
             vm.value = _getDefault(type);
-            // $log.log('Set default with switch.', type);
           }
 
           // ParamType
@@ -159,21 +172,41 @@
             // Unit
             vm.unit = vm.paramType.unit ? vm.paramType.unit : undefined;
           }
-
-          // $log.log('unit', vm.unit);
         }
 
-        // function _setInitialValue() {
-        //   if(angular.isDefined(vm.state) && vm.state !== null) {
-        //     // vm.value = vm.state;
-        //     // $log.log('vm.state', vm.state, (typeof vm.state));
+        function _setValueOperators() {
+          var type = '';
 
-        //     vm.value = vm.state.defaultValue ? vm.state.defaultValue : _getDefault(vm.state.type);
-        //     $log.log(vm.value);
-        //   } else {
-        //     $log.log('vm.state', vm.state);
-        //   }
-        // }
+          if(angular.isDefined(vm.paramType)) {
+            type = vm.paramType.type;
+          } else if(angular.isDefined(vm.stateType)) {
+            type = vm.stateType.type;
+          }
+
+          switch(type) {
+            case 'bool':
+              vm.availableValueOperators = [
+                app.valueOperator.is
+              ];
+              break;
+            case 'QString':
+              vm.availableValueOperators = [
+                app.valueOperator.is
+              ];
+              break;
+            case 'int':
+            case 'uint':
+            case 'double':
+              vm.availableValueOperators = [
+                app.valueOperator.is,
+                app.valueOperator.isNot,
+                app.valueOperator.isGreaterThan,
+                app.valueOperator.isLessThan,
+                app.valueOperator.between
+              ];
+              break;
+          }
+        }
 
         function _invokeCallback() {
           // TODO: Validate if no parent form => not necessary?
@@ -214,6 +247,40 @@
         /*
          * Public methods
          */
+
+        function selectValueOperator() {
+          // Remove all accurances of this scope in formCtrl
+          if(vm.formCtrl) {
+            vm.formCtrl.removeFormField($scope);
+          }
+
+          // Reset
+          vm.is = null;
+          vm.from = null;
+          vm.to = null;
+
+          if(angular.toJson(vm.selectedValueOperator) === angular.toJson(app.valueOperator.between)) {
+            vm.is = null;
+
+            vm.from = angular.copy(vm.selectedValueOperator);
+            vm.from.paramType = angular.copy(vm.paramType);
+            vm.from.stateType = angular.copy(vm.stateType);
+            vm.from.operator = angular.copy(vm.selectedValueOperator.operators[0]);
+
+            vm.to = angular.copy(vm.selectedValueOperator);
+            vm.to.paramType = angular.copy(vm.paramType);
+            vm.to.stateType = angular.copy(vm.stateType);
+            vm.to.operator = angular.copy(vm.selectedValueOperator.operators[1]);
+          } else {
+            vm.is = angular.copy(vm.selectedValueOperator);
+            vm.is.paramType = angular.copy(vm.paramType);
+            vm.is.stateType = angular.copy(vm.stateType);
+            vm.is.operator = angular.copy(vm.selectedValueOperator.operators[0]);
+
+            vm.from = null;
+            vm.to = null;
+          }
+        }
 
         function setValue(type, wait, options) {
           var invokeWait;
@@ -258,7 +325,7 @@
         }
 
 
-        _init();
+        // _init();
         
       }
 
@@ -267,24 +334,52 @@
         var ctrl = scope.formField;
         var templateUrl = ctrl.template;
 
-        // Parent form is optional
-        if(formCtrl) {
-          formCtrl.addFormField(scope);
-        }
+        // Add parent controller to access it from this controller
+        ctrl.formCtrl = formCtrl;
 
-        // Get template
+        // Watch selected operator
+        scope.$watch('formField.selectedOperator', function(newValue, oldValue) {
+          if(formCtrl && !ctrl.valueOperator) {
+            // Add formField if valueOperator not set
+            formCtrl.addFormField(scope);
+          }
+
+          formCtrl.updateFormField(scope.$id, newValue);
+        });
+
+        // Watch template
         scope.$watch('formField.template', function(newValue, oldValue) {
           templateUrl = newValue;
 
-          if(angular.isString(templateUrl)) {
-            $http.get(templateUrl).success(function(template) {
+          ctrl.init();
+
+          if(ctrl.valueOperator) {
+            $http.get('app/shared/ui/form/value-operator.html').success(function(template) {
               // Replace guhFormField-directive with proper HTML input
+              // element.html(template);
               element.html(template);
               $compile(element.contents())(scope);
             });
           } else {
-            $log.error('guh.ui.guhFormField:directive', 'TemplateURL is not set.');
+            if(angular.isString(templateUrl)) {
+              $http.get(templateUrl).success(function(template) {
+                // Replace guhFormField-directive with proper HTML input
+                element.html(template);
+                $compile(element.contents())(scope);
+              });
+            } else {
+              $log.error('guh.ui.guhFormField:directive', 'TemplateURL is not set.');
+            }
           }
+        });
+
+        // On destroy
+        scope.$on('$destroy', function() {
+          // Remove previously added formFields
+          formCtrl.removeFormField(scope);
+
+          element.remove();
+          scope = null;
         });
       }
     }
