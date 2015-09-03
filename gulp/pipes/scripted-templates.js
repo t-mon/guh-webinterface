@@ -31,7 +31,6 @@ var gulp = require('gulp');
 var htmlhint = require('gulp-htmlhint');
 var htmlmin = require('gulp-htmlmin');
 var ngHtml2Js = require('gulp-ng-html2js');
-var debug = require('gulp-debug');
 
 /*
  * Pipes
@@ -59,7 +58,6 @@ module.exports = {
     return validatedTemplates.getPipe()
       .pipe(htmlhint.failReporter())
       .pipe(htmlmin(htmlminConfig))
-      .pipe(debug())
       .pipe(ngHtml2Js(ngHtml2JsConfig))
       .pipe(gulp.dest(pathConfig.dest.production));
   }

@@ -22,90 +22,37 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-/**
- * @ngdoc interface
- * @name guh.devices.controller:DevicesDetailCtrl
- *
- * @description
- * Load and show details of certain device.
- *
+/*
+ * Plugins
  */
 
-(function(){
-  'use strict';
-
-  angular
-    .module('guh.moods')
-    .controller('AddActionsCtrl', AddActionsCtrl);
-
-  AddActionsCtrl.$inject = ['$log', '$scope', '$rootScope', 'DSDevice'];
-
-  function AddActionsCtrl($log, $scope, $rootScope, DSDevice) {
-
-    var vm = this;
-    var isExitAction = false;
-
-    // Public varaibles
-    vm.rule = {};
-    vm.enterActionDevices = [];
-    vm.exitActionDevices = [];
-    vm.selectedActionType = {};
-
-    // Public methods
-    vm.selectAction = selectAction;
+var gulp = require('gulp');
+var browserSync = require('browser-sync').get('app-server');
+var gulpIf = require('gulp-if');
+var argsParser = require('../utils/args-parser');
 
 
-    function _init() {
-      $log.log('_init', $scope);
+/*
+ * Pipes
+ */
 
-      _findAllDevices()
-        .then(function(devices) {
-          angular.forEach(devices, function(device) {
-            if(angular.isDefined(device.deviceClass) && device.deviceClass.actionTypes.length > 0) {
-              vm.enterActionDevices.push(device);
-              vm.exitActionDevices.push(device);
-            }
-          });
-        });
-    }
-
-    function _findAllDevices(bypassCache) {
-      if(bypassCache) {
-        return DSDevice.findAll();
-      }
-
-      return DSDevice.findAll();
-    }
-
-    function selectAction(device, actionType) {
-      vm.selectedActionType = actionType;
-
-      var ruleAction = {
-        actionTypeId: actionType.id,
-        deviceId: device.id
-      };
-
-      if(isExitAction) {
-        if(angular.isUnDefined(vm.currentRule.exitActions)) {
-          vm.currentRule.exitActions = [];
-        }
-
-        vm.currentRule.exitActions.push(ruleAction);
-      } {
-        vm.currentRule.actions.push(ruleAction);
-      }
-
-      $log.log('vm.currentRule', vm.currentRule);
-
-      if(actionType.paramTypes.length > 0) {
-        $rootScope.$broadcast('wizard.next', 'addActions');
-      }
-    }
+var validatedTemplates = require('../pipes/validated-templates');
 
 
-    _init(false);
+/*
+ * Configuration
+ */
 
-  }
+var pathConfig = require('../config/gulp').paths;
 
-}());
+
+/*
+ * Task
+ * 
+ */
+
+gulp.task('build-templates-production', function() {
+  return validatedTemplates.getPipe()
+    .pipe(gulp.dest(pathConfig.dest.production))
+    .pipe( gulpIf(argsParser.isWatch(), browserSync.reload({ stream: true })) );
+});

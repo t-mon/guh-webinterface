@@ -21,4 +21,10 @@
 -->
 
 
-
+<ul class="tiles">
+  <li class="item" ng-repeat="mood in moods.configured | orderBy: 'name' track by $index">
+    <a ui-sref="guh.moods.detail({ moodId: mood.id })">
+      <h2 class="name">{{ mood.name }}</h2>
+    </a>
+  </li>
+</ul>
