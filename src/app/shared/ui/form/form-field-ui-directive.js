@@ -344,7 +344,9 @@
             formCtrl.addFormField(scope);
           }
 
-          formCtrl.updateFormField(scope.$id, newValue);
+          if(formCtrl) {
+            formCtrl.updateFormField(scope.$id, newValue);
+          }
         });
 
         // Watch template
@@ -376,7 +378,9 @@
         // On destroy
         scope.$on('$destroy', function() {
           // Remove previously added formFields
-          formCtrl.removeFormField(scope);
+          if(formCtrl) {
+            formCtrl.removeFormField(scope);
+          }
 
           element.remove();
           scope = null;
