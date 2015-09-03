@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhFormField', guhFormField);
 
-    guhFormField.$inject = ['$log', '$http', '$q', '$compile', 'libs', 'app'];
+    guhFormField.$inject = ['$log', '$http', '$templateCache', '$compile', 'libs', 'app'];
 
-    function guhFormField($log, $http, $q, $compile, libs, app) {
+    function guhFormField($log, $http, $templateCache, $compile, libs, app) {
       var directive = {
         bindToController: {
           changeCallback: '&onValueChange',
@@ -354,7 +354,7 @@
           ctrl.init();
 
           if(ctrl.valueOperator) {
-            $http.get('app/shared/ui/form/value-operator.html').success(function(template) {
+            $http.get('app/shared/ui/form/value-operator.html', { cache: $templateCache }).success(function(template) {
               // Replace guhFormField-directive with proper HTML input
               // element.html(template);
               element.html(template);
@@ -362,7 +362,7 @@
             });
           } else {
             if(angular.isString(templateUrl)) {
-              $http.get(templateUrl).success(function(template) {
+              $http.get(templateUrl, { cache: $templateCache }).success(function(template) {
                 // Replace guhFormField-directive with proper HTML input
                 element.html(template);
                 $compile(element.contents())(scope);
