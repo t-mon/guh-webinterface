@@ -62,8 +62,6 @@
 
       _findMood(bypassCache, moodId)
         .then(function(mood) {
-          $log.log('mood', mood);
-
           vm.actions = mood.actions;
           vm.active = mood.active;
           vm.enabled = mood.enabled;
@@ -75,11 +73,6 @@
 
           // Event descriptors
           angular.forEach(vm.eventDescriptors, function(eventDescriptor, index) {
-            // _findDevice(eventDescriptor.deviceId)
-            //   .then(function(device) {
-            //     vm.eventDescriptors[index].device = device;
-            //   });
-
             _findEventType(bypassCache, eventDescriptor.eventTypeId)
               .then(function(eventType) {
                 // vm.eventDescriptors[index].name = eventType.name;
@@ -94,11 +87,11 @@
                 vm.stateEvaluator.stateDescriptor.phrase = stateType.phrase;
               });
           }
-          angular.forEach(vm.stateEvaluator.childEvaluators, function(stateEvaluator) {
-            if(angular.isDefined(stateEvaluator.stateDescriptor)) {
-              _findStateType(bypassCache, stateEvaluator.stateDescriptor.stateTypeId)
+          angular.forEach(vm.stateEvaluator.childEvaluators, function(childEvaluator, index) {
+            if(angular.isDefined(childEvaluator.stateDescriptor)) {
+              _findStateType(bypassCache, childEvaluator.stateDescriptor.stateTypeId)
                 .then(function(stateType) {
-                  vm.stateEvaluator.stateDescriptor.phrase = stateType.phrase;
+                  vm.stateEvaluator.childEvaluators[index].stateDescriptor.phrase = stateType.phrase;
                 });
             }
           });
@@ -107,14 +100,11 @@
           angular.forEach(vm.actions, function(action, index) {
             _findActionType(bypassCache, action.actionTypeId)
               .then(function(actionType) {
-                // vm.actions[index].name = actionType.name;
                 vm.actions[index].phrase = actionType.phrase;
               });
 
             // RuleActionParams
             angular.forEach(action.ruleActionParams, function(ruleActionParam) {
-              $log.log('ruleActionParam', ruleActionParam);
-
               if(angular.isUndefined(ruleActionParam.value)) {
                 ruleActionParam.value = null;
               }
@@ -122,7 +112,6 @@
               if(angular.isDefined(ruleActionParam.eventTypeId)) {
                 _findEventType(bypassCache, ruleActionParam.eventTypeId)
                   .then(function(eventType) {
-                    $log.log('EVENTTYPE', eventType);
                     ruleActionParam.eventType = eventType;
                   });
               }
@@ -131,8 +120,6 @@
 
           // Exit actions
           angular.forEach(vm.exitActions, function(exitAction, index) {
-            $log.log('exitAction', exitAction);
-
             _findActionType(bypassCache, exitAction.actionTypeId)
               .then(function(actionType) {
                 // vm.exitActions[index].name = actionType.name;
@@ -141,8 +128,6 @@
 
             // RuleActionParams
             angular.forEach(exitAction.ruleActionParams, function(ruleActionParam) {
-              $log.log('ruleActionParam', ruleActionParam);
-
               if(angular.isUndefined(ruleActionParam.value)) {
                 ruleActionParam.value = null;
               }
@@ -150,7 +135,6 @@
               if(angular.isDefined(ruleActionParam.eventTypeId)) {
                 _findEventType(bypassCache, ruleActionParam.eventTypeId)
                   .then(function(eventType) {
-                    $log.log('EVENTTYPE', eventType);
                     ruleActionParam.eventType = eventType;
                   });
               }
@@ -166,14 +150,6 @@
       
       return DSRule.find(moodId);
     }
-
-    // function _findDevice(deviceId) {
-    //   if(bypassCache) {
-    //     return DSDevice.find(deviceId, { bypassCache: true });
-    //   }
-
-    //   return DSDevice.find(deviceId);
-    // }
 
     function _findEventType(bypassCache, eventTypeId) {
       if(bypassCache) {
