@@ -99,6 +99,11 @@
             vm.is.stateType = angular.copy(vm.stateType);
 
             if(vm.selectedValueOperator) {
+              // Reset
+              if(angular.toJson(vm.selectedValueOperator) !== angular.toJson(app.valueOperator.is)) {
+                vm.selectedValueOperator = app.valueOperator.is;
+              }
+
               vm.selectedOperator = vm.selectedValueOperator.operators[0];
               vm.selectValueOperator();
             }

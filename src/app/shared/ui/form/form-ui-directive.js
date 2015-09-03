@@ -107,29 +107,29 @@
             var params = [];
 
             angular.forEach(vm.formFields, function(scope) {
-              if(angular.isDefined(scope.formField.selectedValueOperator)) {
-                if(angular.toJson(scope.formField.selectedValueOperator) === angular.toJson(app.valueOperator.between)) {
-                  // Between
-                  paramDescriptors.push({
-                    name: scope.formField.from.name,
-                    operator: scope.formField.selectedOperator,
-                    value: scope.formField.from.value,
-                  });
+              // if(angular.isDefined(scope.formField.selectedValueOperator)) {
+                // if(angular.toJson(scope.formField.selectedValueOperator) === angular.toJson(app.valueOperator.between)) {
+                //   // Between
+                //   paramDescriptors.push({
+                //     name: scope.formField.from.name,
+                //     operator: scope.formField.selectedOperator,
+                //     value: scope.formField.from.value,
+                //   });
 
-                  paramDescriptors.push({
-                    name: scope.formField.to.name,
-                    operator: scope.formField.selectedOperator,
-                    value: scope.formField.to.value,
-                  });
-                } else {
+                //   paramDescriptors.push({
+                //     name: scope.formField.to.name,
+                //     operator: scope.formField.selectedOperator,
+                //     value: scope.formField.to.value,
+                //   });
+                // } else {
                   // Is, is not, greater than, less than
                   paramDescriptors.push({
                     name: scope.formField.name,
                     operator: scope.formField.selectedOperator,
                     value: scope.formField.value,
                   });
-                }
-              }
+                // }
+              // }
 
               params.push({
                 name: scope.formField.name,

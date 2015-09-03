@@ -288,6 +288,7 @@
     }
 
     function selectTrigger(device, eventStateType) {
+      // Cleanup
       vm.selectedTriggerDevice = null;
       vm.selectedTriggerType = null;
 
@@ -337,21 +338,26 @@
         eventDescriptor = vm.selectedTriggerDevice.getEventDescriptor(vm.selectedTriggerType, paramDescriptors);
 
         _addEventDescriptor(eventDescriptor);
-         _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
+        _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
       } else if(DSStateType.is(vm.selectedTriggerType)) {
-        var stateDescriptor = {
-          deviceId: vm.selectedTriggerDevice.id,
-          operator: paramDescriptors[0].operator,
-          stateTypeId: vm.selectedTriggerType.id,
-          value: paramDescriptors[0].value
-        };
+        angular.forEach(paramDescriptors, function(paramDescriptor) {
+          var stateDescriptor = {
+            deviceId: vm.selectedTriggerDevice.id,
+            operator: paramDescriptor.operator,
+            stateTypeId: vm.selectedTriggerType.id,
+            value: paramDescriptor.value
+          };
 
-        _addStateEvaluator(stateDescriptor);
+          _addStateEvaluator(stateDescriptor);
+        });
+
         _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
       }
 
-      $log.log('vm.rule', vm.rule);
-
+      // Cleanup
+      vm.selectedTriggerDevice = null;
+      vm.selectedTriggerType = null;
+      
       $rootScope.$broadcast('wizard.prev', 'addTriggerDetails');
     }
 
@@ -364,11 +370,7 @@
           // Close dialog and update mood master view with new mood
           $scope.closeThisDialog();
 
-          $state.go('guh.moods.detail', { moodId: vm.rule.id }, { bypassCache: true }, {
-            reload: true,
-            inherit: false,
-            notify: true
-          });
+          $state.reload();
         })
         .catch(function(error) {
           $log.log('guh.moods.AddTriggerCtrl:controller | Rule not updated.', error);

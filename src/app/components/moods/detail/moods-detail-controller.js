@@ -53,6 +53,8 @@
     vm.remove = remove;
 
     function _loadViewData(bypassCache) {
+      $log.log('_loadViewData');
+
       var moodId = $stateParams.moodId;
 
       if(angular.isUndefined(moodId)) {
