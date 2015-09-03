@@ -338,7 +338,7 @@
         ctrl.formCtrl = formCtrl;
 
         // Watch selected operator
-        scope.$watch('formField.selectedOperator', function(newValue, oldValue) {
+        scope.$watch('formField.selectedOperator', function(newValue) {
           if(formCtrl && !ctrl.valueOperator) {
             // Add formField if valueOperator not set
             formCtrl.addFormField(scope);
@@ -348,7 +348,7 @@
         });
 
         // Watch template
-        scope.$watch('formField.template', function(newValue, oldValue) {
+        scope.$watch('formField.template', function(newValue) {
           templateUrl = newValue;
 
           ctrl.init();

@@ -72,7 +72,7 @@
           vm.stateEvaluator = mood.stateEvaluator;
 
           // Event descriptors
-          angular.forEach(vm.eventDescriptors, function(eventDescriptor, index) {
+          angular.forEach(vm.eventDescriptors, function(eventDescriptor, index) {
             _findEventType(bypassCache, eventDescriptor.eventTypeId)
               .then(function(eventType) {
                 // vm.eventDescriptors[index].name = eventType.name;
@@ -151,7 +151,7 @@
       return DSRule.find(moodId);
     }
 
-    function _findEventType(bypassCache, eventTypeId) {
+    function _findEventType(bypassCache, eventTypeId) {
       if(bypassCache) {
         return DSEventType.find(eventTypeId, { bypassCache: true });
       }
@@ -159,7 +159,7 @@
       return DSEventType.find(eventTypeId);
     }
 
-    function _findStateType(bypassCache, stateTypeId) {
+    function _findStateType(bypassCache, stateTypeId) {
       if(bypassCache) {
         return DSStateType.find(stateTypeId, { bypassCache: true });
       }
@@ -167,7 +167,7 @@
       return DSStateType.find(stateTypeId);
     }
 
-    function _findActionType(bypassCache, actionTypeId) {
+    function _findActionType(bypassCache, actionTypeId) {
       if(bypassCache) {
         return DSActionType.find(actionTypeId, { bypassCache: true });
       }

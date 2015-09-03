@@ -131,7 +131,7 @@
       return DSRule
         .create(vm.rule)
         .then(function(rule) {
-          $log.log('guh.moods.NewMoodCtrl:controller | Rule created successfully.', rule);
+          $log.log('guh.moods.NewMoodCtrl:controller | Rule created successfully.', rule);
 
           // Add id to view data
           vm.rule.id = rule.id;
@@ -146,7 +146,7 @@
           return {
             id: toggleButtonId,
             params: toggleButtonParams
-          }
+          };
         });
     }
 
@@ -277,99 +277,12 @@
       // Set name
       vm.rule.name = params[0].value;
 
-      // Create rule
-      // Create toggle-button
-      // Find toggle-button
-      // Load relations for toggle-button
-      // Update rule
-
       _saveRule()
         .then(_addToggleButton)
         .then(_updateRule)
         .catch(function(error) {
           $log.log('guh.moods.NewMoodCtrl:controller | Error while saving mood.', error);
         });
-
-      // DSRule
-      //   .create(vm.rule)
-      //   .then(function(rule) {
-      //     $log.log('guh.moods.NewMoodCtrl:controller | Rule created successfully.', rule);
-
-      //     // Add id to view data
-      //     vm.rule.id = rule.id;
-
-      //     // Create toggle-button for created mood
-      //     var toggleButtonId = 'c0f511f9-70f5-499b-bd70-2c0e9ddd68c4';
-      //     var toggleButtonParams = [{
-      //       name: 'name',
-      //       value: 'mood-toggle-button-' + rule.id
-      //     }];
-
-          // DSDevice
-          //   .add(toggleButtonId, undefined, toggleButtonParams)
-        //     .then(function(device) {
-        //       $log.log('toggle-button', device);
-
-        //       DSDevice
-        //         .find(device.id, { bypassCache: true })
-        //         .then(function(device) {
-        //           // Get device relations
-        //           DSDevice
-        //             .loadRelations(device, ['deviceClass'])
-        //             .then(function(device) {
-        //               // Create stateEvaluator for toggle-button
-        //               var stateEvaluator = {
-        //                 stateDescriptor: {
-        //                   deviceId: device.id,
-        //                   operator: 'ValueOperatorEquals',
-        //                   stateTypeId: device.deviceClass.stateTypes[0].id,
-        //                   value: true
-        //                 }
-        //               };
-
-        //               // Get created rule and add created stateEvaluator
-        //               vm.rule.stateEvaluator = stateEvaluator;
-
-        //               $log.log('vm.rule', vm.rule);
-
-        //               // Update created rule with created stateEvaluator
-        //               DSRule
-        //                 .update(vm.rule.id, vm.rule, { cacheResponse: false })
-        //                 .then(function(rule) {
-        //                   $log.log('updated rule', rule);
-
-        //                   DSDevice
-        //                     .inject(vm.rule);
-
-
-        //                   // Close dialog and update mood master view with new mood
-        //                   $scope.closeThisDialog();
-
-        //                   $state.go('guh.moods.master', { bypassCache: true }, {
-        //                     reload: true,
-        //                     inherit: false,
-        //                     notify: true
-        //                   });
-        //                 })
-        //                 .catch(function(error) {
-        //                   $log.log('guh.moods.NewMoodCtrl:controller | Rule not updated.', error);
-        //                 });
-        //             })
-        //             .catch(function(error) {
-        //               $log.log('guh.moods.NewMoodCtrl:controller | Relations of device not loaded.', error);
-        //             });
-        //         })
-        //         .catch(function(error) {
-        //           $log.log('guh.moods.NewMoodCtrl:controller | Device not found.', error);
-        //         });
-        //     })
-        //     .catch(function(error) {
-        //       $log.log('guh.moods.NewMoodCtrl:controller | Device not created.', error);
-        //     });
-        // })
-        // .catch(function(error) {
-        //   $log.log('guh.moods.NewMoodCtrl:controller | Rule not created.', error);
-        // });
     }
 
 

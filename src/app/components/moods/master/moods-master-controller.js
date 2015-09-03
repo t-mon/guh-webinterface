@@ -39,9 +39,9 @@
     .module('guh.moods')
     .controller('MoodsMasterCtrl', MoodsMasterCtrl);
 
-  MoodsMasterCtrl.$inject = ['$log', '$stateParams', 'DSRule', 'DSDevice'];
+  MoodsMasterCtrl.$inject = ['$log', '$stateParams', 'DSRule'];
 
-  function MoodsMasterCtrl($log, $stateParams, DSRule, DSDevice) {
+  function MoodsMasterCtrl($log, $stateParams, DSRule) {
 
     // Don't show debugging information
     DSRule.debug = false;
@@ -55,7 +55,7 @@
 
     function _loadViewData(bypassCache) {
       _findAllRules(bypassCache)
-        .then(function(rules) {
+        .then(function(rules) {
           vm.configured = rules;
         });
     }
@@ -66,10 +66,6 @@
       }
       
       return DSRule.findAll();
-    }
-
-    function _findAllDevices() {
-      return DSDevice.findAll();
     }
 
 

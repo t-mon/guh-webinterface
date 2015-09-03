@@ -123,7 +123,7 @@
 
       vm.triggerDevices = angular.copy(triggerDevices);
 
-      angular.forEach(vm.triggerDevices, function(triggerDevice) {
+      angular.forEach(vm.triggerDevices, function(triggerDevice) {
         angular.forEach(triggerDevice.deviceClass.eventTypes, function(eventType) {
           _markAsSelected(triggerDevice, eventType);
         });
@@ -135,7 +135,7 @@
     }
 
     function _hasTrigger(device) {
-      return angular.isDefined(device.deviceClass) && (device.deviceClass.eventTypes.length > 0 || device.deviceClass.stateTypes.length > 0) && device.name.indexOf('mood-toggle') === -1;
+      return angular.isDefined(device.deviceClass) && (device.deviceClass.eventTypes.length > 0 || device.deviceClass.stateTypes.length > 0) && device.name.indexOf('mood-toggle') === -1;
     }
 
     function _isSelected(device, eventStateType) {
@@ -203,7 +203,7 @@
         });
       } else if(angular.isDefined(vm.rule.eventDescriptor)) {
         if(delete vm.rule.eventDescriptor) {
-          var removedEventDescriptor = vm.rule.eventDescriptor;
+          removedEventDescriptor = vm.rule.eventDescriptor;
         }
       }
 
@@ -307,7 +307,7 @@
           vm.availableOperators[device.id] = {};
           vm.availableOperators[device.id][eventType.id] = {};
 
-          if(!_isSelected(device, eventType)) {
+          if(!_isSelected(device, eventType)) {
             $rootScope.$broadcast('wizard.next', 'addTriggerDetails');
           } else {
             _markAsSelected(device, eventType); 
@@ -322,7 +322,7 @@
         // Add stateType value operators
         vm.availableOperators[device.id] = {};
 
-        if(!_isSelected(device, stateType)) {
+        if(!_isSelected(device, stateType)) {
           $rootScope.$broadcast('wizard.next', 'addTriggerDetails');
         } else {
           _markAsSelected(device, stateType); 
@@ -358,7 +358,7 @@
     function save() {
       DSRule
         .update(vm.rule.id, vm.rule, { cacheResponse: false })
-        .then(function(rule) {
+        .then(function() {
           DSDevice.inject(vm.rule);
 
           // Close dialog and update mood master view with new mood

@@ -107,7 +107,7 @@
             var params = [];
 
             angular.forEach(vm.formFields, function(scope) {
-              if(angular.isDefined(scope.formField.selectedValueOperator)) {
+              if(angular.isDefined(scope.formField.selectedValueOperator)) {
                 if(angular.toJson(scope.formField.selectedValueOperator) === angular.toJson(app.valueOperator.between)) {
                   // Between
                   paramDescriptors.push({
