@@ -22,15 +22,15 @@
  *                                                                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
  * Plugins
  */
 
 var gulp = require('gulp');
-var htmlhint = require('gulp-htmlhint');
-var htmlmin = require('gulp-htmlmin');
-var ngHtml2Js = require('gulp-ng-html2js');
+var browserSync = require('browser-sync').get('app-server');
+var gulpIf = require('gulp-if');
+var argsParser = require('../utils/args-parser');
+
 
 /*
  * Pipes
@@ -44,21 +44,15 @@ var validatedTemplates = require('../pipes/validated-templates');
  */
 
 var pathConfig = require('../config/gulp').paths;
-var jshintConfig = require('../config/gulp').jshint;
-var htmlminConfig = require('../config/gulp').htmlmin;
-var ngHtml2JsConfig = require('../config/gulp').ngHtml2Js;
 
 
 /*
- * Pipe
+ * Task
+ * 
  */
 
-module.exports = {
-  getPipe: function() {
-    return validatedTemplates.getPipe()
-      .pipe(htmlhint.failReporter())
-      .pipe(htmlmin(htmlminConfig))
-      .pipe(ngHtml2Js(ngHtml2JsConfig))
-      .pipe(gulp.dest(pathConfig.dest.production));
-  }
-};
+gulp.task('build-templates-production', function() {
+  return validatedTemplates.getPipe()
+    .pipe(gulp.dest(pathConfig.dest.production))
+    .pipe( gulpIf(argsParser.isWatch(), browserSync.reload({ stream: true })) );
+});
