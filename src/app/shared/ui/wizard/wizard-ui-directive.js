@@ -124,8 +124,6 @@
 
     function wizardLink(scope, element, attrs, wizardCtrl) {
 
-      $log.log('wizardLink', scope);
-
       function _init() {
         // Add proper styles
         element.addClass('wizard');
@@ -139,7 +137,6 @@
 
       // Go to previous step
       scope.$on('wizard.prev', function(event, handle) {
-        $log.log('prev handle', handle, wizardCtrl);
         if(handle === wizardCtrl.handle) {
           wizardService.getByHandle(handle).wizard.prev();
         }
@@ -147,7 +144,6 @@
 
       // Go to next step
       scope.$on('wizard.next', function(event, handle) {
-        $log.log('next handle', handle, wizardCtrl);
         if(handle === wizardCtrl.handle) {
           wizardService.getByHandle(handle).wizard.next();
         }
