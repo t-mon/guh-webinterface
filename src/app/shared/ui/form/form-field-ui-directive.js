@@ -100,7 +100,7 @@
 
             if(vm.selectedValueOperator) {
               // Reset
-              if(angular.toJson(vm.selectedValueOperator) !== angular.toJson(app.valueOperator.is)) {
+              if(angular.toJson(vm.selectedValueOperator) !== angular.toJson(app.valueOperator.is)) {
                 vm.selectedValueOperator = app.valueOperator.is;
               }
 

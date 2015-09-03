@@ -353,11 +353,11 @@
 
         _markAsSelected(vm.selectedTriggerDevice, vm.selectedTriggerType);
       }
-
+      
       // Cleanup
       vm.selectedTriggerDevice = null;
       vm.selectedTriggerType = null;
-      
+
       $rootScope.$broadcast('wizard.prev', 'addTriggerDetails');
     }
 

@@ -29,9 +29,9 @@
     .module('guh.ui')
     .directive('guhForm', guhForm);
 
-    guhForm.$inject = ['$log', 'libs', 'app'];
+    guhForm.$inject = ['$log', 'libs'];
 
-    function guhForm($log, libs, app) {
+    function guhForm($log, libs) {
       var directive = {
         bindToController: {
           name: '@',
